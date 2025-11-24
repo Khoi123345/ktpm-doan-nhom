@@ -1,0 +1,42 @@
+{
+    "name": "bookstore-frontend",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "concurrently \"npm run dev:customer\" \"npm run dev:admin\"",
+        "dev:customer": "vite --config vite.config.customer.js",
+        "dev:admin": "vite --config vite.config.admin.js",
+        "build": "vite build",
+        "build:customer": "vite build --config vite.config.customer.js",
+        "build:admin": "vite build --config vite.config.admin.js",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@headlessui/react": "^1.7.17",
+        "@reduxjs/toolkit": "^2.0.1",
+        "axios": "^1.6.2",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-hook-form": "^7.49.2",
+        "react-icons": "^4.12.0",
+        "react-redux": "^9.0.4",
+        "react-router-dom": "^6.20.1",
+        "react-toastify": "^9.1.3",
+        "recharts": "^2.10.3"
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.0",
+        "@types/react": "^18.2.43",
+        "@types/react-dom": "^18.2.17",
+        "@vitejs/plugin-react": "^4.2.1",
+        "autoprefixer": "^10.4.16",
+        "concurrently": "^9.2.1",
+        "jsdom": "^27.2.0",
+        "postcss": "^8.4.32",
+        "tailwindcss": "^3.4.0",
+        "vite": "^7.2.4",
+        "vitest": "^4.0.12"
+    }
+}
