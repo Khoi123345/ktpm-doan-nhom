@@ -2,7 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FiShoppingCart, FiUser, FiLogOut, FiSearch, FiMenu } from 'react-icons/fi';
 import { logout } from '../../features/authSlice';
-import { useState } from 'react';
+import { fetchCart } from '../../features/cartSlice';
+import { useState, useEffect } from 'react';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -11,6 +12,12 @@ const Header = () => {
     const { cartItems } = useSelector((state) => state.cart);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [keyword, setKeyword] = useState('');
+
+    useEffect(() => {
+        if (userInfo && userInfo.role !== 'admin') {
+            dispatch(fetchCart());
+        }
+    }, [dispatch, userInfo]);
 
     const handleLogout = () => {
         dispatch(logout());

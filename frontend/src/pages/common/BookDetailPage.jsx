@@ -58,15 +58,33 @@ const BookDetailPage = () => {
                 author: book.author,
                 price: book.discountPrice > 0 ? book.discountPrice : book.price,
                 image: book.images?.[0],
+                stock: book.stock,
                 quantity,
             }));
             toast.success('Đã thêm vào giỏ hàng!');
         }
     };
 
-    const handleBuyNow = () => {
-        handleAddToCart();
-        setTimeout(() => navigate('/cart'), 500);
+    const handleBuyNow = async () => {
+        if (userInfo) {
+            try {
+                await dispatch(addToCartAsync({ bookId: book._id, quantity })).unwrap();
+                navigate('/checkout', { state: { selectedItems: [book._id] } });
+            } catch (err) {
+                toast.error(err || 'Không thể thêm vào giỏ hàng');
+            }
+        } else {
+            dispatch(addToCart({
+                _id: book._id,
+                title: book.title,
+                author: book.author,
+                price: book.discountPrice > 0 ? book.discountPrice : book.price,
+                image: book.images?.[0],
+                stock: book.stock,
+                quantity,
+            }));
+            navigate('/checkout', { state: { selectedItems: [book._id] } });
+        }
     };
 
     const handleReviewSuccess = () => {

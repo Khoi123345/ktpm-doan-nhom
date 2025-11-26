@@ -54,7 +54,12 @@ export const login = asyncHandler(async (req, res) => {
     // Check for user email
     const user = await User.findOne({ email }).select('+password');
 
-    if (user && (await user.matchPassword(password))) {
+    if (!user) {
+        res.status(401);
+        throw new Error('Email này không tồn tại');
+    }
+
+    if (await user.matchPassword(password)) {
         res.json({
             success: true,
             data: {
@@ -70,7 +75,7 @@ export const login = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(401);
-        throw new Error('Email hoặc mật khẩu không đúng');
+        throw new Error('Mật khẩu không đúng');
     }
 });
 

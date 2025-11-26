@@ -31,8 +31,9 @@ api.interceptors.request.use(
 export const cartAPI = {
     getCart: () => api.get('/cart'),
     addToCart: (bookId, quantity) => api.post('/cart', { bookId, quantity }),
-    updateCartItem: (itemId, quantity) => api.put(`/cart/${itemId}`, { quantity }),
+    updateCartItem: (bookId, quantity) => api.put(`/cart/${bookId}`, { quantity }),
     removeFromCart: (itemId) => api.delete(`/cart/${itemId}`),
+    removeMultipleFromCart: (itemIds) => api.delete('/cart/remove-multiple', { data: { itemIds } }),
     clearCart: () => api.delete('/cart'),
 };
 
@@ -108,6 +109,7 @@ export const usersAPI = {
 export const reviewsAPI = {
     createReview: (bookId, reviewData) => api.post(`/reviews/books/${bookId}/reviews`, reviewData),
     getBookReviews: (bookId) => api.get(`/reviews/books/${bookId}/reviews`),
+    updateReview: (id, reviewData) => api.put(`/reviews/${id}`, reviewData),
     deleteReview: (id) => api.delete(`/reviews/${id}`),
 };
 

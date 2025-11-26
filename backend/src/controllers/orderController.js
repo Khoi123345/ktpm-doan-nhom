@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/Order.js';
 import Book from '../models/Book.js';
-import Coupon from '../models/Coupon.js';
+import Cart from '../models/Cart.js';
 
 /**
  * @desc    Create new order
@@ -9,49 +9,52 @@ import Coupon from '../models/Coupon.js';
  * @access  Private
  */
 export const createOrder = asyncHandler(async (req, res) => {
-    // Prevent admin from creating orders
-    if (req.user.role === 'admin') {
-        res.status(403);
-        throw new Error('Tài khoản quản trị không thể đặt hàng. Vui lòng sử dụng tài khoản khách hàng.');
-    }
-
     const {
         orderItems,
         shippingAddress,
         paymentMethod,
         itemsPrice,
         shippingPrice,
+        discountAmount,
         totalPrice,
         couponCode,
-        discountAmount,
     } = req.body;
 
-    if (orderItems && orderItems.length === 0) {
+    if (!orderItems || orderItems.length === 0) {
         res.status(400);
-        throw new Error('Giỏ hàng trống');
+        throw new Error('Không có sản phẩm trong đơn hàng');
     }
 
-    // Update coupon usage if applied
-    if (couponCode) {
-        const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
-        if (coupon) {
-            coupon.usedCount += 1;
-            await coupon.save();
+    // Validate stock for all items
+    for (const item of orderItems) {
+        const book = await Book.findById(item.book);
+        if (!book) {
+            res.status(404);
+            throw new Error(`Không tìm thấy sách: ${item.title}`);
+        }
+        if (book.stock < item.quantity) {
+            res.status(400);
+            throw new Error(`Sách "${book.title}" không đủ số lượng trong kho`);
         }
     }
 
+    // Create order
     const order = new Order({
         user: req.user._id,
-        orderItems,
+        orderItems: orderItems.map(item => ({
+            book: item.book,
+            title: item.title,
+            quantity: item.quantity,
+            image: item.image,
+            price: item.price,
+        })),
         shippingAddress,
         paymentMethod,
         itemsPrice,
         shippingPrice,
+        discountAmount: discountAmount || 0,
         totalPrice,
-        couponApplied: {
-            code: couponCode || '',
-            discountAmount: discountAmount || 0,
-        },
+        couponCode: couponCode || null,
     });
 
     const createdOrder = await order.save();
@@ -65,6 +68,9 @@ export const createOrder = asyncHandler(async (req, res) => {
         }
     }
 
+    // DO NOT clear cart here - it will be handled by frontend
+    // This prevents clearing cart when user only checks out selected items
+
     res.status(201).json({
         success: true,
         data: createdOrder,
@@ -77,65 +83,18 @@ export const createOrder = asyncHandler(async (req, res) => {
  * @access  Private
  */
 export const getOrderById = asyncHandler(async (req, res) => {
-    // Trim ID to remove any potential whitespace
-    const orderId = req.params.id.trim();
-
-    const order = await Order.findById(orderId)
-        .populate('user', 'name email')
-        .populate('orderItems.book', 'title author');
+    const order = await Order.findById(req.params.id).populate('user', 'name email');
 
     if (order) {
-        // Check if the order belongs to the user or if user is admin
-        // Handle case where populated user might be null (e.g. user deleted)
-        const orderUserId = order.user ? order.user._id.toString() : null;
-
-        // If order has no user (deleted) and current user is admin, allow access
-        // If order belongs to current user, allow access
-        if ((orderUserId && orderUserId === req.user._id.toString()) || req.user.role === 'admin') {
-            res.json({
-                success: true,
-                data: order,
-            });
-        } else {
+        // Check if order belongs to user or user is admin
+        if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
             res.status(403);
-            throw new Error('Bạn không có quyền xem đơn hàng này');
+            throw new Error('Không có quyền truy cập đơn hàng này');
         }
-    } else {
-        res.status(404);
-        throw new Error('Không tìm thấy đơn hàng');
-    }
-});
-
-/**
- * @desc    Update order to paid
- * @route   PUT /api/orders/:id/pay
- * @access  Private
- */
-export const updateOrderToPaid = asyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
-
-    if (order) {
-        order.isPaid = true;
-        order.paidAt = Date.now();
-        order.paymentResult = {
-            id: req.body.id,
-            status: req.body.status,
-            update_time: req.body.update_time,
-            email_address: req.body.email_address,
-        };
-
-        // When admin confirms payment (COD collected), mark as delivered
-        if (req.body.id === 'ADMIN_CONFIRMED') {
-            order.status = 'delivered';
-            order.isDelivered = true;
-            order.deliveredAt = Date.now();
-        }
-
-        const updatedOrder = await order.save();
 
         res.json({
             success: true,
-            data: updatedOrder,
+            data: order,
         });
     } else {
         res.status(404);
@@ -162,10 +121,8 @@ export const getMyOrders = asyncHandler(async (req, res) => {
  * @route   GET /api/orders
  * @access  Private/Admin
  */
-export const getAllOrders = asyncHandler(async (req, res) => {
-    const orders = await Order.find({})
-        .populate('user', 'name email')
-        .sort({ createdAt: -1 });
+export const getOrders = asyncHandler(async (req, res) => {
+    const orders = await Order.find({}).populate('user', 'name email').sort({ createdAt: -1 });
 
     res.json({
         success: true,
@@ -179,15 +136,56 @@ export const getAllOrders = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 export const updateOrderStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body;
     const order = await Order.findById(req.params.id);
 
     if (order) {
-        order.status = req.body.status || order.status;
+        order.status = status;
 
-        if (req.body.status === 'delivered') {
+        if (status === 'delivered') {
             order.isDelivered = true;
             order.deliveredAt = Date.now();
         }
+
+        if (status === 'cancelled') {
+            // Restore book stock when order is cancelled
+            for (const item of order.orderItems) {
+                const book = await Book.findById(item.book);
+                if (book) {
+                    book.stock += item.quantity;
+                    await book.save();
+                }
+            }
+        }
+
+        const updatedOrder = await order.save();
+
+        res.json({
+            success: true,
+            data: updatedOrder,
+        });
+    } else {
+        res.status(404);
+        throw new Error('Không tìm thấy đơn hàng');
+    }
+});
+
+/**
+ * @desc    Update order to paid
+ * @route   PUT /api/orders/:id/pay
+ * @access  Private
+ */
+export const updateOrderToPaid = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        order.isPaid = true;
+        order.paidAt = Date.now();
+        order.paymentResult = {
+            id: req.body.id,
+            status: req.body.status,
+            update_time: req.body.update_time,
+        };
 
         const updatedOrder = await order.save();
 
@@ -204,148 +202,53 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 /**
  * @desc    Cancel order
  * @route   PUT /api/orders/:id/cancel
- * @access  Private/Admin
+ * @access  Private
  */
 export const cancelOrder = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
 
-    if (order) {
-        if (order.status === 'delivered') {
-            res.status(400);
-            throw new Error('Không thể hủy đơn hàng đã giao');
-        }
-
-        if (order.isPaid) {
-            res.status(400);
-            throw new Error('Không thể hủy đơn hàng đã thanh toán');
-        }
-
-        // Restore stock for cancelled orders
-        for (const item of order.orderItems) {
-            const book = await Book.findById(item.book);
-            if (book) {
-                book.stock += item.quantity;
-                await book.save();
-            }
-        }
-
-        order.status = 'cancelled';
-        order.cancelReason = req.body.reason || 'Không có lý do';
-        const updatedOrder = await order.save();
-
-        res.json({
-            success: true,
-            data: updatedOrder,
-        });
-    } else {
+    if (!order) {
         res.status(404);
         throw new Error('Không tìm thấy đơn hàng');
     }
-});
 
-/**
- * @desc    Update order shipping address
- * @route   PUT /api/orders/:id/address
- * @access  Private/Admin
- */
-export const updateOrderAddress = asyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
-
-    if (order) {
-        // Only allow address update if order hasn't been shipped yet
-        if (order.status === 'shipping' || order.status === 'delivered') {
-            res.status(400);
-            throw new Error('Không thể sửa địa chỉ khi đơn hàng đã giao cho đơn vị vận chuyển');
-        }
-
-        order.shippingAddress = {
-            ...order.shippingAddress,
-            ...req.body,
-        };
-
-        const updatedOrder = await order.save();
-
-        res.json({
-            success: true,
-            data: updatedOrder,
-        });
-    } else {
-        res.status(404);
-        throw new Error('Không tìm thấy đơn hàng');
+    // Check if order belongs to user
+    if (order.user.toString() !== req.user._id.toString()) {
+        res.status(403);
+        throw new Error('Không có quyền hủy đơn hàng này');
     }
-});
 
-/**
- * @desc    Mark order as returned
- * @route   PUT /api/orders/:id/return
- * @access  Private/Admin
- */
-export const returnOrder = asyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
-
-    if (order) {
-        // Restore stock for returned orders
-        for (const item of order.orderItems) {
-            const book = await Book.findById(item.book);
-            if (book) {
-                book.stock += item.quantity;
-                await book.save();
-            }
-        }
-
-        order.status = 'returned';
-        order.cancelReason = req.body.reason || 'Khách không nhận hàng';
-        const updatedOrder = await order.save();
-
-        res.json({
-            success: true,
-            data: updatedOrder,
-        });
-    } else {
-        res.status(404);
-        throw new Error('Không tìm thấy đơn hàng');
+    // Check if order can be cancelled
+    if (order.status === 'delivered' || order.status === 'cancelled') {
+        res.status(400);
+        throw new Error('Không thể hủy đơn hàng đã giao hoặc đã hủy');
     }
-});
 
-/**
- * @desc    Unpay order (revert payment status)
- * @route   PUT /api/orders/:id/unpay
- * @access  Private/Admin
- */
-export const unpayOrder = asyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
+    order.status = 'cancelled';
 
-    if (order) {
-        if (order.status === 'delivered') {
-            res.status(400);
-            throw new Error('Không thể hủy thanh toán cho đơn hàng đã giao');
+    // Restore book stock
+    for (const item of order.orderItems) {
+        const book = await Book.findById(item.book);
+        if (book) {
+            book.stock += item.quantity;
+            await book.save();
         }
-
-        order.isPaid = false;
-        order.paidAt = undefined;
-        order.paymentResult = undefined;
-
-        const updatedOrder = await order.save();
-
-        res.json({
-            success: true,
-            data: updatedOrder,
-        });
-    } else {
-        res.status(404);
-        throw new Error('Không tìm thấy đơn hàng');
     }
+
+    const updatedOrder = await order.save();
+
+    res.json({
+        success: true,
+        data: updatedOrder,
+    });
 });
 
 export default {
     createOrder,
     getOrderById,
-    updateOrderToPaid,
     getMyOrders,
-    getAllOrders,
+    getOrders,
     updateOrderStatus,
+    updateOrderToPaid,
     cancelOrder,
-    updateOrderAddress,
-    returnOrder,
-    unpayOrder,
 };

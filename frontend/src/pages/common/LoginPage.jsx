@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../../features/authSlice';
+import { login, clearError } from '../../features/authSlice';
 import { toast } from 'react-toastify';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -14,6 +14,10 @@ const LoginPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { userInfo, loading, error } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        dispatch(clearError());
+    }, [dispatch]);
 
     useEffect(() => {
         if (userInfo) {

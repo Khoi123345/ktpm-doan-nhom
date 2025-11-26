@@ -7,8 +7,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles --forceExit",
-    "test:watch": "cross-env NODE_ENV=test jest --watch"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --coverage --detectOpenHandles --forceExit",
+    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --watch"
   },
   "keywords": [
     "bookstore",

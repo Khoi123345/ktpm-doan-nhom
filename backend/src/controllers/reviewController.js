@@ -55,13 +55,49 @@ export const createReview = asyncHandler(async (req, res) => {
  */
 export const getBookReviews = asyncHandler(async (req, res) => {
     const reviews = await Review.find({ book: req.params.id })
-        .populate('user', 'name avatar')
+        .populate('user', '_id name avatar')
         .sort({ createdAt: -1 });
 
     res.json({
         success: true,
         data: reviews,
     });
+});
+
+/**
+ * @desc    Update review
+ * @route   PUT /api/reviews/:id
+ * @access  Private
+ */
+export const updateReview = asyncHandler(async (req, res) => {
+    const { rating, comment } = req.body;
+    const review = await Review.findById(req.params.id);
+
+    if (review) {
+        // Check if review belongs to user
+        if (review.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            res.status(401);
+            throw new Error('Không có quyền sửa đánh giá này');
+        }
+
+        review.rating = Number(rating) || review.rating;
+        review.comment = comment || review.comment;
+        await review.save();
+
+        // Update book rating
+        const book = await Book.findById(review.book);
+        const reviews = await Review.find({ book: review.book });
+        book.rating = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
+        await book.save();
+
+        res.json({
+            success: true,
+            data: review,
+        });
+    } else {
+        res.status(404);
+        throw new Error('Không tìm thấy đánh giá');
+    }
 });
 
 /**
@@ -73,6 +109,12 @@ export const deleteReview = asyncHandler(async (req, res) => {
     const review = await Review.findById(req.params.id);
 
     if (review) {
+        // Check if review belongs to user or user is admin
+        if (review.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            res.status(401);
+            throw new Error('Không có quyền xóa đánh giá này');
+        }
+
         const bookId = review.book;
         await review.deleteOne();
 
@@ -116,5 +158,6 @@ export default {
     createReview,
     getBookReviews,
     deleteReview,
+    updateReview,
     getAllReviews,
 };

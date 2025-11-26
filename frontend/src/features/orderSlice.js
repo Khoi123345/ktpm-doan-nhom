@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../services/api';
+import { toast } from 'react-toastify';
 
 const initialState = {
     orders: [],
@@ -70,6 +71,19 @@ export const updateOrderToDelivered = createAsyncThunk(
             return data.data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Không thể cập nhật trạng thái đơn hàng');
+        }
+    }
+);
+
+// Cancel order
+export const cancelOrder = createAsyncThunk(
+    'orders/cancelOrder',
+    async ({ id, reason }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.put(`/orders/${id}/cancel`, { reason });
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Không thể hủy đơn hàng');
         }
     }
 );
@@ -145,6 +159,19 @@ const orderSlice = createSlice({
             .addCase(updateOrderToDelivered.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            .addCase(cancelOrder.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(cancelOrder.fulfilled, (state, action) => {
+                state.loading = false;
+                state.order = action.payload;
+                toast.success('Đã hủy đơn hàng thành công');
+            })
+            .addCase(cancelOrder.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                toast.error(action.payload);
             });
     },
 });

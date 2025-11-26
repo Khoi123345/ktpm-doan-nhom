@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../../features/authSlice';
+import { register, clearError } from '../../features/authSlice';
 import { toast } from 'react-toastify';
 import { FiCheck, FiX } from 'react-icons/fi';
 import Input from '../../components/common/Input';
@@ -23,6 +23,10 @@ const RegisterPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { userInfo, loading, error } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        dispatch(clearError());
+    }, [dispatch]);
 
     useEffect(() => {
         if (userInfo) {
@@ -63,7 +67,14 @@ const RegisterPage = () => {
             return;
         }
 
-        dispatch(register({ name, email, password }));
+        dispatch(register({ name, email, password }))
+            .unwrap()
+            .then(() => {
+                toast.success(`Chào mừng ${name} đến với BookStore!`);
+            })
+            .catch((error) => {
+                // Error is already handled by the error useEffect
+            });
     };
 
     return (

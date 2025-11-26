@@ -22,7 +22,7 @@ const HomePage = () => {
         if (userInfo) {
             dispatch(addToCartAsync({ bookId: book._id, quantity: 1 }));
         } else {
-            dispatch(addToCart({ ...book, quantity: 1 }));
+            dispatch(addToCart({ ...book, quantity: 1, stock: book.stock }));
         }
         toast.success('Đã thêm vào giỏ hàng!');
     };
