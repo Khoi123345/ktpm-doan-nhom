@@ -137,10 +137,42 @@ export const changePassword = asyncHandler(async (req, res) => {
     });
 });
 
+/**
+ * @desc    Lock/Unlock user
+ * @route   PUT /api/users/:id/lock
+ * @access  Private/Admin
+ */
+export const toggleUserLock = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+        if (user.role === 'admin') {
+            res.status(400);
+            throw new Error('Không thể khóa tài khoản admin');
+        }
+
+        user.isLocked = !user.isLocked;
+        const updatedUser = await user.save();
+
+        res.json({
+            success: true,
+            message: updatedUser.isLocked ? 'Đã khóa tài khoản' : 'Đã mở khóa tài khoản',
+            data: {
+                _id: updatedUser._id,
+                isLocked: updatedUser.isLocked,
+            },
+        });
+    } else {
+        res.status(404);
+        throw new Error('Không tìm thấy người dùng');
+    }
+});
+
 export default {
     getAllUsers,
     getUserById,
     updateUser,
     deleteUser,
     changePassword,
+    toggleUserLock,
 };

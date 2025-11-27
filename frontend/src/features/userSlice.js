@@ -61,6 +61,19 @@ export const updateUser = createAsyncThunk(
     }
 );
 
+// Toggle user lock (Admin)
+export const toggleUserLock = createAsyncThunk(
+    'users/toggleUserLock',
+    async (id, { rejectWithValue }) => {
+        try {
+            const { data } = await api.put(`/users/${id}/lock`);
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Không thể thay đổi trạng thái khóa');
+        }
+    }
+);
+
 const userSlice = createSlice({
     name: 'users',
     initialState,
@@ -120,6 +133,12 @@ const userSlice = createSlice({
             .addCase(updateUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            .addCase(toggleUserLock.fulfilled, (state, action) => {
+                const index = state.users.findIndex((user) => user._id === action.payload._id);
+                if (index !== -1) {
+                    state.users[index].isLocked = action.payload.isLocked;
+                }
             });
     },
 });

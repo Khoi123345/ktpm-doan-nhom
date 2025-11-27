@@ -59,6 +59,11 @@ export const login = asyncHandler(async (req, res) => {
         throw new Error('Email này không tồn tại');
     }
 
+    if (user.isLocked) {
+        res.status(403);
+        throw new Error('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin.');
+    }
+
     if (await user.matchPassword(password)) {
         res.json({
             success: true,
