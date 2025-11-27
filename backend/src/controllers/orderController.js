@@ -212,19 +212,62 @@ export const cancelOrder = asyncHandler(async (req, res) => {
         throw new Error('Không tìm thấy đơn hàng');
     }
 
-    // Check if order belongs to user
-    if (order.user.toString() !== req.user._id.toString()) {
+    // Check if order belongs to user or user is admin
+    if (order.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
         res.status(403);
         throw new Error('Không có quyền hủy đơn hàng này');
     }
 
     // Check if order can be cancelled
-    if (order.status === 'delivered' || order.status === 'cancelled') {
+    if (order.status === 'delivered' || order.status === 'cancelled' || order.status === 'returned') {
         res.status(400);
-        throw new Error('Không thể hủy đơn hàng đã giao hoặc đã hủy');
+        throw new Error('Không thể hủy đơn hàng đã giao, đã hủy hoặc đã hoàn');
     }
 
     order.status = 'cancelled';
+    order.cancelReason = req.body.reason || '';
+
+    // Restore book stock
+    for (const item of order.orderItems) {
+        const book = await Book.findById(item.book);
+        if (book) {
+            book.stock += item.quantity;
+            await book.save();
+        }
+    }
+
+    const updatedOrder = await order.save();
+
+    res.json({
+        success: true,
+        data: updatedOrder,
+    });
+});
+
+/**
+ * @desc    Return order
+ * @route   PUT /api/orders/:id/return
+ * @access  Private/Admin
+ */
+export const returnOrder = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+        res.status(404);
+        throw new Error('Không tìm thấy đơn hàng');
+    }
+
+    // Only admin can mark as returned (for now)
+    // if (req.user.role !== 'admin') { ... } // Already protected by route middleware
+
+    // Check if order can be returned
+    if (order.status === 'cancelled' || order.status === 'returned') {
+        res.status(400);
+        throw new Error('Đơn hàng đã hủy hoặc đã hoàn');
+    }
+
+    order.status = 'returned';
+    order.cancelReason = req.body.reason || ''; // Reuse cancelReason for return reason
 
     // Restore book stock
     for (const item of order.orderItems) {
@@ -251,4 +294,5 @@ export default {
     updateOrderStatus,
     updateOrderToPaid,
     cancelOrder,
+    returnOrder,
 };

@@ -7,6 +7,7 @@ import {
     getOrders,
     updateOrderStatus,
     cancelOrder,
+    returnOrder,
 } from '../controllers/orderController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { admin } from '../middlewares/adminMiddleware.js';
@@ -19,5 +20,6 @@ router.get('/:id', protect, getOrderById);
 router.put('/:id/pay', protect, updateOrderToPaid);
 router.put('/:id/status', protect, admin, updateOrderStatus);
 router.put('/:id/cancel', protect, cancelOrder);
+router.put('/:id/return', protect, admin, returnOrder);
 
 export default router;
