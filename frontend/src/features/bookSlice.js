@@ -138,7 +138,6 @@ const bookSlice = createSlice({
             })
             .addCase(deleteBook.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
             })
             .addCase(createBook.pending, (state) => {
                 state.loading = true;
@@ -149,7 +148,6 @@ const bookSlice = createSlice({
             })
             .addCase(createBook.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
             })
             .addCase(updateBook.pending, (state) => {
                 state.loading = true;
@@ -164,7 +162,6 @@ const bookSlice = createSlice({
             })
             .addCase(updateBook.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
             });
     },
 });

@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Book from '../models/Book.js';
 import Review from '../models/Review.js';
+import Order from '../models/Order.js';
 import { uploadToCloudinary } from '../utils/cloudinaryUpload.js';
 
 /**
@@ -135,6 +136,12 @@ export const deleteBook = asyncHandler(async (req, res) => {
     const book = await Book.findById(req.params.id);
 
     if (book) {
+        const orderExists = await Order.findOne({ 'orderItems.book': req.params.id });
+        if (orderExists) {
+            res.status(400);
+            throw new Error('Không thể xóa sách này vì đã có trong đơn hàng');
+        }
+
         await book.deleteOne();
         res.json({
             success: true,

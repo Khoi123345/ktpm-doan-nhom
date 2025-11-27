@@ -7,7 +7,7 @@ const Sidebar = () => {
     const navItems = [
         { path: '/admin/dashboard', icon: FiHome, label: 'Dashboard' },
         { path: '/admin/orders', icon: FiShoppingBag, label: 'Đơn hàng' },
-        { path: '/admin/books', icon: FiBook, label: 'Sản phẩm' },
+        { path: '/admin/books', icon: FiBook, label: 'Sách' },
         { path: '/admin/categories', icon: FiTag, label: 'Danh mục' },
         { path: '/admin/users', icon: FiUsers, label: 'Khách hàng' },
         { path: '/admin/coupons', icon: FiGift, label: 'Mã giảm giá' },
@@ -33,8 +33,8 @@ const Sidebar = () => {
                                 key={item.path}
                                 to={item.path}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
-                                        ? 'bg-primary-50 text-primary-600 font-medium shadow-sm'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    ? 'bg-primary-50 text-primary-600 font-medium shadow-sm'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                     }`}
                             >
                                 <Icon className={`w-5 h-5 ${isActive ? 'text-primary-600' : 'text-gray-400'}`} />
