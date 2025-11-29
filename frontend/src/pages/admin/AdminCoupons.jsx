@@ -16,7 +16,6 @@ const AdminCoupons = () => {
         discountType: 'percentage',
         discountValue: '',
         minOrderValue: 0,
-        maxDiscountAmount: 0,
         startDate: '',
         endDate: '',
         usageLimit: 0,
@@ -43,7 +42,6 @@ const AdminCoupons = () => {
             discountType: coupon.discountType,
             discountValue: coupon.discountValue,
             minOrderValue: coupon.minOrderValue,
-            maxDiscountAmount: coupon.maxDiscountAmount,
             startDate: coupon.startDate.split('T')[0],
             endDate: coupon.endDate.split('T')[0],
             usageLimit: coupon.usageLimit,
@@ -61,7 +59,6 @@ const AdminCoupons = () => {
             discountType: 'percentage',
             discountValue: '',
             minOrderValue: 0,
-            maxDiscountAmount: 0,
             startDate: '',
             endDate: '',
             usageLimit: 0,
@@ -134,11 +131,6 @@ const AdminCoupons = () => {
                                             ? `${coupon.discountValue}%`
                                             : `${coupon.discountValue.toLocaleString('vi-VN')} đ`}
                                     </div>
-                                    {coupon.maxDiscountAmount > 0 && (
-                                        <div className="text-xs text-gray-500">
-                                            Tối đa: {coupon.maxDiscountAmount.toLocaleString('vi-VN')} đ
-                                        </div>
-                                    )}
                                 </td>
                                 <td className="p-4">
                                     <div className="text-sm">
@@ -284,20 +276,6 @@ const AdminCoupons = () => {
                                             disabled={isEditing}
                                         />
                                     </div>
-                                    {formData.discountType === 'percentage' && (
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Giảm tối đa (VNĐ)</label>
-                                            <input
-                                                type="number"
-                                                value={formData.maxDiscountAmount}
-                                                onChange={(e) => setFormData({ ...formData, maxDiscountAmount: Number(e.target.value) })}
-                                                className={`input-field ${isEditing ? 'bg-gray-100' : ''}`}
-                                                placeholder="0 = Không giới hạn"
-                                                min="0"
-                                                disabled={isEditing}
-                                            />
-                                        </div>
-                                    )}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Giới hạn lượt dùng</label>
                                         <input

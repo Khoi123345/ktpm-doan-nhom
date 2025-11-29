@@ -80,16 +80,13 @@ export const validateCoupon = asyncHandler(async (req, res) => {
     // Check minimum order value
     if (orderValue < coupon.minOrderValue) {
         res.status(400);
-        throw new Error(`Đơn hàng tối thiểu ${coupon.minOrderValue.toLocaleString('vi-VN')} VNĐ`);
+        throw new Error(`Mã giảm giá này chỉ áp dụng cho đơn hàng tối thiểu ${coupon.minOrderValue.toLocaleString('vi-VN')} VNĐ`);
     }
 
     // Calculate discount
     let discountAmount = 0;
     if (coupon.discountType === 'percentage') {
         discountAmount = (orderValue * coupon.discountValue) / 100;
-        if (coupon.maxDiscountAmount > 0 && discountAmount > coupon.maxDiscountAmount) {
-            discountAmount = coupon.maxDiscountAmount;
-        }
     } else {
         discountAmount = coupon.discountValue;
     }
@@ -117,7 +114,6 @@ export const createCoupon = asyncHandler(async (req, res) => {
         discountType,
         discountValue,
         minOrderValue,
-        maxDiscountAmount,
         startDate,
         endDate,
         usageLimit,
@@ -136,7 +132,6 @@ export const createCoupon = asyncHandler(async (req, res) => {
         discountType,
         discountValue,
         minOrderValue,
-        maxDiscountAmount,
         startDate,
         endDate,
         usageLimit,
