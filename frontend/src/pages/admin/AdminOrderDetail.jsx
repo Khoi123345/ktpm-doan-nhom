@@ -205,14 +205,16 @@ const AdminOrderDetail = () => {
                                 <p className="text-gray-600 text-sm">Phí vận chuyển</p>
                                 <p className="font-medium">{order.shippingPrice.toLocaleString('vi-VN')} đ</p>
                             </div>
-                            {order.couponApplied?.code && (
-                                <div>
-                                    <p className="text-gray-600 text-sm">Mã giảm giá</p>
+                            <div>
+                                <p className="text-gray-600 text-sm">Mã giảm giá</p>
+                                {order.couponApplied?.code ? (
                                     <p className="font-medium text-green-600">
                                         {order.couponApplied.code} (-{order.couponApplied.discountAmount.toLocaleString('vi-VN')} đ)
                                     </p>
-                                </div>
-                            )}
+                                ) : (
+                                    <p className="font-medium text-gray-500">Không có</p>
+                                )}
+                            </div>
                             <div>
                                 <p className="text-gray-600 text-sm">Tổng thanh toán</p>
                                 <p className="font-bold text-lg text-primary-600">{order.totalPrice.toLocaleString('vi-VN')} đ</p>

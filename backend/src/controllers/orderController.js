@@ -2,6 +2,7 @@ import asyncHandler from 'express-async-handler';
 import Order from '../models/Order.js';
 import Book from '../models/Book.js';
 import Cart from '../models/Cart.js';
+import Coupon from '../models/Coupon.js';
 
 /**
  * @desc    Create new order
@@ -54,10 +55,22 @@ export const createOrder = asyncHandler(async (req, res) => {
         shippingPrice,
         discountAmount: discountAmount || 0,
         totalPrice,
-        couponCode: couponCode || null,
+        couponApplied: {
+            code: couponCode || '',
+            discountAmount: discountAmount || 0
+        },
     });
 
     const createdOrder = await order.save();
+
+    // Update coupon usage
+    if (couponCode) {
+        const coupon = await Coupon.findOne({ code: couponCode });
+        if (coupon) {
+            coupon.usedCount = (coupon.usedCount || 0) + 1;
+            await coupon.save();
+        }
+    }
 
     // NOTE: Stock is NOT reduced here anymore. It will be reduced when admin confirms the order.
 
@@ -167,6 +180,15 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
             }
         }
 
+        // Restore coupon usage if cancelled
+        if (status === 'cancelled' && order.couponApplied && order.couponApplied.code) {
+            const coupon = await Coupon.findOne({ code: order.couponApplied.code });
+            if (coupon) {
+                coupon.usedCount = Math.max(0, (coupon.usedCount || 0) - 1);
+                await coupon.save();
+            }
+        }
+
         const updatedOrder = await order.save();
 
         res.json({
@@ -248,6 +270,15 @@ export const cancelOrder = asyncHandler(async (req, res) => {
         }
     }
 
+    // Restore coupon usage
+    if (order.couponApplied && order.couponApplied.code) {
+        const coupon = await Coupon.findOne({ code: order.couponApplied.code });
+        if (coupon) {
+            coupon.usedCount = Math.max(0, (coupon.usedCount || 0) - 1);
+            await coupon.save();
+        }
+    }
+
     const updatedOrder = await order.save();
 
     res.json({
@@ -269,9 +300,6 @@ export const returnOrder = asyncHandler(async (req, res) => {
         throw new Error('Không tìm thấy đơn hàng');
     }
 
-    // Only admin can mark as returned (for now)
-    // if (req.user.role !== 'admin') { ... } // Already protected by route middleware
-
     // Check if order can be returned
     if (order.status === 'cancelled' || order.status === 'returned') {
         res.status(400);
@@ -280,10 +308,9 @@ export const returnOrder = asyncHandler(async (req, res) => {
 
     const oldStatus = order.status;
     order.status = 'returned';
-    order.cancelReason = req.body.reason || ''; // Reuse cancelReason for return reason
+    order.cancelReason = req.body.reason || '';
 
-    // Restore book stock (assuming returned orders should restore stock)
-    // If it was pending, stock wasn't reduced, so don't restore. But returned usually implies delivered, so stock WAS reduced.
+    // Restore book stock
     if (oldStatus !== 'pending') {
         for (const item of order.orderItems) {
             const book = await Book.findById(item.book);

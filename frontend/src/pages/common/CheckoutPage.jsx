@@ -230,6 +230,7 @@ const CheckoutPage = () => {
                 paymentMethod: selectedPayment,
                 itemsPrice,
                 shippingPrice,
+                discountAmount,
                 totalPrice,
                 couponCode: appliedCoupon?.code
             };
