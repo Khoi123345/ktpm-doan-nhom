@@ -21,4 +21,5 @@ export default {
     clearMocks: true,
     resetMocks: true,
     restoreMocks: true,
+    transform: {},
 };
