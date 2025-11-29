@@ -1,7 +1,7 @@
-import User from '../src/models/User.js';
-import Book from '../src/models/Book.js';
-import Category from '../src/models/Category.js';
-import generateToken from '../src/utils/generateToken.js';
+import User from '../../src/models/User.js';
+import Book from '../../src/models/Book.js';
+import Category from '../../src/models/Category.js';
+import generateToken from '../../src/utils/generateToken.js';
 
 /**
  * Create a test user
