@@ -142,6 +142,7 @@ const ReviewList = ({ reviews, loading }) => {
                                                 month: 'long',
                                                 day: 'numeric'
                                             })}
+
                                         </p>
                                     </div>
                                 </div>
@@ -163,6 +164,12 @@ const ReviewList = ({ reviews, loading }) => {
                             <p className="text-gray-700 mt-3 whitespace-pre-line">
                                 {review.comment}
                             </p>
+                            {review.response && (
+                                <div className="mt-3 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                    <p className="text-sm font-semibold text-primary-600 mb-1">Phản hồi từ nhà sách:</p>
+                                    <p className="text-sm text-gray-700">{review.response}</p>
+                                </div>
+                            )}
                         </>
                     )}
                 </div>

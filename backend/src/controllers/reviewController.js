@@ -82,6 +82,12 @@ export const updateReview = asyncHandler(async (req, res) => {
 
         review.rating = Number(rating) || review.rating;
         review.comment = comment || review.comment;
+
+        // Allow admin to update response
+        if (req.user.role === 'admin' && req.body.response !== undefined) {
+            review.response = req.body.response;
+        }
+
         await review.save();
 
         // Update book rating
