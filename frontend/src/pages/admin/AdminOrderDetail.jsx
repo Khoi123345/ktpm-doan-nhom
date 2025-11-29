@@ -256,6 +256,7 @@ const AdminOrderDetail = () => {
                             <p><span className="font-medium">Người nhận:</span> {order.shippingAddress.fullName}</p>
                             <p><span className="font-medium">Số điện thoại:</span> {order.shippingAddress.phone}</p>
                             <p><span className="font-medium">Địa chỉ:</span> {order.shippingAddress.address}</p>
+                            <p><span className="font-medium">Phường/Xã:</span> {order.shippingAddress.ward}</p>
                             <p><span className="font-medium">Quận/Huyện:</span> {order.shippingAddress.district}</p>
                             <p><span className="font-medium">Tỉnh/Thành phố:</span> {order.shippingAddress.city}</p>
                         </div>

@@ -47,6 +47,10 @@ const shippingAddressSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    ward: {
+        type: String,
+        required: true,
+    },
 });
 
 const orderSchema = new mongoose.Schema(

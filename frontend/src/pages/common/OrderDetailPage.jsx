@@ -189,7 +189,7 @@ const OrderDetailPage = () => {
                                 <div>
                                     <p className="text-sm text-gray-600">Địa chỉ</p>
                                     <p className="font-medium">
-                                        {currentOrder.shippingAddress.address}, {currentOrder.shippingAddress.district}, {currentOrder.shippingAddress.city}
+                                        {currentOrder.shippingAddress.address}, {currentOrder.shippingAddress.ward ? `${currentOrder.shippingAddress.ward}, ` : ''}{currentOrder.shippingAddress.district}, {currentOrder.shippingAddress.city}
                                     </p>
                                 </div>
                             </div>

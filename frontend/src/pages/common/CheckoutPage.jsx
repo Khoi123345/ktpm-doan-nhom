@@ -16,6 +16,8 @@ import {
     removeMultipleFromCartAsync
 } from '../../features/cartSlice';
 import { couponsAPI } from '../../services/api';
+import axios from 'axios';
+import Combobox from '../../components/common/Combobox';
 
 const CheckoutPage = () => {
     const dispatch = useDispatch();
@@ -49,10 +51,111 @@ const CheckoutPage = () => {
     const [phone, setPhone] = useState(savedAddress?.phone || userInfo?.phone || '');
     const [city, setCity] = useState(savedAddress?.city || '');
     const [district, setDistrict] = useState(savedAddress?.district || '');
+    const [ward, setWard] = useState(savedAddress?.ward || '');
     const [address, setAddress] = useState(savedAddress?.address || '');
     const [selectedPayment, setSelectedPayment] = useState('COD');
     const [couponCode, setCouponCode] = useState('');
     const [couponLoading, setCouponLoading] = useState(false);
+
+    // Location state
+    const [provinces, setProvinces] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [wards, setWards] = useState([]);
+    const [selectedProvince, setSelectedProvince] = useState(null);
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
+    const [selectedWard, setSelectedWard] = useState(null);
+
+    // Fetch provinces
+    useEffect(() => {
+        const fetchProvinces = async () => {
+            try {
+                const response = await axios.get('https://provinces.open-api.vn/api/p/');
+                setProvinces(response.data);
+
+                // Try to match existing city
+                if (city) {
+                    const found = response.data.find(p => p.name === city || city.includes(p.name) || p.name.includes(city));
+                    if (found) setSelectedProvince(found);
+                }
+            } catch (error) {
+                console.error('Failed to fetch provinces', error);
+            }
+        };
+        fetchProvinces();
+    }, []);
+
+    // Fetch districts when province changes
+    useEffect(() => {
+        if (selectedProvince) {
+            const fetchDistricts = async () => {
+                try {
+                    const response = await axios.get(`https://provinces.open-api.vn/api/p/${selectedProvince.code}?depth=2`);
+                    setDistricts(response.data.districts);
+
+                    // Try to match existing district if we just loaded districts and haven't selected one manually yet
+                    if (district && !selectedDistrict) {
+                        const found = response.data.districts.find(d => d.name === district || district.includes(d.name) || d.name.includes(district));
+                        if (found) setSelectedDistrict(found);
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch districts', error);
+                    setDistricts([]);
+                }
+            };
+            fetchDistricts();
+        } else {
+            setDistricts([]);
+            setSelectedDistrict(null);
+        }
+    }, [selectedProvince]);
+
+    // Fetch wards when district changes
+    useEffect(() => {
+        if (selectedDistrict) {
+            const fetchWards = async () => {
+                try {
+                    const response = await axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`);
+                    setWards(response.data.wards);
+
+                    // Try to match existing ward
+                    if (ward && !selectedWard) {
+                        const found = response.data.wards.find(w => w.name === ward || ward.includes(w.name) || w.name.includes(ward));
+                        if (found) setSelectedWard(found);
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch wards', error);
+                    setWards([]);
+                }
+            };
+            fetchWards();
+        } else {
+            setWards([]);
+            setSelectedWard(null);
+        }
+    }, [selectedDistrict]);
+
+    const handleProvinceChange = (province) => {
+        setSelectedProvince(province);
+        setCity(province?.name || '');
+        // Reset district and ward when province changes
+        setSelectedDistrict(null);
+        setDistrict('');
+        setSelectedWard(null);
+        setWard('');
+    };
+
+    const handleDistrictChange = (district) => {
+        setSelectedDistrict(district);
+        setDistrict(district?.name || '');
+        // Reset ward when district changes
+        setSelectedWard(null);
+        setWard('');
+    };
+
+    const handleWardChange = (ward) => {
+        setSelectedWard(ward);
+        setWard(ward?.name || '');
+    };
 
     // Redirect if no items selected
     useEffect(() => {
@@ -107,12 +210,12 @@ const CheckoutPage = () => {
     const handlePlaceOrder = async () => {
         try {
             // Validate form
-            if (!fullName || !phone || !city || !district || !address) {
+            if (!fullName || !phone || !city || !district || !ward || !address) {
                 toast.error('Vui lòng điền đầy đủ thông tin giao hàng');
                 return;
             }
 
-            const shippingAddress = { fullName, phone, city, district, address };
+            const shippingAddress = { fullName, phone, city, district, ward, address };
             dispatch(saveShippingAddress(shippingAddress));
 
             const orderData = {
@@ -206,24 +309,39 @@ const CheckoutPage = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Tỉnh/Thành phố *</label>
-                                    <Input
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
-                                        placeholder="Hà Nội, TP.HCM..."
-                                        required
+                                    <Combobox
+                                        options={provinces}
+                                        value={selectedProvince}
+                                        onChange={handleProvinceChange}
+                                        placeholder="Chọn Tỉnh/Thành phố"
+                                        displayValue={(item) => item?.name || ''}
+                                        className="mb-4"
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Quận/Huyện *</label>
-                                    <Input
-                                        value={district}
-                                        onChange={(e) => setDistrict(e.target.value)}
-                                        placeholder="Quận 1, Huyện Gia Lâm..."
-                                        required
+                                    <Combobox
+                                        options={districts}
+                                        value={selectedDistrict}
+                                        onChange={handleDistrictChange}
+                                        placeholder="Chọn Quận/Huyện"
+                                        displayValue={(item) => item?.name || ''}
+                                        disabled={!selectedProvince}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Phường/Xã *</label>
+                                    <Combobox
+                                        options={wards}
+                                        value={selectedWard}
+                                        onChange={handleWardChange}
+                                        placeholder="Chọn Phường/Xã"
+                                        displayValue={(item) => item?.name || ''}
+                                        disabled={!selectedDistrict}
                                     />
                                 </div>
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ cụ thể *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ giao hàng *</label>
                                     <Input
                                         value={address}
                                         onChange={(e) => setAddress(e.target.value)}
