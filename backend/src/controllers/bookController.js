@@ -24,13 +24,33 @@ export const getBooks = asyncHandler(async (req, res) => {
 
     const category = req.query.category ? { category: req.query.category } : {};
 
-    const priceFilter = {};
-    if (req.query.minPrice) priceFilter.$gte = Number(req.query.minPrice);
-    if (req.query.maxPrice) priceFilter.$lte = Number(req.query.maxPrice);
-    const price = Object.keys(priceFilter).length > 0 ? { price: priceFilter } : {};
+    let priceQuery = {};
+    if (req.query.minPrice || req.query.maxPrice) {
+        const conditions = [];
+        if (req.query.minPrice) {
+            conditions.push({
+                $gte: [
+                    { $cond: { if: { $gt: ["$discountPrice", 0] }, then: "$discountPrice", else: "$price" } },
+                    Number(req.query.minPrice)
+                ]
+            });
+        }
+        if (req.query.maxPrice) {
+            conditions.push({
+                $lte: [
+                    { $cond: { if: { $gt: ["$discountPrice", 0] }, then: "$discountPrice", else: "$price" } },
+                    Number(req.query.maxPrice)
+                ]
+            });
+        }
 
-    const count = await Book.countDocuments({ ...keyword, ...category, ...price });
-    const books = await Book.find({ ...keyword, ...category, ...price })
+        if (conditions.length > 0) {
+            priceQuery = { $expr: { $and: conditions } };
+        }
+    }
+
+    const count = await Book.countDocuments({ ...keyword, ...category, ...priceQuery });
+    const books = await Book.find({ ...keyword, ...category, ...priceQuery })
         .populate('category', 'name')
         .limit(pageSize)
         .skip(pageSize * (page - 1))
