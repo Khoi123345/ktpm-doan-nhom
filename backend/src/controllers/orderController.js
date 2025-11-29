@@ -59,14 +59,7 @@ export const createOrder = asyncHandler(async (req, res) => {
 
     const createdOrder = await order.save();
 
-    // Update book stock
-    for (const item of orderItems) {
-        const book = await Book.findById(item.book);
-        if (book) {
-            book.stock -= item.quantity;
-            await book.save();
-        }
-    }
+    // NOTE: Stock is NOT reduced here anymore. It will be reduced when admin confirms the order.
 
     // DO NOT clear cart here - it will be handled by frontend
     // This prevents clearing cart when user only checks out selected items
@@ -140,6 +133,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (order) {
+        const oldStatus = order.status;
         order.status = status;
 
         if (status === 'delivered') {
@@ -147,8 +141,23 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
             order.deliveredAt = Date.now();
         }
 
-        if (status === 'cancelled') {
-            // Restore book stock when order is cancelled
+        // Reduce stock when confirmed
+        if (status === 'confirmed' && oldStatus === 'pending') {
+            for (const item of order.orderItems) {
+                const book = await Book.findById(item.book);
+                if (book) {
+                    if (book.stock < item.quantity) {
+                        res.status(400);
+                        throw new Error(`Sách "${book.title}" không đủ số lượng trong kho`);
+                    }
+                    book.stock -= item.quantity;
+                    await book.save();
+                }
+            }
+        }
+
+        // Restore stock if cancelled (only if it was previously confirmed/processed etc)
+        if (status === 'cancelled' && oldStatus !== 'pending' && oldStatus !== 'cancelled' && oldStatus !== 'returned') {
             for (const item of order.orderItems) {
                 const book = await Book.findById(item.book);
                 if (book) {
@@ -224,15 +233,18 @@ export const cancelOrder = asyncHandler(async (req, res) => {
         throw new Error('Không thể hủy đơn hàng đã giao, đã hủy hoặc đã hoàn');
     }
 
+    const oldStatus = order.status;
     order.status = 'cancelled';
     order.cancelReason = req.body.reason || '';
 
-    // Restore book stock
-    for (const item of order.orderItems) {
-        const book = await Book.findById(item.book);
-        if (book) {
-            book.stock += item.quantity;
-            await book.save();
+    // Restore book stock ONLY if it was previously confirmed (i.e., stock was reduced)
+    if (oldStatus !== 'pending') {
+        for (const item of order.orderItems) {
+            const book = await Book.findById(item.book);
+            if (book) {
+                book.stock += item.quantity;
+                await book.save();
+            }
         }
     }
 
@@ -266,15 +278,19 @@ export const returnOrder = asyncHandler(async (req, res) => {
         throw new Error('Đơn hàng đã hủy hoặc đã hoàn');
     }
 
+    const oldStatus = order.status;
     order.status = 'returned';
     order.cancelReason = req.body.reason || ''; // Reuse cancelReason for return reason
 
-    // Restore book stock
-    for (const item of order.orderItems) {
-        const book = await Book.findById(item.book);
-        if (book) {
-            book.stock += item.quantity;
-            await book.save();
+    // Restore book stock (assuming returned orders should restore stock)
+    // If it was pending, stock wasn't reduced, so don't restore. But returned usually implies delivered, so stock WAS reduced.
+    if (oldStatus !== 'pending') {
+        for (const item of order.orderItems) {
+            const book = await Book.findById(item.book);
+            if (book) {
+                book.stock += item.quantity;
+                await book.save();
+            }
         }
     }
 
@@ -283,6 +299,90 @@ export const returnOrder = asyncHandler(async (req, res) => {
     res.json({
         success: true,
         data: updatedOrder,
+    });
+});
+
+/**
+ * @desc    Get top selling books
+ * @route   GET /api/orders/analytics/top-books
+ * @access  Private/Admin
+ */
+export const getTopSellingBooks = asyncHandler(async (req, res) => {
+    const topBooks = await Order.aggregate([
+        {
+            $match: {
+                $or: [
+                    { isPaid: true },
+                    { status: 'delivered' }
+                ]
+            }
+        },
+        { $unwind: '$orderItems' },
+        {
+            $group: {
+                _id: '$orderItems.book',
+                title: { $first: '$orderItems.title' },
+                image: { $first: '$orderItems.image' },
+                totalSold: { $sum: '$orderItems.quantity' },
+                totalRevenue: { $sum: { $multiply: ['$orderItems.price', '$orderItems.quantity'] } }
+            }
+        },
+        { $sort: { totalSold: -1 } },
+        { $limit: 10 }
+    ]);
+
+    res.json({
+        success: true,
+        data: topBooks,
+    });
+});
+
+/**
+ * @desc    Get top buyers
+ * @route   GET /api/orders/analytics/top-buyers
+ * @access  Private/Admin
+ */
+export const getTopBuyers = asyncHandler(async (req, res) => {
+    const topBuyers = await Order.aggregate([
+        {
+            $match: {
+                $or: [
+                    { isPaid: true },
+                    { status: 'delivered' }
+                ]
+            }
+        },
+        {
+            $group: {
+                _id: '$user',
+                totalOrders: { $sum: 1 },
+                totalSpent: { $sum: '$totalPrice' }
+            }
+        },
+        { $sort: { totalSpent: -1 } },
+        { $limit: 10 },
+        {
+            $lookup: {
+                from: 'users',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'userDetails'
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                totalOrders: 1,
+                totalSpent: 1,
+                name: { $arrayElemAt: ['$userDetails.name', 0] },
+                email: { $arrayElemAt: ['$userDetails.email', 0] }
+            }
+        }
+    ]);
+
+    res.json({
+        success: true,
+        data: topBuyers,
     });
 });
 
@@ -295,4 +395,6 @@ export default {
     updateOrderToPaid,
     cancelOrder,
     returnOrder,
+    getTopSellingBooks,
+    getTopBuyers,
 };

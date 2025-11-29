@@ -8,6 +8,8 @@ const initialState = {
     loading: false,
     error: null,
     success: false,
+    topSellingBooks: [],
+    topBuyers: [],
 };
 
 // Create order
@@ -84,6 +86,32 @@ export const cancelOrder = createAsyncThunk(
             return data.data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Không thể hủy đơn hàng');
+        }
+    }
+);
+
+// Get top selling books
+export const getTopSellingBooks = createAsyncThunk(
+    'orders/getTopSellingBooks',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get('/orders/analytics/top-books');
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Lỗi khi tải danh sách sách bán chạy');
+        }
+    }
+);
+
+// Get top buyers
+export const getTopBuyers = createAsyncThunk(
+    'orders/getTopBuyers',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get('/orders/analytics/top-buyers');
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Lỗi khi tải danh sách người mua hàng đầu');
         }
     }
 );
@@ -172,6 +200,28 @@ const orderSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
                 toast.error(action.payload);
+            })
+            .addCase(getTopSellingBooks.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getTopSellingBooks.fulfilled, (state, action) => {
+                state.loading = false;
+                state.topSellingBooks = action.payload;
+            })
+            .addCase(getTopSellingBooks.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(getTopBuyers.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getTopBuyers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.topBuyers = action.payload;
+            })
+            .addCase(getTopBuyers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     },
 });

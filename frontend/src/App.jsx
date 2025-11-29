@@ -24,6 +24,7 @@ import AdminCoupons from './pages/admin/AdminCoupons';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminOrderDetail from './pages/admin/AdminOrderDetail';
 import AdminReviews from './pages/admin/AdminReviews';
+import AdminRating from './pages/admin/AdminRating';
 import PrivateRoute from './components/common/PrivateRoute';
 import AdminRoute from './components/admin/AdminRoute';
 import CustomerRoute from './components/common/CustomerRoute';
@@ -77,6 +78,7 @@ function App() {
                             <Route path="users" element={<AdminUsers />} />
                             <Route path="coupons" element={<AdminCoupons />} />
                             <Route path="reviews" element={<AdminReviews />} />
+                            <Route path="analytics" element={<AdminRating />} />
                         </Routes>
                     </AdminLayout>
                 </AdminRoute>

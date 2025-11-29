@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FiHome, FiBook, FiTag, FiShoppingBag, FiUsers, FiGift, FiStar, FiSettings } from 'react-icons/fi';
+import { FiHome, FiBook, FiTag, FiShoppingBag, FiUsers, FiGift, FiStar, FiSettings, FiBarChart2 } from 'react-icons/fi';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -12,6 +12,7 @@ const Sidebar = () => {
         { path: '/admin/users', icon: FiUsers, label: 'Khách hàng' },
         { path: '/admin/coupons', icon: FiGift, label: 'Mã giảm giá' },
         { path: '/admin/reviews', icon: FiStar, label: 'Đánh giá' },
+        { path: '/admin/analytics', icon: FiBarChart2, label: 'Xếp hạng' },
     ];
 
     return (
