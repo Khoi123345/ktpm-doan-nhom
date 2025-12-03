@@ -1,14 +1,14 @@
 import { jest } from '@jest/globals';
 
 // Mock dependencies
-jest.unstable_mockModule('../../src/models/Coupon.js', () => ({
+jest.unstable_mockModule('../../../src/models/Coupon.js', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(() => ({
         save: jest.fn(),
     })),
 }));
 
-jest.unstable_mockModule('../../src/models/Order.js', () => ({
+jest.unstable_mockModule('../../../src/models/Order.js', () => ({
     __esModule: true,
     default: {
         findOne: jest.fn(),
@@ -16,7 +16,7 @@ jest.unstable_mockModule('../../src/models/Order.js', () => ({
 }));
 
 // Add static methods to the mock
-const { default: CouponMock } = await import('../../src/models/Coupon.js');
+const { default: CouponMock } = await import('../../../src/models/Coupon.js');
 Object.assign(CouponMock, {
     find: jest.fn().mockReturnThis(),
     findById: jest.fn(),
@@ -33,10 +33,10 @@ const {
     deleteCoupon,
     validateCoupon,
     getAllCoupons
-} = await import('../../src/controllers/couponController.js');
+} = await import('../../../src/controllers/couponController.js');
 
-const { default: Coupon } = await import('../../src/models/Coupon.js');
-const { default: Order } = await import('../../src/models/Order.js');
+const { default: Coupon } = await import('../../../src/models/Coupon.js');
+const { default: Order } = await import('../../../src/models/Order.js');
 const { mockRequest, mockResponse, mockCoupon } = await import('../helpers/testHelpers.js');
 
 describe('couponController', () => {

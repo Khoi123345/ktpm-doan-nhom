@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import generateToken from '../../src/utils/generateToken.js';
+import generateToken from '../../../src/utils/generateToken.js';
 
 describe('generateToken', () => {
     const mockUserId = '507f1f77bcf86cd799439011';

@@ -1,34 +1,46 @@
-import multer from 'multer';
+import { jest } from '@jest/globals';
 
 // Mock multer
-jest.mock('multer');
+const mockMulter = jest.fn();
+const mockMemoryStorage = jest.fn();
+
+// Setup mock return value for multer
+mockMulter.memoryStorage = mockMemoryStorage;
+
+jest.unstable_mockModule('multer', () => ({
+    default: mockMulter,
+}));
 
 describe('uploadMiddleware', () => {
-    beforeEach(() => {
+    let uploadMiddleware;
+
+    beforeEach(async () => {
         jest.clearAllMocks();
+        mockMulter.mockReturnValue({
+            single: jest.fn(),
+            array: jest.fn(),
+            fields: jest.fn(),
+            any: jest.fn(),
+        });
+
+        // Re-import module for each test to ensure fresh execution of top-level code
+        jest.resetModules();
+        const module = await import('../../../src/middlewares/uploadMiddleware.js');
+        uploadMiddleware = module.default;
     });
 
     it('should configure multer with memory storage', () => {
-        require('../../src/middlewares/uploadMiddleware.js');
+        expect(mockMulter).toHaveBeenCalled();
+        expect(mockMemoryStorage).toHaveBeenCalled();
 
-        expect(multer).toHaveBeenCalled();
-        const multerConfig = multer.mock.calls[0][0];
-
+        const multerConfig = mockMulter.mock.calls[0][0];
         expect(multerConfig).toHaveProperty('storage');
         expect(multerConfig).toHaveProperty('fileFilter');
         expect(multerConfig).toHaveProperty('limits');
     });
 
     it('should accept image files', () => {
-        multer.mockReturnValue({
-            single: jest.fn(),
-            array: jest.fn()
-        });
-
-        jest.resetModules();
-        require('../../src/middlewares/uploadMiddleware.js');
-
-        const multerConfig = multer.mock.calls[0][0];
+        const multerConfig = mockMulter.mock.calls[0][0];
         const fileFilter = multerConfig.fileFilter;
 
         const mockReq = {};
@@ -41,15 +53,7 @@ describe('uploadMiddleware', () => {
     });
 
     it('should reject non-image files', () => {
-        multer.mockReturnValue({
-            single: jest.fn(),
-            array: jest.fn()
-        });
-
-        jest.resetModules();
-        require('../../src/middlewares/uploadMiddleware.js');
-
-        const multerConfig = multer.mock.calls[0][0];
+        const multerConfig = mockMulter.mock.calls[0][0];
         const fileFilter = multerConfig.fileFilter;
 
         const mockReq = {};
@@ -67,15 +71,7 @@ describe('uploadMiddleware', () => {
     });
 
     it('should set file size limit to 5MB', () => {
-        multer.mockReturnValue({
-            single: jest.fn(),
-            array: jest.fn()
-        });
-
-        jest.resetModules();
-        require('../../src/middlewares/uploadMiddleware.js');
-
-        const multerConfig = multer.mock.calls[0][0];
+        const multerConfig = mockMulter.mock.calls[0][0];
 
         expect(multerConfig.limits).toBeDefined();
         expect(multerConfig.limits.fileSize).toBe(5 * 1024 * 1024);

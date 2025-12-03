@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 // Mock dependencies
-jest.unstable_mockModule('../../src/models/User.js', () => ({
+jest.unstable_mockModule('../../../src/models/User.js', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(() => ({
         save: jest.fn(),
@@ -10,7 +10,7 @@ jest.unstable_mockModule('../../src/models/User.js', () => ({
 }));
 
 // Add static methods to the mock
-const { default: UserMock } = await import('../../src/models/User.js');
+const { default: UserMock } = await import('../../../src/models/User.js');
 Object.assign(UserMock, {
     find: jest.fn().mockReturnThis(),
     findById: jest.fn(),
@@ -26,9 +26,9 @@ const {
     deleteUser,
     toggleUserLock,
     changePassword
-} = await import('../../src/controllers/userController.js');
+} = await import('../../../src/controllers/userController.js');
 
-const { default: User } = await import('../../src/models/User.js');
+const { default: User } = await import('../../../src/models/User.js');
 const { mockRequest, mockResponse, mockUser } = await import('../helpers/testHelpers.js');
 
 describe('userController', () => {

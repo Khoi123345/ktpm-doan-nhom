@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 // Mock dependencies
-jest.unstable_mockModule('../../src/models/Cart.js', () => ({
+jest.unstable_mockModule('../../../src/models/Cart.js', () => ({
     __esModule: true,
     default: {
         findOne: jest.fn(),
@@ -10,7 +10,7 @@ jest.unstable_mockModule('../../src/models/Cart.js', () => ({
     }
 }));
 
-jest.unstable_mockModule('../../src/models/Book.js', () => ({
+jest.unstable_mockModule('../../../src/models/Book.js', () => ({
     __esModule: true,
     default: {
         findById: jest.fn(),
@@ -25,10 +25,10 @@ const {
     removeFromCart,
     removeMultipleFromCart,
     clearCart
-} = await import('../../src/controllers/cartController.js');
+} = await import('../../../src/controllers/cartController.js');
 
-const { default: Cart } = await import('../../src/models/Cart.js');
-const { default: Book } = await import('../../src/models/Book.js');
+const { default: Cart } = await import('../../../src/models/Cart.js');
+const { default: Book } = await import('../../../src/models/Book.js');
 const { mockRequest, mockResponse, mockCart, mockBook, mockUser } = await import('../helpers/testHelpers.js');
 
 describe('cartController', () => {

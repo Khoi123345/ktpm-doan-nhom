@@ -1,30 +1,30 @@
 import { jest } from '@jest/globals';
 
 // Mock dependencies
-jest.unstable_mockModule('../../src/models/Order.js', () => ({
+jest.unstable_mockModule('../../../src/models/Order.js', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(() => ({
         save: jest.fn(),
     })),
 }));
 
-jest.unstable_mockModule('../../src/models/Book.js', () => ({
+jest.unstable_mockModule('../../../src/models/Book.js', () => ({
     __esModule: true,
     default: jest.fn(),
 }));
 
-jest.unstable_mockModule('../../src/models/Cart.js', () => ({
+jest.unstable_mockModule('../../../src/models/Cart.js', () => ({
     __esModule: true,
     default: jest.fn(),
 }));
 
-jest.unstable_mockModule('../../src/models/Coupon.js', () => ({
+jest.unstable_mockModule('../../../src/models/Coupon.js', () => ({
     __esModule: true,
     default: jest.fn(),
 }));
 
 // Add static methods to the mocks
-const { default: OrderMock } = await import('../../src/models/Order.js');
+const { default: OrderMock } = await import('../../../src/models/Order.js');
 Object.assign(OrderMock, {
     find: jest.fn().mockReturnThis(),
     findById: jest.fn(),
@@ -32,17 +32,17 @@ Object.assign(OrderMock, {
     aggregate: jest.fn(),
 });
 
-const { default: BookMock } = await import('../../src/models/Book.js');
+const { default: BookMock } = await import('../../../src/models/Book.js');
 Object.assign(BookMock, {
     findById: jest.fn(),
 });
 
-const { default: CartMock } = await import('../../src/models/Cart.js');
+const { default: CartMock } = await import('../../../src/models/Cart.js');
 Object.assign(CartMock, {
     findOne: jest.fn(),
 });
 
-const { default: CouponMock } = await import('../../src/models/Coupon.js');
+const { default: CouponMock } = await import('../../../src/models/Coupon.js');
 Object.assign(CouponMock, {
     findOne: jest.fn(),
 });
@@ -59,11 +59,11 @@ const {
     returnOrder,
     getTopSellingBooks,
     getTopBuyers
-} = await import('../../src/controllers/orderController.js');
+} = await import('../../../src/controllers/orderController.js');
 
-const { default: Order } = await import('../../src/models/Order.js');
-const { default: Book } = await import('../../src/models/Book.js');
-const { default: Coupon } = await import('../../src/models/Coupon.js');
+const { default: Order } = await import('../../../src/models/Order.js');
+const { default: Book } = await import('../../../src/models/Book.js');
+const { default: Coupon } = await import('../../../src/models/Coupon.js');
 const { mockRequest, mockResponse, mockOrder, mockBook, mockUser } = await import('../helpers/testHelpers.js');
 
 describe('orderController', () => {

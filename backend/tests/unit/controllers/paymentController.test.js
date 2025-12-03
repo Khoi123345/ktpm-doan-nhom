@@ -1,12 +1,12 @@
 import { jest } from '@jest/globals';
 
 // Mock dependencies
-jest.unstable_mockModule('../../src/models/Order.js', () => ({
+jest.unstable_mockModule('../../../src/models/Order.js', () => ({
     __esModule: true,
     default: jest.fn(),
 }));
 
-jest.unstable_mockModule('../../src/utils/momoHelper.js', () => ({
+jest.unstable_mockModule('../../../src/utils/momoHelper.js', () => ({
     __esModule: true,
     createMoMoPayment: jest.fn(),
     verifyMoMoSignature: jest.fn(),
@@ -39,10 +39,10 @@ jest.unstable_mockModule('../helpers/testHelpers.js', () => ({
 }));
 
 // Import modules dynamically
-const { default: Order } = await import('../../src/models/Order.js');
-const { createMoMoPayment, verifyMoMoSignature, parseMoMoReturn } = await import('../../src/utils/momoHelper.js');
+const { default: Order } = await import('../../../src/models/Order.js');
+const { createMoMoPayment, verifyMoMoSignature, parseMoMoReturn } = await import('../../../src/utils/momoHelper.js');
 const { mockRequest, mockResponse, mockOrder } = await import('../helpers/testHelpers.js');
-const { createMoMoPaymentUrl, momoReturn, momoIPN } = await import('../../src/controllers/paymentController.js');
+const { createMoMoPaymentUrl, momoReturn, momoIPN } = await import('../../../src/controllers/paymentController.js');
 
 describe('paymentController', () => {
     let req, res;

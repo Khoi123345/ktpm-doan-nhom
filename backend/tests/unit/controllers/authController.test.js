@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 // Mock User model
-jest.unstable_mockModule('../../src/models/User.js', () => ({
+jest.unstable_mockModule('../../../src/models/User.js', () => ({
     __esModule: true,
     default: {
         findOne: jest.fn(),
@@ -11,14 +11,14 @@ jest.unstable_mockModule('../../src/models/User.js', () => ({
 }));
 
 // Mock generateToken
-jest.unstable_mockModule('../../src/utils/generateToken.js', () => ({
+jest.unstable_mockModule('../../../src/utils/generateToken.js', () => ({
     __esModule: true,
     default: jest.fn()
 }));
 
-const { register, login, getProfile, updateProfile } = await import('../../src/controllers/authController.js');
-const { default: User } = await import('../../src/models/User.js');
-const { default: generateToken } = await import('../../src/utils/generateToken.js');
+const { register, login, getProfile, updateProfile } = await import('../../../src/controllers/authController.js');
+const { default: User } = await import('../../../src/models/User.js');
+const { default: generateToken } = await import('../../../src/utils/generateToken.js');
 const { mockRequest, mockResponse, mockNext, mockUser } = await import('../helpers/testHelpers.js');
 
 describe('authController', () => {

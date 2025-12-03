@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 // Mock dependencies
-jest.unstable_mockModule('../../src/models/Category.js', () => ({
+jest.unstable_mockModule('../../../src/models/Category.js', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(() => ({
         save: jest.fn(),
@@ -9,7 +9,7 @@ jest.unstable_mockModule('../../src/models/Category.js', () => ({
 }));
 
 // Add static methods to the mock
-const { default: CategoryMock } = await import('../../src/models/Category.js');
+const { default: CategoryMock } = await import('../../../src/models/Category.js');
 Object.assign(CategoryMock, {
     find: jest.fn().mockReturnThis(),
     findOne: jest.fn(),
@@ -24,9 +24,9 @@ const {
     createCategory,
     updateCategory,
     deleteCategory
-} = await import('../../src/controllers/categoryController.js');
+} = await import('../../../src/controllers/categoryController.js');
 
-const { default: Category } = await import('../../src/models/Category.js');
+const { default: Category } = await import('../../../src/models/Category.js');
 const { mockRequest, mockResponse, mockCategory } = await import('../helpers/testHelpers.js');
 
 describe('categoryController', () => {

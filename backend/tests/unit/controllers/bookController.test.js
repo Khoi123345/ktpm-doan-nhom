@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 // Mock dependencies
-jest.unstable_mockModule('../../src/models/Book.js', () => ({
+jest.unstable_mockModule('../../../src/models/Book.js', () => ({
     __esModule: true,
     default: Object.assign(
         jest.fn().mockImplementation(() => ({
@@ -17,21 +17,21 @@ jest.unstable_mockModule('../../src/models/Book.js', () => ({
     ),
 }));
 
-jest.unstable_mockModule('../../src/models/Order.js', () => ({
+jest.unstable_mockModule('../../../src/models/Order.js', () => ({
     __esModule: true,
     default: {
         findOne: jest.fn(),
     }
 }));
 
-jest.unstable_mockModule('../../src/models/Review.js', () => ({
+jest.unstable_mockModule('../../../src/models/Review.js', () => ({
     __esModule: true,
     default: {
         find: jest.fn(),
     }
 }));
 
-jest.unstable_mockModule('../../src/utils/cloudinaryUpload.js', () => ({
+jest.unstable_mockModule('../../../src/utils/cloudinaryUpload.js', () => ({
     __esModule: true,
     uploadToCloudinary: jest.fn()
 }));
@@ -46,11 +46,11 @@ const {
     getTopBooks,
     getNewArrivals,
     uploadBookImages
-} = await import('../../src/controllers/bookController.js');
+} = await import('../../../src/controllers/bookController.js');
 
-const { default: Book } = await import('../../src/models/Book.js');
-const { default: Order } = await import('../../src/models/Order.js');
-const { uploadToCloudinary } = await import('../../src/utils/cloudinaryUpload.js');
+const { default: Book } = await import('../../../src/models/Book.js');
+const { default: Order } = await import('../../../src/models/Order.js');
+const { uploadToCloudinary } = await import('../../../src/utils/cloudinaryUpload.js');
 const { mockRequest, mockResponse, mockBook } = await import('../helpers/testHelpers.js');
 
 describe('bookController', () => {

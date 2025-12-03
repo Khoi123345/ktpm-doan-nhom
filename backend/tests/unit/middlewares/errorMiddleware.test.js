@@ -1,5 +1,21 @@
-import { notFound, errorHandler } from '../../src/middlewares/errorMiddleware.js';
-import { mockRequest, mockResponse, mockNext } from '../helpers/testHelpers.js';
+import { jest } from '@jest/globals';
+
+// Mock test helpers
+const mockRequest = () => ({
+    originalUrl: '/test-url',
+});
+
+const mockResponse = () => {
+    const res = {};
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    return res;
+};
+
+const mockNext = jest.fn();
+
+// Import module under test dynamically
+const { notFound, errorHandler } = await import('../../../src/middlewares/errorMiddleware.js');
 
 describe('errorMiddleware', () => {
     let req, res, next;
@@ -7,7 +23,7 @@ describe('errorMiddleware', () => {
     beforeEach(() => {
         req = mockRequest();
         res = mockResponse();
-        next = mockNext();
+        next = mockNext; // Reset mockNext
         jest.clearAllMocks();
         process.env.NODE_ENV = 'test';
     });

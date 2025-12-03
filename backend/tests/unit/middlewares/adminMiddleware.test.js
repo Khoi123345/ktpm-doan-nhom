@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { admin } from '../../src/middlewares/adminMiddleware.js';
+import { admin } from '../../../src/middlewares/adminMiddleware.js';
 import { mockRequest, mockResponse, mockNext, mockUser } from '../helpers/testHelpers.js';
 
 describe('adminMiddleware', () => {

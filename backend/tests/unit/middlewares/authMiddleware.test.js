@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 // Mock User model
-jest.unstable_mockModule('../../src/models/User.js', () => ({
+jest.unstable_mockModule('../../../src/models/User.js', () => ({
     __esModule: true,
     default: {
         findById: jest.fn()
@@ -18,8 +18,8 @@ jest.unstable_mockModule('jsonwebtoken', () => ({
 }));
 
 const jwt = (await import('jsonwebtoken')).default;
-const { protect } = await import('../../src/middlewares/authMiddleware.js');
-const { default: User } = await import('../../src/models/User.js');
+const { protect } = await import('../../../src/middlewares/authMiddleware.js');
+const { default: User } = await import('../../../src/models/User.js');
 const { mockRequest, mockResponse, mockNext, mockUser } = await import('../helpers/testHelpers.js');
 
 describe('authMiddleware', () => {

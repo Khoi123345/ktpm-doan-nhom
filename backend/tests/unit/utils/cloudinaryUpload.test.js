@@ -1,16 +1,21 @@
-import { uploadToCloudinary, deleteFromCloudinary } from '../../src/utils/cloudinaryUpload.js';
-import cloudinary from '../../src/config/cloudinary.js';
+import { jest } from '@jest/globals';
 
-// Mock cloudinary
-jest.mock('../../src/config/cloudinary.js', () => ({
-    __esModule: true,
+// Define mock functions
+const mockUploadStream = jest.fn();
+const mockDestroy = jest.fn();
+
+// Mock cloudinary config
+jest.unstable_mockModule('../../../src/config/cloudinary.js', () => ({
     default: {
         uploader: {
-            upload_stream: jest.fn(),
-            destroy: jest.fn()
-        }
-    }
+            upload_stream: mockUploadStream,
+            destroy: mockDestroy,
+        },
+    },
 }));
+
+// Import the module under test dynamically
+const { uploadToCloudinary, deleteFromCloudinary } = await import('../../../src/utils/cloudinaryUpload.js');
 
 describe('cloudinaryUpload', () => {
     beforeEach(() => {
@@ -22,21 +27,31 @@ describe('cloudinaryUpload', () => {
             const mockBuffer = Buffer.from('test image data');
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/test.jpg';
 
-            cloudinary.uploader.upload_stream.mockImplementation((options, callback) => {
-                callback(null, { secure_url: mockUrl });
+            // Mock implementation of upload_stream
+            mockUploadStream.mockImplementation((options, callback) => {
+                // Simulate async success
+                setTimeout(() => {
+                    callback(null, { secure_url: mockUrl });
+                }, 10);
+
+                // Return a dummy stream object that can be piped to
                 return {
                     on: jest.fn(),
-                    end: jest.fn()
+                    once: jest.fn(),
+                    emit: jest.fn(),
+                    write: jest.fn(),
+                    end: jest.fn(),
+                    pipe: jest.fn(),
                 };
             });
 
             const result = await uploadToCloudinary(mockBuffer, 'bookstore');
 
             expect(result).toBe(mockUrl);
-            expect(cloudinary.uploader.upload_stream).toHaveBeenCalledWith(
+            expect(mockUploadStream).toHaveBeenCalledWith(
                 expect.objectContaining({
                     folder: 'bookstore',
-                    resource_type: 'auto'
+                    resource_type: 'auto',
                 }),
                 expect.any(Function)
             );
@@ -46,19 +61,23 @@ describe('cloudinaryUpload', () => {
             const mockBuffer = Buffer.from('test image data');
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/test.jpg';
 
-            cloudinary.uploader.upload_stream.mockImplementation((options, callback) => {
+            mockUploadStream.mockImplementation((options, callback) => {
                 callback(null, { secure_url: mockUrl });
                 return {
                     on: jest.fn(),
-                    end: jest.fn()
+                    once: jest.fn(),
+                    emit: jest.fn(),
+                    write: jest.fn(),
+                    end: jest.fn(),
+                    pipe: jest.fn(),
                 };
             });
 
             await uploadToCloudinary(mockBuffer);
 
-            expect(cloudinary.uploader.upload_stream).toHaveBeenCalledWith(
+            expect(mockUploadStream).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    folder: 'bookstore'
+                    folder: 'bookstore',
                 }),
                 expect.any(Function)
             );
@@ -68,11 +87,15 @@ describe('cloudinaryUpload', () => {
             const mockBuffer = Buffer.from('test image data');
             const mockError = new Error('Upload failed');
 
-            cloudinary.uploader.upload_stream.mockImplementation((options, callback) => {
+            mockUploadStream.mockImplementation((options, callback) => {
                 callback(mockError, null);
                 return {
                     on: jest.fn(),
-                    end: jest.fn()
+                    once: jest.fn(),
+                    emit: jest.fn(),
+                    write: jest.fn(),
+                    end: jest.fn(),
+                    pipe: jest.fn(),
                 };
             });
 
@@ -83,28 +106,38 @@ describe('cloudinaryUpload', () => {
     describe('deleteFromCloudinary', () => {
         it('should delete image successfully', async () => {
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/test.jpg';
-            cloudinary.uploader.destroy.mockResolvedValue({ result: 'ok' });
+            mockDestroy.mockResolvedValue({ result: 'ok' });
 
             await deleteFromCloudinary(mockUrl);
 
-            expect(cloudinary.uploader.destroy).toHaveBeenCalledWith('bookstore/test');
+            // Logic in code:
+            // parts = [..., 'bookstore', 'test.jpg']
+            // filename = 'test.jpg' -> publicId = 'test'
+            // folder = 'bookstore'
+            // fullPublicId = 'bookstore/test'
+            expect(mockDestroy).toHaveBeenCalledWith('bookstore/test');
         });
 
         it('should handle deletion error', async () => {
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/test.jpg';
             const mockError = new Error('Deletion failed');
-            cloudinary.uploader.destroy.mockRejectedValue(mockError);
+            mockDestroy.mockRejectedValue(mockError);
 
             await expect(deleteFromCloudinary(mockUrl)).rejects.toThrow('Deletion failed');
         });
 
         it('should extract public_id correctly from complex URL', async () => {
+            // URL: .../bookstore/books/cover.jpg
+            // parts: [..., 'bookstore', 'books', 'cover.jpg']
+            // filename: 'cover.jpg' -> publicId: 'cover'
+            // folder: 'books'
+            // full: 'books/cover'
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/books/cover.jpg';
-            cloudinary.uploader.destroy.mockResolvedValue({ result: 'ok' });
+            mockDestroy.mockResolvedValue({ result: 'ok' });
 
             await deleteFromCloudinary(mockUrl);
 
-            expect(cloudinary.uploader.destroy).toHaveBeenCalledWith('books/cover');
+            expect(mockDestroy).toHaveBeenCalledWith('books/cover');
         });
     });
 });

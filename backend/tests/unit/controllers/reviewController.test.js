@@ -1,14 +1,14 @@
 import { jest } from '@jest/globals';
 
 // Mock dependencies
-jest.unstable_mockModule('../../src/models/Review.js', () => ({
+jest.unstable_mockModule('../../../src/models/Review.js', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(() => ({
         save: jest.fn(),
     })),
 }));
 
-jest.unstable_mockModule('../../src/models/Book.js', () => ({
+jest.unstable_mockModule('../../../src/models/Book.js', () => ({
     __esModule: true,
     default: {
         findById: jest.fn(),
@@ -16,7 +16,7 @@ jest.unstable_mockModule('../../src/models/Book.js', () => ({
 }));
 
 // Add static methods to the mock
-const { default: ReviewMock } = await import('../../src/models/Review.js');
+const { default: ReviewMock } = await import('../../../src/models/Review.js');
 Object.assign(ReviewMock, {
     find: jest.fn().mockReturnThis(),
     findById: jest.fn(),
@@ -31,10 +31,10 @@ const {
     updateReview,
     deleteReview,
     getAllReviews
-} = await import('../../src/controllers/reviewController.js');
+} = await import('../../../src/controllers/reviewController.js');
 
-const { default: Review } = await import('../../src/models/Review.js');
-const { default: Book } = await import('../../src/models/Book.js');
+const { default: Review } = await import('../../../src/models/Review.js');
+const { default: Book } = await import('../../../src/models/Book.js');
 const { mockRequest, mockResponse, mockReview, mockUser, mockBook } = await import('../helpers/testHelpers.js');
 
 describe('reviewController', () => {
