@@ -64,7 +64,7 @@ const orderSchema = new mongoose.Schema(
         shippingAddress: shippingAddressSchema,
         paymentMethod: {
             type: String,
-            enum: ['COD', 'VNPay', 'MoMo'],
+            enum: ['COD', 'MoMo'],
             required: true,
             default: 'COD',
         },

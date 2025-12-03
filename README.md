@@ -11,7 +11,7 @@ Dự án này là một ứng dụng web thương mại điện tử được th
 -   **Cơ sở dữ liệu**: MongoDB với Mongoose ODM
 -   **Xác thực**: JSON Web Tokens (JWT)
 -   **Lưu trữ đa phương tiện**: Cloudinary
--   **Cổng thanh toán**: VNPay, MoMo
+-   **Cổng thanh toán**: MoMo
 -   **Bảo mật**: Bcrypt để mã hóa mật khẩu
 
 ### Frontend
@@ -34,7 +34,7 @@ Kiến trúc backend bao gồm các module cốt lõi sau:
 -   **Quản lý Đơn hàng**: Xử lý đơn hàng của khách hàng, theo dõi trạng thái và lịch sử.
 -   **Hệ thống Đánh giá**: Đánh giá và xếp hạng của khách hàng cho sản phẩm.
 -   **Hệ thống Giảm giá**: Quản lý và xác thực mã giảm giá.
--   **Tích hợp Thanh toán**: Hỗ trợ thanh toán trực tuyến qua VNPay và MoMo, cũng như Thanh toán khi nhận hàng (COD).
+-   **Tích hợp Thanh toán**: Hỗ trợ thanh toán trực tuyến qua MoMo, cũng như Thanh toán khi nhận hàng (COD).
 
 ### Các Module Frontend
 Ứng dụng frontend cung cấp giao diện người dùng đáp ứng (responsive) với các tính năng sau:
@@ -72,8 +72,7 @@ Kiến trúc backend bao gồm các module cốt lõi sau:
     CLOUDINARY_CLOUD_NAME=your_cloudinary_name
     CLOUDINARY_API_KEY=your_cloudinary_key
     CLOUDINARY_API_SECRET=your_cloudinary_secret
-    VNPAY_TMN_CODE=your_vnpay_code
-    VNPAY_HASH_SECRET=your_vnpay_secret
+
     MOMO_PARTNER_CODE=your_momo_code
     MOMO_ACCESS_KEY=your_momo_access_key
     MOMO_SECRET_KEY=your_momo_secret_key
@@ -124,7 +123,7 @@ Kiến trúc backend bao gồm các module cốt lõi sau:
 -   `GET /api/orders`: Lấy tất cả đơn hàng (Chỉ Admin).
 
 ### Thanh toán (Payment)
--   `POST /api/payment/vnpay/create`: Khởi tạo giao dịch thanh toán VNPay.
+
 -   `POST /api/payment/momo/create`: Khởi tạo giao dịch thanh toán MoMo.
 
 ## Triển khai Bảo mật

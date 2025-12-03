@@ -91,8 +91,7 @@ export const couponsAPI = {
 
 // Payment API
 export const paymentAPI = {
-    createVNPayUrl: (orderId, amount, orderDescription) =>
-        api.post('/payment/vnpay/create', { orderId, amount, orderDescription }),
+
     createMoMoPayment: (orderId, amount, orderDescription) =>
         api.post('/payment/momo/create', { orderId, amount, orderDescription }),
 };

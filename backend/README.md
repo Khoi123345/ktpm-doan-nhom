@@ -11,7 +11,7 @@ Backend API cho hệ thống nhà sách online được xây dựng với Node.j
 - ✅ Quản lý đơn hàng
 - ✅ Đánh giá & bình luận sách
 - ✅ Hệ thống mã giảm giá/coupon
-- ✅ Tích hợp thanh toán VNPay
+
 - ✅ Tích hợp thanh toán MoMo
 - ✅ Upload ảnh lên Cloudinary
 - ✅ Phân quyền Admin/User
@@ -22,7 +22,7 @@ Backend API cho hệ thống nhà sách online được xây dựng với Node.j
 - MongoDB & Mongoose
 - JWT Authentication
 - Cloudinary (Image Upload)
-- VNPay Payment Gateway
+
 - MoMo Payment Gateway
 - Bcrypt (Password Hashing)
 
@@ -62,11 +62,7 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
-# VNPay
-VNPAY_TMN_CODE=your_vnpay_tmn_code
-VNPAY_HASH_SECRET=your_vnpay_hash_secret
-VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-VNPAY_RETURN_URL=http://localhost:3000/payment/vnpay/return
+
 
 # MoMo
 MOMO_PARTNER_CODE=your_momo_partner_code
@@ -142,9 +138,7 @@ Server sẽ chạy tại `http://localhost:5000`
 - `GET /api/coupons/admin/all` - Lấy tất cả coupon (Admin)
 
 ### Payment
-- `POST /api/payment/vnpay/create` - Tạo payment URL VNPay (Protected)
-- `GET /api/payment/vnpay/return` - VNPay return handler
-- `POST /api/payment/vnpay/ipn` - VNPay IPN handler
+
 - `POST /api/payment/momo/create` - Tạo payment MoMo (Protected)
 - `POST /api/payment/momo/return` - MoMo return handler
 - `POST /api/payment/momo/ipn` - MoMo IPN handler
@@ -213,7 +207,7 @@ Test coverage bao gồm:
 
 - Cần tạo tài khoản MongoDB Atlas (miễn phí)
 - Cần tạo tài khoản Cloudinary (miễn phí)
-- Cần đăng ký VNPay Sandbox để test thanh toán
+
 - Cần lấy MoMo test credentials để test thanh toán
 - Đảm bảo tất cả environment variables được cấu hình đúng
 

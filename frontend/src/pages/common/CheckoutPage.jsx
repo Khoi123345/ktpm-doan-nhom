@@ -258,9 +258,7 @@ const CheckoutPage = () => {
                 toast.success('Đặt hàng thành công!');
 
                 // Navigate based on payment method
-                if (selectedPayment === 'VNPay') {
-                    navigate(`/payment/vnpay/${order._id}`);
-                } else if (selectedPayment === 'MoMo') {
+                if (selectedPayment === 'MoMo') {
                     navigate(`/payment/momo/${order._id}`);
                 } else {
                     navigate(`/orders/${order._id}`);
@@ -375,24 +373,6 @@ const CheckoutPage = () => {
                                             <FiTruck className="text-gray-400 w-6 h-6" />
                                         </div>
                                         <p className="text-sm text-gray-500 mt-1">Thanh toán bằng tiền mặt khi nhận hàng</p>
-                                    </div>
-                                </label>
-
-                                <label className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'VNPay' ? 'border-primary-600 bg-primary-50 ring-1 ring-primary-600' : 'border-gray-200 hover:border-gray-300'}`}>
-                                    <input
-                                        type="radio"
-                                        name="payment"
-                                        value="VNPay"
-                                        checked={selectedPayment === 'VNPay'}
-                                        onChange={(e) => setSelectedPayment(e.target.value)}
-                                        className="mr-4 w-5 h-5 text-primary-600 focus:ring-primary-500"
-                                    />
-                                    <div className="flex-1">
-                                        <div className="flex items-center justify-between">
-                                            <p className="font-bold text-gray-900">VNPay</p>
-                                            <FiCreditCard className="text-gray-400 w-6 h-6" />
-                                        </div>
-                                        <p className="text-sm text-gray-500 mt-1">Thanh toán an toàn qua cổng VNPay</p>
                                     </div>
                                 </label>
 
