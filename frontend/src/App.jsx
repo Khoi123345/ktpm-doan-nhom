@@ -14,7 +14,7 @@ import OrderHistoryPage from './pages/common/OrderHistoryPage';
 import OrderDetailPage from './pages/common/OrderDetailPage';
 import PaymentSuccessPage from './pages/common/PaymentSuccessPage';
 import PaymentFailPage from './pages/common/PaymentFailPage';
-import VNPayPaymentPage from './pages/common/VNPayPaymentPage';
+
 import MoMoPaymentPage from './pages/common/MoMoPaymentPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminBooks from './pages/admin/AdminBooks';
@@ -24,6 +24,7 @@ import AdminCoupons from './pages/admin/AdminCoupons';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminOrderDetail from './pages/admin/AdminOrderDetail';
 import AdminReviews from './pages/admin/AdminReviews';
+import AdminRating from './pages/admin/AdminRating';
 import PrivateRoute from './components/common/PrivateRoute';
 import AdminRoute from './components/admin/AdminRoute';
 import CustomerRoute from './components/common/CustomerRoute';
@@ -54,7 +55,7 @@ function App() {
                             <Route path="/orders/:id" element={<PrivateRoute><OrderDetailPage /></PrivateRoute>} />
 
                             {/* Payment Routes */}
-                            <Route path="/payment/vnpay/:orderId" element={<PrivateRoute><VNPayPaymentPage /></PrivateRoute>} />
+
                             <Route path="/payment/momo/:orderId" element={<PrivateRoute><MoMoPaymentPage /></PrivateRoute>} />
                             <Route path="/payment/success" element={<PrivateRoute><PaymentSuccessPage /></PrivateRoute>} />
                             <Route path="/payment/fail" element={<PrivateRoute><PaymentFailPage /></PrivateRoute>} />
@@ -77,6 +78,7 @@ function App() {
                             <Route path="users" element={<AdminUsers />} />
                             <Route path="coupons" element={<AdminCoupons />} />
                             <Route path="reviews" element={<AdminReviews />} />
+                            <Route path="analytics" element={<AdminRating />} />
                         </Routes>
                     </AdminLayout>
                 </AdminRoute>

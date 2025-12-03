@@ -47,6 +47,10 @@ const shippingAddressSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    ward: {
+        type: String,
+        required: true,
+    },
 });
 
 const orderSchema = new mongoose.Schema(
@@ -60,7 +64,7 @@ const orderSchema = new mongoose.Schema(
         shippingAddress: shippingAddressSchema,
         paymentMethod: {
             type: String,
-            enum: ['COD', 'VNPay', 'MoMo'],
+            enum: ['COD', 'MoMo'],
             required: true,
             default: 'COD',
         },

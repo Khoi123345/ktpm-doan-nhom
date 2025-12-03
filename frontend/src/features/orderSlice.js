@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../services/api';
+import { toast } from 'react-toastify';
 
 const initialState = {
     orders: [],
@@ -7,6 +8,8 @@ const initialState = {
     loading: false,
     error: null,
     success: false,
+    topSellingBooks: [],
+    topBuyers: [],
 };
 
 // Create order
@@ -70,6 +73,45 @@ export const updateOrderToDelivered = createAsyncThunk(
             return data.data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Không thể cập nhật trạng thái đơn hàng');
+        }
+    }
+);
+
+// Cancel order
+export const cancelOrder = createAsyncThunk(
+    'orders/cancelOrder',
+    async ({ id, reason }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.put(`/orders/${id}/cancel`, { reason });
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Không thể hủy đơn hàng');
+        }
+    }
+);
+
+// Get top selling books
+export const getTopSellingBooks = createAsyncThunk(
+    'orders/getTopSellingBooks',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get('/orders/analytics/top-books');
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Lỗi khi tải danh sách sách bán chạy');
+        }
+    }
+);
+
+// Get top buyers
+export const getTopBuyers = createAsyncThunk(
+    'orders/getTopBuyers',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get('/orders/analytics/top-buyers');
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Lỗi khi tải danh sách người mua hàng đầu');
         }
     }
 );
@@ -143,6 +185,41 @@ const orderSlice = createSlice({
                 }
             })
             .addCase(updateOrderToDelivered.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(cancelOrder.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(cancelOrder.fulfilled, (state, action) => {
+                state.loading = false;
+                state.order = action.payload;
+                toast.success('Đã hủy đơn hàng thành công');
+            })
+            .addCase(cancelOrder.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                toast.error(action.payload);
+            })
+            .addCase(getTopSellingBooks.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getTopSellingBooks.fulfilled, (state, action) => {
+                state.loading = false;
+                state.topSellingBooks = action.payload;
+            })
+            .addCase(getTopSellingBooks.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(getTopBuyers.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getTopBuyers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.topBuyers = action.payload;
+            })
+            .addCase(getTopBuyers.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

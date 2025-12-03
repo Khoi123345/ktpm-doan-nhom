@@ -205,14 +205,16 @@ const AdminOrderDetail = () => {
                                 <p className="text-gray-600 text-sm">Phí vận chuyển</p>
                                 <p className="font-medium">{order.shippingPrice.toLocaleString('vi-VN')} đ</p>
                             </div>
-                            {order.couponApplied?.code && (
-                                <div>
-                                    <p className="text-gray-600 text-sm">Mã giảm giá</p>
+                            <div>
+                                <p className="text-gray-600 text-sm">Mã giảm giá</p>
+                                {order.couponApplied?.code ? (
                                     <p className="font-medium text-green-600">
                                         {order.couponApplied.code} (-{order.couponApplied.discountAmount.toLocaleString('vi-VN')} đ)
                                     </p>
-                                </div>
-                            )}
+                                ) : (
+                                    <p className="font-medium text-gray-500">Không có</p>
+                                )}
+                            </div>
                             <div>
                                 <p className="text-gray-600 text-sm">Tổng thanh toán</p>
                                 <p className="font-bold text-lg text-primary-600">{order.totalPrice.toLocaleString('vi-VN')} đ</p>
@@ -256,6 +258,7 @@ const AdminOrderDetail = () => {
                             <p><span className="font-medium">Người nhận:</span> {order.shippingAddress.fullName}</p>
                             <p><span className="font-medium">Số điện thoại:</span> {order.shippingAddress.phone}</p>
                             <p><span className="font-medium">Địa chỉ:</span> {order.shippingAddress.address}</p>
+                            <p><span className="font-medium">Phường/Xã:</span> {order.shippingAddress.ward}</p>
                             <p><span className="font-medium">Quận/Huyện:</span> {order.shippingAddress.district}</p>
                             <p><span className="font-medium">Tỉnh/Thành phố:</span> {order.shippingAddress.city}</p>
                         </div>

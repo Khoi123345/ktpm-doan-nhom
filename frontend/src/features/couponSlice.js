@@ -73,6 +73,19 @@ export const deleteCoupon = createAsyncThunk(
     }
 );
 
+// Update coupon (Admin)
+export const updateCoupon = createAsyncThunk(
+    'coupons/updateCoupon',
+    async ({ id, couponData }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.put(`/coupons/${id}`, couponData);
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Không thể cập nhật mã giảm giá');
+        }
+    }
+);
+
 const couponSlice = createSlice({
     name: 'coupons',
     initialState,
@@ -137,6 +150,20 @@ const couponSlice = createSlice({
                 state.coupons = state.coupons.filter((coupon) => coupon._id !== action.payload);
             })
             .addCase(deleteCoupon.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(updateCoupon.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateCoupon.fulfilled, (state, action) => {
+                state.loading = false;
+                const index = state.coupons.findIndex((c) => c._id === action.payload._id);
+                if (index !== -1) {
+                    state.coupons[index] = action.payload;
+                }
+            })
+            .addCase(updateCoupon.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

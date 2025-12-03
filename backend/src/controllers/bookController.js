@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Book from '../models/Book.js';
 import Review from '../models/Review.js';
+import Order from '../models/Order.js';
 import { uploadToCloudinary } from '../utils/cloudinaryUpload.js';
 
 /**
@@ -23,13 +24,33 @@ export const getBooks = asyncHandler(async (req, res) => {
 
     const category = req.query.category ? { category: req.query.category } : {};
 
-    const priceFilter = {};
-    if (req.query.minPrice) priceFilter.$gte = Number(req.query.minPrice);
-    if (req.query.maxPrice) priceFilter.$lte = Number(req.query.maxPrice);
-    const price = Object.keys(priceFilter).length > 0 ? { price: priceFilter } : {};
+    let priceQuery = {};
+    if (req.query.minPrice || req.query.maxPrice) {
+        const conditions = [];
+        if (req.query.minPrice) {
+            conditions.push({
+                $gte: [
+                    { $cond: { if: { $gt: ["$discountPrice", 0] }, then: "$discountPrice", else: "$price" } },
+                    Number(req.query.minPrice)
+                ]
+            });
+        }
+        if (req.query.maxPrice) {
+            conditions.push({
+                $lte: [
+                    { $cond: { if: { $gt: ["$discountPrice", 0] }, then: "$discountPrice", else: "$price" } },
+                    Number(req.query.maxPrice)
+                ]
+            });
+        }
 
-    const count = await Book.countDocuments({ ...keyword, ...category, ...price });
-    const books = await Book.find({ ...keyword, ...category, ...price })
+        if (conditions.length > 0) {
+            priceQuery = { $expr: { $and: conditions } };
+        }
+    }
+
+    const count = await Book.countDocuments({ ...keyword, ...category, ...priceQuery });
+    const books = await Book.find({ ...keyword, ...category, ...priceQuery })
         .populate('category', 'name')
         .limit(pageSize)
         .skip(pageSize * (page - 1))
@@ -135,6 +156,12 @@ export const deleteBook = asyncHandler(async (req, res) => {
     const book = await Book.findById(req.params.id);
 
     if (book) {
+        const orderExists = await Order.findOne({ 'orderItems.book': req.params.id });
+        if (orderExists) {
+            res.status(400);
+            throw new Error('Không thể xóa sách này vì đã có trong đơn hàng');
+        }
+
         await book.deleteOne();
         res.json({
             success: true,

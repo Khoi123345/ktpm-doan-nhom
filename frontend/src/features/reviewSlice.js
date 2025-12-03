@@ -40,6 +40,19 @@ export const deleteReview = createAsyncThunk(
     }
 );
 
+// Update review
+export const updateReview = createAsyncThunk(
+    'reviews/update',
+    async ({ id, reviewData }, { rejectWithValue }) => {
+        try {
+            const { data } = await reviewsAPI.updateReview(id, reviewData);
+            return data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Không thể cập nhật đánh giá');
+        }
+    }
+);
+
 // Get all reviews (Admin)
 // Note: reviewsAPI doesn't have getAllReviews yet, need to add it or use api.get directly if needed.
 // Checking api.js, reviewsAPI only has createReview, getBookReviews, deleteReview.
@@ -137,6 +150,21 @@ const reviewSlice = createSlice({
                 state.reviews = action.payload;
             })
             .addCase(getAllReviews.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Update review
+            .addCase(updateReview.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateReview.fulfilled, (state, action) => {
+                state.loading = false;
+                state.reviews = state.reviews.map((review) =>
+                    review._id === action.payload._id ? action.payload : review
+                );
+            })
+            .addCase(updateReview.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

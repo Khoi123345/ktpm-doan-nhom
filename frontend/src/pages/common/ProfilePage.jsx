@@ -4,6 +4,7 @@ import { updateProfile } from '../../features/authSlice';
 import { FiUser, FiMail, FiLock, FiSave, FiCheck, FiX } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import Input from '../../components/common/Input';
 
 const ProfilePage = () => {
     const dispatch = useDispatch();
@@ -168,32 +169,22 @@ const ProfilePage = () => {
                     <h2 className="text-xl font-semibold mb-4">Đổi mật khẩu</h2>
                     <form onSubmit={handlePasswordSubmit} className="space-y-6">
                         {/* Old Password */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                <FiLock className="inline mr-2" />
-                                Mật khẩu cũ *
-                            </label>
-                            <input
-                                type="password"
-                                value={oldPassword}
-                                onChange={(e) => setOldPassword(e.target.value)}
-                                className="input-field"
-                                placeholder="Nhập mật khẩu hiện tại"
-                                required
-                            />
-                        </div>
+                        <Input
+                            label={<><FiLock className="inline mr-2" />Mật khẩu cũ *</>}
+                            type="password"
+                            value={oldPassword}
+                            onChange={(e) => setOldPassword(e.target.value)}
+                            placeholder="Nhập mật khẩu hiện tại"
+                            required
+                        />
 
                         {/* New Password */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                <FiLock className="inline mr-2" />
-                                Mật khẩu mới *
-                            </label>
-                            <input
+                            <Input
+                                label={<><FiLock className="inline mr-2" />Mật khẩu mới *</>}
                                 type="password"
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
-                                className="input-field"
                                 placeholder="Nhập mật khẩu mới"
                                 required
                             />
@@ -225,20 +216,14 @@ const ProfilePage = () => {
                         </div>
 
                         {/* Confirm New Password */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                <FiLock className="inline mr-2" />
-                                Xác nhận mật khẩu mới *
-                            </label>
-                            <input
-                                type="password"
-                                value={confirmNewPassword}
-                                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                                className="input-field"
-                                placeholder="Nhập lại mật khẩu mới"
-                                required
-                            />
-                        </div>
+                        <Input
+                            label={<><FiLock className="inline mr-2" />Xác nhận mật khẩu mới *</>}
+                            type="password"
+                            value={confirmNewPassword}
+                            onChange={(e) => setConfirmNewPassword(e.target.value)}
+                            placeholder="Nhập lại mật khẩu mới"
+                            required
+                        />
 
                         {/* Submit Button */}
                         <button

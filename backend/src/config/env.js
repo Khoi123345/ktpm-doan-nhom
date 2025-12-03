@@ -17,14 +17,7 @@ export const config = {
         apiSecret: process.env.CLOUDINARY_API_SECRET,
     },
 
-    // VNPay
-    vnpay: {
-        tmnCode: process.env.VNPAY_TMN_CODE,
-        hashSecret: process.env.VNPAY_HASH_SECRET,
-        url: process.env.VNPAY_URL,
-        returnUrl: process.env.VNPAY_RETURN_URL,
-        apiUrl: process.env.VNPAY_API_URL,
-    },
+
 
     // MoMo
     momo: {

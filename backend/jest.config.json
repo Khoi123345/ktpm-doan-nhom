@@ -1,0 +1,20 @@
+{
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+        "src/**/*.js",
+        "!src/server.js",
+        "!src/config/**",
+        "!src/routes/**"
+    ],
+    "testMatch": [
+        "**/tests/**/*.test.js"
+    ],
+    "transform": {},
+    "moduleNameMapper": {
+        "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "testPathIgnorePatterns": [
+        "/node_modules/"
+    ]
+}

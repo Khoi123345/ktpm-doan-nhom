@@ -28,11 +28,6 @@ const couponSchema = new mongoose.Schema(
             default: 0,
             min: 0,
         },
-        maxDiscountAmount: {
-            type: Number,
-            default: 0,
-            min: 0,
-        },
         startDate: {
             type: Date,
             required: [true, 'Vui lòng chọn ngày bắt đầu'],

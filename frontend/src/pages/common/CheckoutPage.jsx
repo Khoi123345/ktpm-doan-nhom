@@ -1,54 +1,202 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveShippingAddress, savePaymentMethod, applyCoupon, removeCoupon, clearCart, clearCartAsync } from '../../features/cartSlice';
-import { createOrder } from '../../features/orderSlice';
-import { validateCoupon } from '../../features/couponSlice';
-import { FiTag, FiX, FiCreditCard, FiTruck, FiCheckCircle } from 'react-icons/fi';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Button from '../../components/common/Button';
+import { FiTruck, FiCreditCard, FiTag, FiX } from 'react-icons/fi';
 import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
+import { createOrder } from '../../features/orderSlice';
+import {
+    clearCart,
+    clearCartAsync,
+    applyCoupon,
+    removeCoupon,
+    saveShippingAddress,
+    removeItemsFromCart,
+    removeMultipleFromCartAsync
+} from '../../features/cartSlice';
+import { couponsAPI } from '../../services/api';
+import axios from 'axios';
+import Combobox from '../../components/common/Combobox';
 
 const CheckoutPage = () => {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const { cartItems, shippingAddress, paymentMethod, itemsPrice, shippingPrice, discountAmount, totalPrice, appliedCoupon } = useSelector((state) => state.cart);
+    const {
+        cartItems,
+        shippingAddress: savedAddress,
+        appliedCoupon,
+    } = useSelector((state) => state.cart);
+
     const { userInfo } = useSelector((state) => state.auth);
     const { loading: orderLoading } = useSelector((state) => state.orders);
 
-    const [fullName, setFullName] = useState(shippingAddress.fullName || userInfo?.name || '');
-    const [phone, setPhone] = useState(shippingAddress.phone || '');
-    const [address, setAddress] = useState(shippingAddress.address || '');
-    const [district, setDistrict] = useState(shippingAddress.district || '');
-    const [city, setCity] = useState(shippingAddress.city || '');
-    const [selectedPayment, setSelectedPayment] = useState(paymentMethod || 'COD');
+    // Get selected items passed from navigation
+    const selectedItemIds = location.state?.selectedItems || [];
+
+    // Filter cart items to get only selected ones
+    const checkoutItems = useMemo(() => {
+        return cartItems.filter(item => {
+            // Handle both Cart Item ID (from CartPage) and Book ID (from Buy Now)
+            const itemId = item._id;
+            const bookId = item.book?._id || item._id;
+            return selectedItemIds.includes(itemId) || selectedItemIds.includes(bookId);
+        });
+    }, [cartItems, selectedItemIds]);
+
+    // Form state
+    const [fullName, setFullName] = useState(savedAddress?.fullName || userInfo?.name || '');
+    const [phone, setPhone] = useState(savedAddress?.phone || userInfo?.phone || '');
+    const [city, setCity] = useState(savedAddress?.city || '');
+    const [district, setDistrict] = useState(savedAddress?.district || '');
+    const [ward, setWard] = useState(savedAddress?.ward || '');
+    const [address, setAddress] = useState(savedAddress?.address || '');
+    const [selectedPayment, setSelectedPayment] = useState('COD');
     const [couponCode, setCouponCode] = useState('');
     const [couponLoading, setCouponLoading] = useState(false);
 
+    // Location state
+    const [provinces, setProvinces] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [wards, setWards] = useState([]);
+    const [selectedProvince, setSelectedProvince] = useState(null);
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
+    const [selectedWard, setSelectedWard] = useState(null);
+
+    // Fetch provinces
     useEffect(() => {
-        if (!userInfo) {
-            navigate('/login?redirect=/checkout');
+        const fetchProvinces = async () => {
+            try {
+                const response = await axios.get('https://provinces.open-api.vn/api/p/');
+                setProvinces(response.data);
+
+                // Try to match existing city
+                if (city) {
+                    const found = response.data.find(p => p.name === city || city.includes(p.name) || p.name.includes(city));
+                    if (found) setSelectedProvince(found);
+                }
+            } catch (error) {
+                console.error('Failed to fetch provinces', error);
+            }
+        };
+        fetchProvinces();
+    }, []);
+
+    // Fetch districts when province changes
+    useEffect(() => {
+        if (selectedProvince) {
+            const fetchDistricts = async () => {
+                try {
+                    const response = await axios.get(`https://provinces.open-api.vn/api/p/${selectedProvince.code}?depth=2`);
+                    setDistricts(response.data.districts);
+
+                    // Try to match existing district if we just loaded districts and haven't selected one manually yet
+                    if (district && !selectedDistrict) {
+                        const found = response.data.districts.find(d => d.name === district || district.includes(d.name) || d.name.includes(district));
+                        if (found) setSelectedDistrict(found);
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch districts', error);
+                    setDistricts([]);
+                }
+            };
+            fetchDistricts();
+        } else {
+            setDistricts([]);
+            setSelectedDistrict(null);
         }
-        if (cartItems.length === 0) {
-            navigate('/cart');
+    }, [selectedProvince]);
+
+    // Fetch wards when district changes
+    useEffect(() => {
+        if (selectedDistrict) {
+            const fetchWards = async () => {
+                try {
+                    const response = await axios.get(`https://provinces.open-api.vn/api/d/${selectedDistrict.code}?depth=2`);
+                    setWards(response.data.wards);
+
+                    // Try to match existing ward
+                    if (ward && !selectedWard) {
+                        const found = response.data.wards.find(w => w.name === ward || ward.includes(w.name) || w.name.includes(ward));
+                        if (found) setSelectedWard(found);
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch wards', error);
+                    setWards([]);
+                }
+            };
+            fetchWards();
+        } else {
+            setWards([]);
+            setSelectedWard(null);
         }
-    }, [userInfo, cartItems, navigate]);
+    }, [selectedDistrict]);
+
+    const handleProvinceChange = (province) => {
+        setSelectedProvince(province);
+        setCity(province?.name || '');
+        // Reset district and ward when province changes
+        setSelectedDistrict(null);
+        setDistrict('');
+        setSelectedWard(null);
+        setWard('');
+    };
+
+    const handleDistrictChange = (district) => {
+        setSelectedDistrict(district);
+        setDistrict(district?.name || '');
+        // Reset ward when district changes
+        setSelectedWard(null);
+        setWard('');
+    };
+
+    const handleWardChange = (ward) => {
+        setSelectedWard(ward);
+        setWard(ward?.name || '');
+    };
+
+    // Redirect if no items selected
+    useEffect(() => {
+        if (selectedItemIds.length === 0 || checkoutItems.length === 0) {
+            // Only redirect if we have cart items but none matched (invalid selection)
+            // or if we have no cart items at all
+            if (cartItems.length > 0 && checkoutItems.length === 0) {
+                toast.error('Vui lòng chọn sản phẩm để thanh toán');
+                navigate('/cart');
+            } else if (cartItems.length === 0) {
+                // Allow empty cart to load briefly or handle gracefully, but usually redirect
+                // navigate('/cart'); 
+            }
+        }
+    }, [selectedItemIds, checkoutItems, cartItems, navigate]);
+
+    // Calculate prices
+    const itemsPrice = checkoutItems.reduce((acc, item) => acc + ((item.discountPrice || item.price) * item.quantity), 0);
+    const shippingPrice = itemsPrice > 200000 ? 0 : 30000;
+
+    const discountAmount = useMemo(() => {
+        if (!appliedCoupon) return 0;
+        if (appliedCoupon.discountType === 'percentage') {
+            return Math.round((itemsPrice * appliedCoupon.discountValue) / 100);
+        }
+        return appliedCoupon.discountValue;
+    }, [appliedCoupon, itemsPrice]);
+
+    const totalPrice = Math.max(0, itemsPrice + shippingPrice - discountAmount);
 
     const handleApplyCoupon = async () => {
-        if (!couponCode.trim()) {
-            toast.error('Vui lòng nhập mã giảm giá');
-            return;
-        }
+        if (!couponCode.trim()) return;
 
         setCouponLoading(true);
         try {
-            const result = await dispatch(validateCoupon({ code: couponCode, orderValue: itemsPrice })).unwrap();
-            dispatch(applyCoupon(result.coupon));
+            const { data } = await couponsAPI.validateCoupon(couponCode, itemsPrice);
+            dispatch(applyCoupon(data.data));
             toast.success('Áp dụng mã giảm giá thành công!');
-            setCouponCode('');
         } catch (error) {
-            toast.error(error || 'Mã giảm giá không hợp lệ');
+            toast.error(error.response?.data?.message || 'Mã giảm giá không hợp lệ');
+            dispatch(removeCoupon());
         } finally {
             setCouponLoading(false);
         }
@@ -56,59 +204,72 @@ const CheckoutPage = () => {
 
     const handleRemoveCoupon = () => {
         dispatch(removeCoupon());
-        toast.info('Đã xóa mã giảm giá');
+        setCouponCode('');
     };
 
-    const handlePlaceOrder = () => {
-        if (!fullName || !phone || !address || !district || !city) {
-            toast.error('Vui lòng điền đầy đủ thông tin giao hàng');
-            return;
-        }
+    const handlePlaceOrder = async () => {
+        try {
+            // Validate form
+            if (!fullName || !phone || !city || !district || !ward || !address) {
+                toast.error('Vui lòng điền đầy đủ thông tin giao hàng');
+                return;
+            }
 
-        // Save shipping info
-        dispatch(saveShippingAddress({ fullName, phone, address, district, city }));
-        dispatch(savePaymentMethod(selectedPayment));
+            const shippingAddress = { fullName, phone, city, district, ward, address };
+            dispatch(saveShippingAddress(shippingAddress));
 
-        // Create order
-        const orderData = {
-            orderItems: cartItems.map(item => ({
-                book: item._id,
-                title: item.title,
-                quantity: item.quantity,
-                price: item.price,
-                image: item.image,
-            })),
-            shippingAddress: { fullName, phone, address, district, city },
-            paymentMethod: selectedPayment,
-            itemsPrice,
-            shippingPrice,
-            discountAmount,
-            totalPrice,
-            couponCode: appliedCoupon?.code || null,
-        };
+            const orderData = {
+                orderItems: checkoutItems.map(item => ({
+                    book: userInfo ? item.book._id : item._id, // Handle different structure for guest/user
+                    quantity: item.quantity,
+                    price: item.discountPrice || item.price,
+                    image: item.image,
+                    title: item.title
+                })),
+                shippingAddress,
+                paymentMethod: selectedPayment,
+                itemsPrice,
+                shippingPrice,
+                discountAmount,
+                totalPrice,
+                couponCode: appliedCoupon?.code
+            };
 
-        dispatch(createOrder(orderData))
-            .unwrap()
-            .then((order) => {
-                // Clear cart after successful order
+            const resultAction = await dispatch(createOrder(orderData));
+
+            if (createOrder.fulfilled.match(resultAction)) {
+                const order = resultAction.payload;
+
+                // Remove bought items from cart
+                // Extract Book IDs for removal (Backend expects Book IDs, Guest Local expects Book IDs)
+                const bookIdsToRemove = checkoutItems.map(item =>
+                    userInfo ? item.book._id : item._id
+                );
+
                 if (userInfo) {
-                    dispatch(clearCartAsync());
+                    dispatch(removeMultipleFromCartAsync(bookIdsToRemove));
                 } else {
-                    dispatch(clearCart());
+                    dispatch(removeItemsFromCart(bookIdsToRemove));
                 }
+
+                // Clear coupon
+                dispatch(removeCoupon());
 
                 toast.success('Đặt hàng thành công!');
 
-                // If payment method is VNPay or MoMo, redirect to payment
-                if (selectedPayment === 'VNPay' || selectedPayment === 'MoMo') {
-                    navigate(`/payment/${selectedPayment.toLowerCase()}/${order._id}`);
+                // Navigate based on payment method
+                if (selectedPayment === 'MoMo') {
+                    navigate(`/payment/momo/${order._id}`);
                 } else {
                     navigate(`/orders/${order._id}`);
                 }
-            })
-            .catch((error) => {
-                toast.error(error || 'Đặt hàng thất bại');
-            });
+            } else {
+                throw new Error(resultAction.payload || 'Đặt hàng thất bại');
+            }
+        } catch (error) {
+            console.error('Order error:', error);
+            toast.error(error.message || 'Đặt hàng thất bại. Vui lòng thử lại');
+        }
     };
 
     return (
@@ -127,44 +288,64 @@ const CheckoutPage = () => {
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Họ và tên</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Họ và tên *</label>
                                     <Input
                                         value={fullName}
                                         onChange={(e) => setFullName(e.target.value)}
                                         placeholder="Nguyễn Văn A"
+                                        required
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại *</label>
                                     <Input
                                         type="tel"
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
                                         placeholder="0123456789"
+                                        required
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Tỉnh/Thành phố</label>
-                                    <Input
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
-                                        placeholder="Hà Nội, TP.HCM..."
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Tỉnh/Thành phố *</label>
+                                    <Combobox
+                                        options={provinces}
+                                        value={selectedProvince}
+                                        onChange={handleProvinceChange}
+                                        placeholder="Chọn Tỉnh/Thành phố"
+                                        displayValue={(item) => item?.name || ''}
+                                        className="mb-4"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Quận/Huyện</label>
-                                    <Input
-                                        value={district}
-                                        onChange={(e) => setDistrict(e.target.value)}
-                                        placeholder="Quận 1, Huyện Gia Lâm..."
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Quận/Huyện *</label>
+                                    <Combobox
+                                        options={districts}
+                                        value={selectedDistrict}
+                                        onChange={handleDistrictChange}
+                                        placeholder="Chọn Quận/Huyện"
+                                        displayValue={(item) => item?.name || ''}
+                                        disabled={!selectedProvince}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ cụ thể</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Phường/Xã *</label>
+                                    <Combobox
+                                        options={wards}
+                                        value={selectedWard}
+                                        onChange={handleWardChange}
+                                        placeholder="Chọn Phường/Xã"
+                                        displayValue={(item) => item?.name || ''}
+                                        disabled={!selectedDistrict}
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ giao hàng *</label>
                                     <Input
                                         value={address}
                                         onChange={(e) => setAddress(e.target.value)}
                                         placeholder="Số nhà, tên đường..."
+                                        required
                                     />
                                 </div>
                             </div>
@@ -192,24 +373,6 @@ const CheckoutPage = () => {
                                             <FiTruck className="text-gray-400 w-6 h-6" />
                                         </div>
                                         <p className="text-sm text-gray-500 mt-1">Thanh toán bằng tiền mặt khi nhận hàng</p>
-                                    </div>
-                                </label>
-
-                                <label className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'VNPay' ? 'border-primary-600 bg-primary-50 ring-1 ring-primary-600' : 'border-gray-200 hover:border-gray-300'}`}>
-                                    <input
-                                        type="radio"
-                                        name="payment"
-                                        value="VNPay"
-                                        checked={selectedPayment === 'VNPay'}
-                                        onChange={(e) => setSelectedPayment(e.target.value)}
-                                        className="mr-4 w-5 h-5 text-primary-600 focus:ring-primary-500"
-                                    />
-                                    <div className="flex-1">
-                                        <div className="flex items-center justify-between">
-                                            <p className="font-bold text-gray-900">VNPay</p>
-                                            <FiCreditCard className="text-gray-400 w-6 h-6" />
-                                        </div>
-                                        <p className="text-sm text-gray-500 mt-1">Thanh toán an toàn qua cổng VNPay</p>
                                     </div>
                                 </label>
 
@@ -241,7 +404,7 @@ const CheckoutPage = () => {
 
                             {/* Cart Items */}
                             <div className="space-y-4 mb-6 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
-                                {cartItems.map((item) => (
+                                {checkoutItems.map((item) => (
                                     <div key={item._id} className="flex gap-4">
                                         <div className="relative shrink-0">
                                             <img
@@ -256,7 +419,7 @@ const CheckoutPage = () => {
                                         <div className="flex-1 min-w-0">
                                             <p className="font-medium text-sm text-gray-900 line-clamp-2">{item.title}</p>
                                             <p className="text-sm font-semibold text-primary-600 mt-1">
-                                                {(item.price * item.quantity).toLocaleString('vi-VN')} đ
+                                                {((item.discountPrice || item.price) * item.quantity).toLocaleString('vi-VN')} đ
                                             </p>
                                         </div>
                                     </div>
@@ -280,7 +443,11 @@ const CheckoutPage = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        <button onClick={handleRemoveCoupon} className="text-gray-400 hover:text-red-500 transition">
+                                        <button
+                                            onClick={handleRemoveCoupon}
+                                            className="text-gray-400 hover:text-red-500 transition"
+                                            type="button"
+                                        >
                                             <FiX />
                                         </button>
                                     </div>
@@ -297,6 +464,7 @@ const CheckoutPage = () => {
                                             onClick={handleApplyCoupon}
                                             disabled={couponLoading}
                                             className="whitespace-nowrap px-4"
+                                            type="button"
                                         >
                                             {couponLoading ? '...' : 'Áp dụng'}
                                         </Button>
@@ -312,7 +480,9 @@ const CheckoutPage = () => {
                                 </div>
                                 <div className="flex justify-between text-gray-600">
                                     <span>Phí vận chuyển</span>
-                                    <span className="font-medium text-gray-900">{shippingPrice === 0 ? 'Miễn phí' : `${shippingPrice.toLocaleString('vi-VN')} đ`}</span>
+                                    <span className="font-medium text-gray-900">
+                                        {shippingPrice === 0 ? 'Miễn phí' : `${shippingPrice.toLocaleString('vi-VN')} đ`}
+                                    </span>
                                 </div>
                                 {discountAmount > 0 && (
                                     <div className="flex justify-between text-green-600">
@@ -329,8 +499,9 @@ const CheckoutPage = () => {
                             {/* Place Order Button */}
                             <Button
                                 onClick={handlePlaceOrder}
-                                disabled={orderLoading}
+                                disabled={orderLoading || checkoutItems.length === 0}
                                 className="w-full mt-8 py-4 text-lg shadow-lg shadow-primary-200"
+                                type="button"
                             >
                                 {orderLoading ? 'Đang xử lý...' : 'Đặt Hàng Ngay'}
                             </Button>

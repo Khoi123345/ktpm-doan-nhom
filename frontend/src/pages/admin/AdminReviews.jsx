@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllReviews, deleteReview } from '../../features/reviewSlice';
 import { toast } from 'react-toastify';
@@ -6,14 +6,36 @@ import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import ActionButtons from '../../components/common/ActionButtons';
 import Rating from '../../components/common/Rating';
+import { updateReview } from '../../features/reviewSlice';
+import { FiMessageSquare, FiSend, FiEdit2, FiCheck, FiX } from 'react-icons/fi';
+import Button from '../../components/common/Button';
 
 const AdminReviews = () => {
     const dispatch = useDispatch();
     const { reviews, loading, error } = useSelector((state) => state.reviews);
+    const [editingResponseId, setEditingResponseId] = useState(null);
+    const [editResponseText, setEditResponseText] = useState('');
 
     useEffect(() => {
         dispatch(getAllReviews());
     }, [dispatch]);
+
+    const handleResponse = (id, responseText) => {
+        dispatch(updateReview({
+            id,
+            reviewData: { response: responseText }
+        }))
+            .unwrap()
+            .then(() => {
+                toast.success('Đã gửi phản hồi thành công');
+                dispatch(getAllReviews());
+            })
+            .catch((err) => toast.error(err));
+    };
+
+    const handleAutoResponse = (id) => {
+        handleResponse(id, 'Cảm ơn bạn đã đánh giá sản phẩm');
+    };
 
     const handleDelete = (id) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) {
@@ -60,7 +82,79 @@ const AdminReviews = () => {
                                     <Rating value={review.rating} />
                                 </td>
                                 <td className="p-4 max-w-md">
-                                    <p className="line-clamp-2 text-sm text-gray-700">{review.comment}</p>
+                                    <p className="line-clamp-2 text-sm text-gray-700 mb-2">{review.comment}</p>
+                                    {review.response && editingResponseId !== review._id && (
+                                        <div className="bg-blue-50 p-2 rounded text-xs text-blue-800 mb-2 flex justify-between items-start group">
+                                            <span><span className="font-bold">Phản hồi:</span> {review.response}</span>
+                                            <button
+                                                onClick={() => {
+                                                    setEditingResponseId(review._id);
+                                                    setEditResponseText(review.response);
+                                                }}
+                                                className="text-blue-600 hover:text-blue-800 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                                                title="Sửa phản hồi"
+                                            >
+                                                <FiEdit2 />
+                                            </button>
+                                        </div>
+                                    )}
+                                    {editingResponseId === review._id && (
+                                        <div className="flex gap-1 mb-2">
+                                            <input
+                                                type="text"
+                                                value={editResponseText}
+                                                onChange={(e) => setEditResponseText(e.target.value)}
+                                                className="text-xs border rounded px-2 py-1 flex-1"
+                                                autoFocus
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        handleResponse(review._id, editResponseText);
+                                                        setEditingResponseId(null);
+                                                    } else if (e.key === 'Escape') {
+                                                        setEditingResponseId(null);
+                                                    }
+                                                }}
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    handleResponse(review._id, editResponseText);
+                                                    setEditingResponseId(null);
+                                                }}
+                                                className="text-green-600 hover:text-green-700 p-1"
+                                            >
+                                                <FiCheck />
+                                            </button>
+                                            <button
+                                                onClick={() => setEditingResponseId(null)}
+                                                className="text-red-600 hover:text-red-700 p-1"
+                                            >
+                                                <FiX />
+                                            </button>
+                                        </div>
+                                    )}
+                                    {!review.response && (
+                                        <div className="flex gap-2 mt-2">
+                                            <button
+                                                onClick={() => handleAutoResponse(review._id)}
+                                                className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200"
+                                            >
+                                                Phản hồi tự động
+                                            </button>
+                                            <div className="flex-1 flex gap-1">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Phản hồi thủ công..."
+                                                    className="text-xs border rounded px-2 py-1 flex-1"
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            handleResponse(review._id, e.target.value);
+                                                            e.target.value = '';
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
                                 </td>
                                 <td className="p-4 text-sm">
                                     {new Date(review.createdAt).toLocaleDateString('vi-VN')}

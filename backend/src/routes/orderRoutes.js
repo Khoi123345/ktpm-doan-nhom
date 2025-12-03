@@ -4,26 +4,26 @@ import {
     getOrderById,
     updateOrderToPaid,
     getMyOrders,
-    getAllOrders,
+    getOrders,
     updateOrderStatus,
     cancelOrder,
-    updateOrderAddress,
     returnOrder,
-    unpayOrder,
+    getTopSellingBooks,
+    getTopBuyers,
 } from '../controllers/orderController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { admin } from '../middlewares/adminMiddleware.js';
 
 const router = express.Router();
 
-router.route('/').post(protect, createOrder).get(protect, admin, getAllOrders);
+router.route('/').post(protect, createOrder).get(protect, admin, getOrders);
 router.get('/myorders', protect, getMyOrders);
+router.get('/analytics/top-books', protect, admin, getTopSellingBooks);
+router.get('/analytics/top-buyers', protect, admin, getTopBuyers);
 router.get('/:id', protect, getOrderById);
 router.put('/:id/pay', protect, updateOrderToPaid);
-router.put('/:id/unpay', protect, admin, unpayOrder);
 router.put('/:id/status', protect, admin, updateOrderStatus);
-router.put('/:id/cancel', protect, admin, cancelOrder);
-router.put('/:id/address', protect, admin, updateOrderAddress);
+router.put('/:id/cancel', protect, cancelOrder);
 router.put('/:id/return', protect, admin, returnOrder);
 
 export default router;

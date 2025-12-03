@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Coupon from '../models/Coupon.js';
+import Order from '../models/Order.js';
 
 /**
  * @desc    Get all active coupons
@@ -52,7 +53,7 @@ export const validateCoupon = asyncHandler(async (req, res) => {
     // Check if coupon is active
     if (!coupon.isActive) {
         res.status(400);
-        throw new Error('Mã giảm giá đã bị vô hiệu hóa');
+        throw new Error('Mã giảm giá không khả dụng');
     }
 
     // Check date validity
@@ -79,16 +80,13 @@ export const validateCoupon = asyncHandler(async (req, res) => {
     // Check minimum order value
     if (orderValue < coupon.minOrderValue) {
         res.status(400);
-        throw new Error(`Đơn hàng tối thiểu ${coupon.minOrderValue.toLocaleString('vi-VN')} VNĐ`);
+        throw new Error(`Mã giảm giá này chỉ áp dụng cho đơn hàng tối thiểu ${coupon.minOrderValue.toLocaleString('vi-VN')} VNĐ`);
     }
 
     // Calculate discount
     let discountAmount = 0;
     if (coupon.discountType === 'percentage') {
         discountAmount = (orderValue * coupon.discountValue) / 100;
-        if (coupon.maxDiscountAmount > 0 && discountAmount > coupon.maxDiscountAmount) {
-            discountAmount = coupon.maxDiscountAmount;
-        }
     } else {
         discountAmount = coupon.discountValue;
     }
@@ -116,7 +114,6 @@ export const createCoupon = asyncHandler(async (req, res) => {
         discountType,
         discountValue,
         minOrderValue,
-        maxDiscountAmount,
         startDate,
         endDate,
         usageLimit,
@@ -135,7 +132,6 @@ export const createCoupon = asyncHandler(async (req, res) => {
         discountType,
         discountValue,
         minOrderValue,
-        maxDiscountAmount,
         startDate,
         endDate,
         usageLimit,
@@ -157,15 +153,12 @@ export const updateCoupon = asyncHandler(async (req, res) => {
     const coupon = await Coupon.findById(req.params.id);
 
     if (coupon) {
+        // Only allow updating description, usageLimit, and isActive
         coupon.description = req.body.description || coupon.description;
-        coupon.discountType = req.body.discountType || coupon.discountType;
-        coupon.discountValue = req.body.discountValue ?? coupon.discountValue;
-        coupon.minOrderValue = req.body.minOrderValue ?? coupon.minOrderValue;
-        coupon.maxDiscountAmount = req.body.maxDiscountAmount ?? coupon.maxDiscountAmount;
-        coupon.startDate = req.body.startDate || coupon.startDate;
-        coupon.endDate = req.body.endDate || coupon.endDate;
         coupon.usageLimit = req.body.usageLimit ?? coupon.usageLimit;
         coupon.isActive = req.body.isActive ?? coupon.isActive;
+
+        // Other fields are NOT updated to preserve data integrity
 
         const updatedCoupon = await coupon.save();
         res.json({
@@ -187,6 +180,14 @@ export const deleteCoupon = asyncHandler(async (req, res) => {
     const coupon = await Coupon.findById(req.params.id);
 
     if (coupon) {
+        // Check if coupon has been used in any order
+        const orderWithCoupon = await Order.findOne({ 'couponApplied.code': coupon.code });
+
+        if (orderWithCoupon) {
+            res.status(400);
+            throw new Error('Không thể xóa mã giảm giá đã được sử dụng trong đơn hàng');
+        }
+
         await coupon.deleteOne();
         res.json({
             success: true,

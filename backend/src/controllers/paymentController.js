@@ -1,110 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/Order.js';
-import { createVNPayUrl, verifyVNPaySignature, parseVNPayReturn } from '../utils/vnpayHelper.js';
 import { createMoMoPayment, verifyMoMoSignature, parseMoMoReturn } from '../utils/momoHelper.js';
-
-/**
- * @desc    Create VNPay payment URL
- * @route   POST /api/payment/vnpay/create
- * @access  Private
- */
-export const createVNPayPaymentUrl = asyncHandler(async (req, res) => {
-    const { orderId, orderDescription } = req.body;
-
-    const order = await Order.findById(orderId);
-    if (!order) {
-        res.status(404);
-        throw new Error('Không tìm thấy đơn hàng');
-    }
-
-    const ipAddr = req.headers['x-forwarded-for'] || req.connection.remoteAddress || '127.0.0.1';
-
-    const paymentUrl = createVNPayUrl({
-        orderId,
-        amount: order.totalPrice,
-        orderDescription: orderDescription || `Thanh toán đơn hàng ${orderId}`,
-        ipAddr,
-    });
-
-    res.json({
-        success: true,
-        data: {
-            paymentUrl,
-        },
-    });
-});
-
-/**
- * @desc    VNPay return URL handler
- * @route   GET /api/payment/vnpay/return
- * @access  Public
- */
-export const vnpayReturn = asyncHandler(async (req, res) => {
-    const vnpParams = req.query;
-
-    const isValid = verifyVNPaySignature(vnpParams);
-
-    if (!isValid) {
-        return res.redirect(`${process.env.FRONTEND_URL}/payment/fail?message=Invalid signature`);
-    }
-
-    const paymentResult = parseVNPayReturn(vnpParams);
-
-    if (paymentResult.isSuccess) {
-        const order = await Order.findById(paymentResult.orderId);
-        if (order) {
-            order.isPaid = true;
-            order.paidAt = Date.now();
-            order.paymentResult = {
-                id: paymentResult.transactionNo,
-                status: 'completed',
-                update_time: paymentResult.payDate,
-            };
-            order.status = 'processing';
-            await order.save();
-        }
-
-        res.redirect(`${process.env.FRONTEND_URL}/payment/success?orderId=${paymentResult.orderId}`);
-    } else {
-        res.redirect(`${process.env.FRONTEND_URL}/payment/fail?orderId=${paymentResult.orderId}`);
-    }
-});
-
-/**
- * @desc    VNPay IPN handler
- * @route   POST /api/payment/vnpay/ipn
- * @access  Public
- */
-export const vnpayIPN = asyncHandler(async (req, res) => {
-    const vnpParams = req.query;
-
-    const isValid = verifyVNPaySignature(vnpParams);
-
-    if (!isValid) {
-        return res.json({ RspCode: '97', Message: 'Invalid signature' });
-    }
-
-    const paymentResult = parseVNPayReturn(vnpParams);
-
-    if (paymentResult.isSuccess) {
-        const order = await Order.findById(paymentResult.orderId);
-        if (order && !order.isPaid) {
-            order.isPaid = true;
-            order.paidAt = Date.now();
-            order.paymentResult = {
-                id: paymentResult.transactionNo,
-                status: 'completed',
-                update_time: paymentResult.payDate,
-            };
-            order.status = 'processing';
-            await order.save();
-        }
-
-        res.json({ RspCode: '00', Message: 'Success' });
-    } else {
-        res.json({ RspCode: '01', Message: 'Payment failed' });
-    }
-});
 
 /**
  * @desc    Create MoMo payment
@@ -213,9 +109,6 @@ export const momoIPN = asyncHandler(async (req, res) => {
 });
 
 export default {
-    createVNPayPaymentUrl,
-    vnpayReturn,
-    vnpayIPN,
     createMoMoPaymentUrl,
     momoReturn,
     momoIPN,

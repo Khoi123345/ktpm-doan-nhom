@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { removeFromCart, updateCartQuantity, clearCart, clearCartAsync } from '../../features/cartSlice';
+import { removeFromCart, updateCartItem, clearCart, clearCartAsync, updateCartItemAsync, removeFromCartAsync } from '../../features/cartSlice';
 import { FiTrash2, FiMinus, FiPlus, FiArrowLeft, FiShoppingBag } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import Button from '../../components/common/Button';
@@ -11,14 +12,46 @@ const CartPage = () => {
     const navigate = useNavigate();
     const { cartItems, itemsPrice, shippingPrice, totalPrice } = useSelector((state) => state.cart);
     const { userInfo } = useSelector((state) => state.auth);
+    const [selectedItems, setSelectedItems] = useState([]);
 
-    const handleRemove = (id) => {
-        dispatch(removeFromCart(id));
+    // Initialize selectedItems with all items when cartItems loads
+    useEffect(() => {
+        // Only set if selectedItems is empty and we have cart items (initial load)
+        // Or if cart items count changed (added/removed), we might want to re-sync
+        // For simplicity, let's default to all selected on first load
+        if (cartItems.length > 0 && selectedItems.length === 0) {
+            setSelectedItems(cartItems.map(item => item._id));
+        }
+    }, [cartItems.length]);
+
+    const handleRemove = (item) => {
+        const bookId = userInfo ? item.book?._id : item._id;
+        const cartItemId = item._id;
+
+        if (userInfo) {
+            if (bookId) {
+                dispatch(removeFromCartAsync(bookId));
+            }
+        } else {
+            dispatch(removeFromCart(bookId));
+        }
+        // Remove from selected items if it was selected
+        setSelectedItems(prev => prev.filter(id => id !== cartItemId));
     };
 
-    const handleUpdateQuantity = (id, quantity) => {
+    const handleUpdateQuantity = (item, quantity) => {
+        const bookId = userInfo ? item.book?._id : item._id;
+
         if (quantity > 0) {
-            dispatch(updateCartQuantity({ id, quantity }));
+            if (userInfo) {
+                if (bookId) {
+                    dispatch(updateCartItemAsync({ bookId, quantity }))
+                        .unwrap()
+                        .catch((err) => toast.error(err));
+                }
+            } else {
+                dispatch(updateCartItem({ id: bookId, quantity }));
+            }
         }
     };
 
@@ -29,8 +62,39 @@ const CartPage = () => {
             } else {
                 dispatch(clearCart());
             }
+            setSelectedItems([]);
             toast.success('Đã xóa tất cả sản phẩm khỏi giỏ hàng');
         }
+    };
+
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            setSelectedItems(cartItems.map(item => item._id));
+        } else {
+            setSelectedItems([]);
+        }
+    };
+
+    const handleSelectItem = (id) => {
+        if (selectedItems.includes(id)) {
+            setSelectedItems(selectedItems.filter(itemId => itemId !== id));
+        } else {
+            setSelectedItems([...selectedItems, id]);
+        }
+    };
+
+    // Calculate totals based on selection
+    const selectedCartItems = cartItems.filter(item => selectedItems.includes(item._id));
+    const selectedItemsPrice = selectedCartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const selectedShippingPrice = selectedItemsPrice > 200000 ? 0 : (selectedItemsPrice === 0 ? 0 : 30000);
+    const selectedTotalPrice = selectedItemsPrice + selectedShippingPrice;
+
+    const handleCheckout = () => {
+        if (selectedItems.length === 0) {
+            toast.error('Vui lòng chọn ít nhất một sản phẩm để thanh toán');
+            return;
+        }
+        navigate('/checkout', { state: { selectedItems } });
     };
 
     if (cartItems.length === 0) {
@@ -68,9 +132,27 @@ const CartPage = () => {
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Cart Items List */}
                     <div className="lg:w-2/3 space-y-4">
+                        {/* Select All Header */}
+                        <div className="bg-white p-4 rounded-xl shadow-sm flex items-center gap-4">
+                            <input
+                                type="checkbox"
+                                checked={selectedItems.length === cartItems.length && cartItems.length > 0}
+                                onChange={handleSelectAll}
+                                className="w-5 h-5 text-primary-600 rounded focus:ring-primary-500 border-gray-300"
+                            />
+                            <span className="font-medium text-gray-700">Chọn tất cả ({cartItems.length} sản phẩm)</span>
+                        </div>
+
                         {cartItems.map((item) => (
                             <div key={item._id} className="bg-white p-4 rounded-xl shadow-sm flex gap-4 items-center transition hover:shadow-md">
-                                <Link to={`/books/${item._id}`} className="shrink-0">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedItems.includes(item._id)}
+                                    onChange={() => handleSelectItem(item._id)}
+                                    className="w-5 h-5 text-primary-600 rounded focus:ring-primary-500 border-gray-300 shrink-0"
+                                />
+
+                                <Link to={`/books/${userInfo ? item.book?._id : item._id}`} className="shrink-0">
                                     <img
                                         src={item.image}
                                         alt={item.title}
@@ -81,13 +163,13 @@ const CartPage = () => {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-start mb-2">
                                         <div>
-                                            <Link to={`/books/${item._id}`} className="font-semibold text-lg text-gray-900 hover:text-primary-600 line-clamp-1">
+                                            <Link to={`/books/${userInfo ? item.book?._id : item._id}`} className="font-semibold text-lg text-gray-900 hover:text-primary-600 line-clamp-1">
                                                 {item.title}
                                             </Link>
                                             <p className="text-gray-500 text-sm">{item.author}</p>
                                         </div>
                                         <button
-                                            onClick={() => handleRemove(item._id)}
+                                            onClick={() => handleRemove(item)}
                                             className="text-gray-400 hover:text-red-500 p-2 transition"
                                         >
                                             <FiTrash2 className="w-5 h-5" />
@@ -97,7 +179,7 @@ const CartPage = () => {
                                     <div className="flex items-center justify-between mt-4">
                                         <div className="flex items-center border border-gray-200 rounded-lg">
                                             <button
-                                                onClick={() => handleUpdateQuantity(item._id, item.quantity - 1)}
+                                                onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
                                                 className="p-2 hover:bg-gray-50 text-gray-600 transition disabled:opacity-50"
                                                 disabled={item.quantity <= 1}
                                             >
@@ -105,7 +187,7 @@ const CartPage = () => {
                                             </button>
                                             <span className="w-10 text-center font-medium text-gray-900">{item.quantity}</span>
                                             <button
-                                                onClick={() => handleUpdateQuantity(item._id, item.quantity + 1)}
+                                                onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
                                                 className="p-2 hover:bg-gray-50 text-gray-600 transition"
                                             >
                                                 <FiPlus className="w-4 h-4" />
@@ -140,22 +222,30 @@ const CartPage = () => {
 
                             <div className="space-y-4 mb-6 pb-6 border-b border-gray-100">
                                 <div className="flex justify-between text-gray-600">
+                                    <span>Đã chọn</span>
+                                    <span className="font-medium text-gray-900">{selectedItems.length} sản phẩm</span>
+                                </div>
+                                <div className="flex justify-between text-gray-600">
                                     <span>Tạm tính</span>
-                                    <span className="font-medium text-gray-900">{itemsPrice.toLocaleString('vi-VN')} đ</span>
+                                    <span className="font-medium text-gray-900">{selectedItemsPrice.toLocaleString('vi-VN')} đ</span>
                                 </div>
                                 <div className="flex justify-between text-gray-600">
                                     <span>Phí vận chuyển</span>
-                                    <span className="font-medium text-gray-900">{shippingPrice === 0 ? 'Miễn phí' : `${shippingPrice.toLocaleString('vi-VN')} đ`}</span>
+                                    <span className="font-medium text-gray-900">{selectedShippingPrice === 0 ? 'Miễn phí' : `${selectedShippingPrice.toLocaleString('vi-VN')} đ`}</span>
                                 </div>
                             </div>
 
                             <div className="flex justify-between items-end mb-8">
                                 <span className="text-lg font-bold text-gray-900">Tổng cộng</span>
-                                <span className="text-2xl font-bold text-primary-600">{totalPrice.toLocaleString('vi-VN')} đ</span>
+                                <span className="text-2xl font-bold text-primary-600">{selectedTotalPrice.toLocaleString('vi-VN')} đ</span>
                             </div>
 
-                            <Button onClick={() => navigate('/checkout')} className="w-full py-4 text-lg shadow-lg shadow-primary-200">
-                                Tiến Hành Thanh Toán
+                            <Button
+                                onClick={handleCheckout}
+                                className="w-full py-4 text-lg shadow-lg shadow-primary-200"
+                                disabled={selectedItems.length === 0}
+                            >
+                                Tiến Hành Thanh Toán ({selectedItems.length})
                             </Button>
 
                             <div className="mt-6 text-center">

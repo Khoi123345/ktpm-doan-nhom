@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrderById, clearOrder } from '../../features/orderSlice';
+import { getOrderById, clearOrder, cancelOrder } from '../../features/orderSlice';
 import { FiPackage, FiClock, FiCheckCircle, FiXCircle, FiArrowLeft, FiMapPin, FiPhone, FiUser } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 
@@ -30,6 +30,12 @@ const OrderDetailPage = () => {
             dispatch(clearOrder());
         };
     }, [dispatch, id, navigate]);
+
+    const handleCancelOrder = () => {
+        if (window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
+            dispatch(cancelOrder({ id: currentOrder._id, reason: 'Khách hàng hủy' }));
+        }
+    };
 
     const getStatusIcon = (status) => {
         switch (status) {
@@ -183,7 +189,7 @@ const OrderDetailPage = () => {
                                 <div>
                                     <p className="text-sm text-gray-600">Địa chỉ</p>
                                     <p className="font-medium">
-                                        {currentOrder.shippingAddress.address}, {currentOrder.shippingAddress.district}, {currentOrder.shippingAddress.city}
+                                        {currentOrder.shippingAddress.address}, {currentOrder.shippingAddress.ward ? `${currentOrder.shippingAddress.ward}, ` : ''}{currentOrder.shippingAddress.district}, {currentOrder.shippingAddress.city}
                                     </p>
                                 </div>
                             </div>
@@ -212,9 +218,17 @@ const OrderDetailPage = () => {
                                 <span className="text-gray-600">Phí vận chuyển:</span>
                                 <span>{currentOrder.shippingPrice.toLocaleString('vi-VN')} đ</span>
                             </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Mã giảm giá:</span>
+                                <span className="font-medium">
+                                    {currentOrder.couponApplied && currentOrder.couponApplied.code
+                                        ? currentOrder.couponApplied.code
+                                        : 'Không có'}
+                                </span>
+                            </div>
                             {currentOrder.couponApplied && currentOrder.couponApplied.discountAmount > 0 && (
                                 <div className="flex justify-between text-green-600">
-                                    <span>Giảm giá ({currentOrder.couponApplied.code}):</span>
+                                    <span>Giảm giá:</span>
                                     <span>-{currentOrder.couponApplied.discountAmount.toLocaleString('vi-VN')} đ</span>
                                 </div>
                             )}
@@ -246,6 +260,16 @@ const OrderDetailPage = () => {
                                     <span className="font-medium">Đã giao:</span> {new Date(currentOrder.deliveredAt).toLocaleString('vi-VN')}
                                 </p>
                             </div>
+                        )}
+
+                        {/* Cancel Button */}
+                        {currentOrder.status === 'pending' && (
+                            <button
+                                onClick={handleCancelOrder}
+                                className="w-full mt-4 bg-red-50 text-red-600 border border-red-200 py-2 rounded font-medium hover:bg-red-100 transition-colors"
+                            >
+                                Hủy đơn hàng
+                            </button>
                         )}
                     </div>
                 </div>
