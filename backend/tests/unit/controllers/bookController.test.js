@@ -65,7 +65,7 @@ describe('bookController', () => {
     describe('getBooks', () => {
         it('returnPaginatedBooks', async () => {
             const books = [mockBook(), mockBook()];
-            req.query = { page: '1' };
+            req.query = { page: '1', limit: '10' };
 
             Book.countDocuments.mockResolvedValue(20);
             Book.find.mockReturnValue({

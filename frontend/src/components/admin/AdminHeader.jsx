@@ -41,16 +41,6 @@ const AdminHeader = ({ onMenuClick }) => {
                 >
                     <FiMenu className="w-6 h-6" />
                 </button>
-
-                {/* Search Bar */}
-                <div className="hidden md:flex items-center bg-gray-50 rounded-lg px-4 py-2 w-64 border border-gray-200 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 transition-all">
-                    <FiSearch className="text-gray-400 w-5 h-5 mr-2" />
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm..."
-                        className="bg-transparent border-none outline-none text-sm w-full text-gray-700 placeholder-gray-400"
-                    />
-                </div>
             </div>
 
             <div className="flex items-center gap-4">

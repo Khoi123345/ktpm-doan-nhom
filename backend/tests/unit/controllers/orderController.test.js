@@ -218,18 +218,32 @@ describe('orderController', () => {
     describe('getOrders', () => {
         it('returnAllOrdersAdmin', async () => {
             const orders = [mockOrder(), mockOrder()];
+            const count = 2;
+
+            Order.countDocuments = jest.fn().mockResolvedValue(count);
+
             Order.find.mockReturnValue({
                 populate: jest.fn().mockReturnValue({
-                    sort: jest.fn().mockResolvedValue(orders)
+                    limit: jest.fn().mockReturnValue({
+                        skip: jest.fn().mockReturnValue({
+                            sort: jest.fn().mockResolvedValue(orders)
+                        })
+                    })
                 })
             });
 
+            req.query = { page: 1, limit: 10 };
+
             await getOrders(req, res);
 
+            expect(Order.countDocuments).toHaveBeenCalledWith({});
             expect(Order.find).toHaveBeenCalledWith({});
             expect(res.json).toHaveBeenCalledWith({
                 success: true,
-                data: orders
+                data: orders,
+                page: 1,
+                pages: 1,
+                total: 2
             });
         });
     });

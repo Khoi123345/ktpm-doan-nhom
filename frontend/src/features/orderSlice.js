@@ -10,6 +10,9 @@ const initialState = {
     success: false,
     topSellingBooks: [],
     topBuyers: [],
+    page: 1,
+    pages: 1,
+    total: 0,
 };
 
 // Create order
@@ -54,10 +57,10 @@ export const getOrderById = createAsyncThunk(
 // Get all orders (Admin)
 export const getOrders = createAsyncThunk(
     'orders/getOrders',
-    async (_, { rejectWithValue }) => {
+    async ({ page = 1, limit = 10 } = {}, { rejectWithValue }) => {
         try {
-            const { data } = await api.get('/orders');
-            return data.data;
+            const { data } = await api.get(`/orders?page=${page}&limit=${limit}`);
+            return data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Lỗi khi tải danh sách đơn hàng');
         }
@@ -166,7 +169,10 @@ const orderSlice = createSlice({
             })
             .addCase(getOrders.fulfilled, (state, action) => {
                 state.loading = false;
-                state.orders = action.payload;
+                state.orders = action.payload.data;
+                state.page = action.payload.page;
+                state.pages = action.payload.pages;
+                state.total = action.payload.total;
             })
             .addCase(getOrders.rejected, (state, action) => {
                 state.loading = false;

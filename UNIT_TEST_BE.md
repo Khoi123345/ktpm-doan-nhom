@@ -77,7 +77,7 @@
 
 | Tên hàm test | Mô tả | Dữ liệu nhập | Kết quả mong đợi | Kết quả chạy | Failed/ Pass |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `returnPaginatedBooks` | Kiểm tra trả về danh sách sách có phân trang | `req.query` với `page` | `res.json` trả về danh sách sách và thông tin phân trang | `res.json` trả về danh sách sách và thông tin phân trang | Pass |
+| `returnPaginatedBooks` | Kiểm tra trả về danh sách sách có phân trang | `req.query` với `page`, `limit` | `res.json` trả về danh sách sách và thông tin phân trang | `res.json` trả về danh sách sách và thông tin phân trang | Pass |
 | `filterByKeyword` | Kiểm tra lọc sách theo từ khóa | `req.query` với `keyword` | `Book.find` được gọi với query `$or` theo title/author | `Book.find` được gọi với query `$or` theo title/author | Pass |
 | `filterByCategory` | Kiểm tra lọc sách theo danh mục | `req.query` với `category` | `Book.find` được gọi với query `category` | `Book.find` được gọi với query `category` | Pass |
 | `filterByPriceRange` | Kiểm tra lọc sách theo khoảng giá | `req.query` với `minPrice`, `maxPrice` | `Book.find` được gọi với query `$expr` so sánh giá | `Book.find` được gọi với query `$expr` so sánh giá | Pass |
@@ -233,13 +233,13 @@
 | :--- | :--- |
 | **ID** | TC-ORDER-04 |
 | **Hàm** | `getOrders(req, res)` |
-| **Mục đích** | Lấy tất cả đơn hàng (Admin) |
+| **Mục đích** | Lấy danh sách đơn hàng (Admin) có phân trang |
 
 **Các trường hợp test:**
 
 | Tên hàm test | Mô tả | Dữ liệu nhập | Kết quả mong đợi | Kết quả chạy | Failed/ Pass |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `returnAllOrdersAdmin` | Kiểm tra trả về tất cả đơn hàng | User là admin | `res.json` trả về tất cả đơn hàng | `res.json` trả về tất cả đơn hàng | Pass |
+| `returnAllOrdersAdmin` | Kiểm tra trả về danh sách đơn hàng có phân trang | User là admin, `req.query` với `page`, `limit` | `res.json` trả về danh sách đơn hàng có phân trang | `res.json` trả về danh sách đơn hàng có phân trang | Pass |
 
 ### Feature: updateOrderStatus
 | Property | Value |

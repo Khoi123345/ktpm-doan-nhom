@@ -220,45 +220,56 @@ const BookListPage = () => {
                     </div>
 
                     {/* Books Grid */}
-                    <div className="flex-1">
-                        {loading ? (
-                            <Loader size="lg" className="py-12" />
-                        ) : sortedBooks.length === 0 ? (
-                            <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
-                                <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <FiSearch className="w-10 h-10 text-gray-400" />
+                    <div className="flex-1 relative min-h-[400px]">
+                        {loading && (
+                            <div className="absolute inset-0 z-10 flex items-start justify-center pt-40 pointer-events-none">
+                                <div className="bg-white/90 p-3 rounded-full shadow-lg backdrop-blur-sm">
+                                    <Loader size="lg" />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-2">Không tìm thấy kết quả</h3>
-                                <p className="text-gray-500">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
-                                <button
-                                    onClick={handleClearFilters}
-                                    className="mt-4 text-primary-600 font-medium hover:underline"
-                                >
-                                    Xóa bộ lọc
-                                </button>
                             </div>
-                        ) : (
-                            <>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                                    {sortedBooks.map((book) => (
-                                        <ProductCard
-                                            key={book._id}
-                                            book={book}
-                                            showQuickAdd={true}
-                                        />
-                                    ))}
-                                </div>
-
-                                {/* Pagination */}
-                                <div className="flex justify-center">
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={pages}
-                                        onPageChange={setCurrentPage}
-                                    />
-                                </div>
-                            </>
                         )}
+
+                        <div className={`transition-opacity duration-300 ${loading ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+                            {sortedBooks.length === 0 && !loading ? (
+                                <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
+                                    <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <FiSearch className="w-10 h-10 text-gray-400" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">Không tìm thấy kết quả</h3>
+                                    <p className="text-gray-500">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+                                    <button
+                                        onClick={handleClearFilters}
+                                        className="mt-4 text-primary-600 font-medium hover:underline"
+                                    >
+                                        Xóa bộ lọc
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                                        {sortedBooks.map((book) => (
+                                            <ProductCard
+                                                key={book._id}
+                                                book={book}
+                                                showQuickAdd={true}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Pagination */}
+                                    <div className="flex justify-center">
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={pages}
+                                            onPageChange={(page) => {
+                                                setCurrentPage(page);
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            }}
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

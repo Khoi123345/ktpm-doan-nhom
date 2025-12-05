@@ -34,7 +34,7 @@ const Header = () => {
     const cartItemsCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
     return (
-        <header className="bg-white shadow-md sticky top-0 z-50">
+        <header className="bg-white shadow-md z-50">
 
             {/* --- Top Bar đã được xóa theo yêu cầu --- */}
 
