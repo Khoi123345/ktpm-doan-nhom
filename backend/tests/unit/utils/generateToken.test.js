@@ -9,7 +9,7 @@ describe('generateToken', () => {
         process.env.JWT_EXPIRE = '7d';
     });
 
-    it('should generate a valid JWT token', () => {
+    it('generateValidJWTToken', () => {
         const token = generateToken(mockUserId);
 
         expect(token).toBeDefined();
@@ -17,14 +17,14 @@ describe('generateToken', () => {
         expect(token.split('.')).toHaveLength(3);
     });
 
-    it('should encode the user id in the token', () => {
+    it('encodeUserIdInToken', () => {
         const token = generateToken(mockUserId);
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         expect(decoded.id).toBe(mockUserId);
     });
 
-    it('should use the configured expiry time', () => {
+    it('useConfiguredExpiryTime', () => {
         const token = generateToken(mockUserId);
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -33,7 +33,7 @@ describe('generateToken', () => {
         expect(decoded.exp - decoded.iat).toBe(604800); // 7 days in seconds
     });
 
-    it('should use default expiry if JWT_EXPIRE is not set', () => {
+    it('useDefaultExpiryIfJWTEXPIREIsNotSet', () => {
         delete process.env.JWT_EXPIRE;
 
         const token = generateToken(mockUserId);
@@ -42,7 +42,7 @@ describe('generateToken', () => {
         expect(decoded.exp - decoded.iat).toBe(2592000); // 30 days in seconds
     });
 
-    it('should create different tokens for different user IDs', () => {
+    it('createDifferentTokensForDifferentUserIDs', () => {
         const token1 = generateToken('user1');
         const token2 = generateToken('user2');
 

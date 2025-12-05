@@ -48,7 +48,7 @@ describe('reviewController', () => {
     });
 
     describe('getBookReviews', () => {
-        it('should return all reviews for a book', async () => {
+        it('returnAllReviewsForABook', async () => {
             const reviews = [mockReview(), mockReview()];
             req.params = { id: 'book-id' };
 
@@ -68,7 +68,7 @@ describe('reviewController', () => {
     });
 
     describe('createReview', () => {
-        it('should create review successfully', async () => {
+        it('createReviewSuccessfully', async () => {
             const reviewData = {
                 rating: 5,
                 comment: 'Great book!'
@@ -101,7 +101,7 @@ describe('reviewController', () => {
             });
         });
 
-        it('should return 404 when book not found', async () => {
+        it('return404WhenBookNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             req.body = { rating: 5 };
             Book.findById.mockResolvedValue(null);
@@ -110,7 +110,7 @@ describe('reviewController', () => {
             expect(res.status).toHaveBeenCalledWith(404);
         });
 
-        it('should return 400 when already reviewed', async () => {
+        it('return400WhenAlreadyReviewed', async () => {
             req.params = { id: 'book-id' };
             req.body = { rating: 5 };
 
@@ -123,7 +123,7 @@ describe('reviewController', () => {
     });
 
     describe('updateReview', () => {
-        it('should update review successfully', async () => {
+        it('updateReviewSuccessfully', async () => {
             const review = mockReview({ user: req.user._id, book: 'book-id' });
             req.params = { id: review._id };
             req.body = { rating: 4, comment: 'Updated comment' };
@@ -145,7 +145,7 @@ describe('reviewController', () => {
             expect(book.save).toHaveBeenCalled();
         });
 
-        it('should allow admin to update response', async () => {
+        it('allowAdminToUpdateResponse', async () => {
             const review = mockReview({ user: 'user-id', book: 'book-id' });
             req.params = { id: review._id };
             req.body = { response: 'Thank you!' };
@@ -166,7 +166,7 @@ describe('reviewController', () => {
             expect(review.save).toHaveBeenCalled();
         });
 
-        it('should return 401 when unauthorized', async () => {
+        it('return401WhenUnauthorized', async () => {
             const review = mockReview({ user: 'different-user-id' });
             req.params = { id: review._id };
             req.body = { rating: 4 };
@@ -177,7 +177,7 @@ describe('reviewController', () => {
             expect(res.status).toHaveBeenCalledWith(401);
         });
 
-        it('should return 404 when review not found', async () => {
+        it('return404WhenReviewNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             Review.findById.mockResolvedValue(null);
 
@@ -187,7 +187,7 @@ describe('reviewController', () => {
     });
 
     describe('deleteReview', () => {
-        it('should delete review successfully', async () => {
+        it('deleteReviewSuccessfully', async () => {
             const review = mockReview({ user: req.user._id, book: 'book-id' });
             req.params = { id: review._id };
 
@@ -208,7 +208,7 @@ describe('reviewController', () => {
             expect(book.save).toHaveBeenCalled();
         });
 
-        it('should allow admin to delete any review', async () => {
+        it('allowAdminToDeleteAnyReview', async () => {
             const review = mockReview({ user: 'other-user-id', book: 'book-id' });
             req.params = { id: review._id };
             req.user = mockUser({ role: 'admin' });
@@ -227,7 +227,7 @@ describe('reviewController', () => {
             expect(review.deleteOne).toHaveBeenCalled();
         });
 
-        it('should return 401 when unauthorized', async () => {
+        it('return401WhenUnauthorized', async () => {
             const review = mockReview({ user: 'different-user-id' });
             req.params = { id: review._id };
             req.user = mockUser({ role: 'customer' });
@@ -238,7 +238,7 @@ describe('reviewController', () => {
             expect(res.status).toHaveBeenCalledWith(401);
         });
 
-        it('should return 404 when review not found', async () => {
+        it('return404WhenReviewNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             Review.findById.mockResolvedValue(null);
 
@@ -248,7 +248,7 @@ describe('reviewController', () => {
     });
 
     describe('getAllReviews', () => {
-        it('should return all reviews (admin)', async () => {
+        it('returnAllReviewsAdmin', async () => {
             const reviews = [mockReview(), mockReview()];
 
             Review.find.mockReturnValue({

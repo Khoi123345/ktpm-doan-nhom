@@ -29,7 +29,7 @@ describe('uploadMiddleware', () => {
         uploadMiddleware = module.default;
     });
 
-    it('should configure multer with memory storage', () => {
+    it('configureMulterWithMemoryStorage', () => {
         expect(mockMulter).toHaveBeenCalled();
         expect(mockMemoryStorage).toHaveBeenCalled();
 
@@ -39,7 +39,7 @@ describe('uploadMiddleware', () => {
         expect(multerConfig).toHaveProperty('limits');
     });
 
-    it('should accept image files', () => {
+    it('acceptImageFiles', () => {
         const multerConfig = mockMulter.mock.calls[0][0];
         const fileFilter = multerConfig.fileFilter;
 
@@ -52,7 +52,7 @@ describe('uploadMiddleware', () => {
         expect(mockCallback).toHaveBeenCalledWith(null, true);
     });
 
-    it('should reject non-image files', () => {
+    it('rejectNonImageFiles', () => {
         const multerConfig = mockMulter.mock.calls[0][0];
         const fileFilter = multerConfig.fileFilter;
 
@@ -70,7 +70,7 @@ describe('uploadMiddleware', () => {
         );
     });
 
-    it('should set file size limit to 5MB', () => {
+    it('setFileSizeLimitTo5MB', () => {
         const multerConfig = mockMulter.mock.calls[0][0];
 
         expect(multerConfig.limits).toBeDefined();

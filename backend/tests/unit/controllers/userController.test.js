@@ -41,7 +41,7 @@ describe('userController', () => {
     });
 
     describe('getAllUsers', () => {
-        it('should return all users', async () => {
+        it('returnAllUsers', async () => {
             const users = [mockUser(), mockUser()];
 
             User.find.mockReturnValue({
@@ -59,7 +59,7 @@ describe('userController', () => {
     });
 
     describe('getUserById', () => {
-        it('should return user when found', async () => {
+        it('returnUserWhenFound', async () => {
             const user = mockUser();
             req.params = { id: user._id };
 
@@ -75,7 +75,7 @@ describe('userController', () => {
             });
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
 
             User.findById.mockReturnValue({
@@ -88,7 +88,7 @@ describe('userController', () => {
     });
 
     describe('updateUser', () => {
-        it('should update user successfully', async () => {
+        it('updateUserSuccessfully', async () => {
             const user = mockUser();
             req.params = { id: user._id };
             req.body = { name: 'Updated Name', role: 'admin' };
@@ -111,7 +111,7 @@ describe('userController', () => {
             });
         });
 
-        it('should handle partial updates', async () => {
+        it('handlePartialUpdates', async () => {
             const user = mockUser({ name: 'Old Name', role: 'user' });
             req.params = { id: user._id };
             req.body = { name: 'New Name' }; // Only update name
@@ -127,7 +127,7 @@ describe('userController', () => {
             expect(updatedUser.save).toHaveBeenCalled();
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             req.body = { name: 'Updated Name' };
 
@@ -139,7 +139,7 @@ describe('userController', () => {
     });
 
     describe('deleteUser', () => {
-        it('should delete user successfully', async () => {
+        it('deleteUserSuccessfully', async () => {
             const user = mockUser({ role: 'user' });
             req.params = { id: user._id };
 
@@ -155,7 +155,7 @@ describe('userController', () => {
             });
         });
 
-        it('should return 400 when trying to delete admin', async () => {
+        it('return400WhenTryingToDeleteAdmin', async () => {
             const adminUser = mockUser({ role: 'admin' });
             req.params = { id: adminUser._id };
 
@@ -165,7 +165,7 @@ describe('userController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
 
             User.findById.mockResolvedValue(null);
@@ -176,7 +176,7 @@ describe('userController', () => {
     });
 
     describe('changePassword', () => {
-        it('should change password successfully', async () => {
+        it('changePasswordSuccessfully', async () => {
             const user = mockUser();
             req.user = { _id: user._id };
             req.body = {
@@ -202,7 +202,7 @@ describe('userController', () => {
             });
         });
 
-        it('should return 401 if old password is incorrect', async () => {
+        it('return401IfOldPasswordIsIncorrect', async () => {
             const user = mockUser();
             req.user = { _id: user._id };
             req.body = {
@@ -220,7 +220,7 @@ describe('userController', () => {
             expect(res.status).toHaveBeenCalledWith(401);
         });
 
-        it('should return 400 if new password is too short', async () => {
+        it('return400IfNewPasswordIsTooShort', async () => {
             const user = mockUser();
             req.user = { _id: user._id };
             req.body = {
@@ -238,7 +238,7 @@ describe('userController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 400 if new password lacks complexity', async () => {
+        it('return400IfNewPasswordLacksComplexity', async () => {
             const user = mockUser();
             req.user = { _id: user._id };
             req.body = {
@@ -256,7 +256,7 @@ describe('userController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 404 if user not found', async () => {
+        it('return404IfUserNotFound', async () => {
             req.user = { _id: 'nonexistent-id' };
             req.body = {
                 oldPassword: 'OldPassword123!',
@@ -273,7 +273,7 @@ describe('userController', () => {
     });
 
     describe('toggleUserLock', () => {
-        it('should lock user successfully', async () => {
+        it('lockUserSuccessfully', async () => {
             const user = mockUser({ isLocked: false, role: 'user' });
             req.params = { id: user._id };
 
@@ -295,7 +295,7 @@ describe('userController', () => {
             });
         });
 
-        it('should unlock user successfully', async () => {
+        it('unlockUserSuccessfully', async () => {
             const user = mockUser({ isLocked: true, role: 'user' });
             req.params = { id: user._id };
 
@@ -317,7 +317,7 @@ describe('userController', () => {
             });
         });
 
-        it('should return 400 when trying to lock admin', async () => {
+        it('return400WhenTryingToLockAdmin', async () => {
             const adminUser = mockUser({ role: 'admin' });
             req.params = { id: adminUser._id };
 
@@ -327,7 +327,7 @@ describe('userController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
 
             User.findById.mockResolvedValue(null);

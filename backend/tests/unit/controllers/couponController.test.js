@@ -49,7 +49,7 @@ describe('couponController', () => {
     });
 
     describe('getCoupons', () => {
-        it('should return all coupons', async () => {
+        it('returnAllCoupons', async () => {
             const coupons = [mockCoupon(), mockCoupon()];
             Coupon.find.mockReturnValue({
                 sort: jest.fn().mockResolvedValue(coupons)
@@ -65,7 +65,7 @@ describe('couponController', () => {
     });
 
     describe('getAllCoupons', () => {
-        it('should return all coupons with populated data', async () => {
+        it('returnAllCouponsWithPopulatedData', async () => {
             const coupons = [mockCoupon(), mockCoupon()];
             const mockPopulate = jest.fn().mockResolvedValue(coupons);
             const mockSort = jest.fn().mockReturnValue({ populate: mockPopulate });
@@ -83,7 +83,7 @@ describe('couponController', () => {
     });
 
     describe('getCouponByCode', () => {
-        it('should return coupon when found', async () => {
+        it('returnCouponWhenFound', async () => {
             const coupon = mockCoupon();
             req.params = { code: coupon.code };
             Coupon.findOne.mockResolvedValue(coupon);
@@ -96,7 +96,7 @@ describe('couponController', () => {
             });
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { code: 'nonexistent-code' };
             Coupon.findOne.mockResolvedValue(null);
 
@@ -106,7 +106,7 @@ describe('couponController', () => {
     });
 
     describe('validateCoupon', () => {
-        it('should validate active coupon', async () => {
+        it('validateActiveCoupon', async () => {
             const coupon = mockCoupon({ isActive: true, usedCount: 5, usageLimit: 100 });
             req.body = { code: coupon.code, orderValue: 200000 };
 
@@ -124,7 +124,7 @@ describe('couponController', () => {
             });
         });
 
-        it('should return 404 when coupon not found', async () => {
+        it('return404WhenCouponNotFound', async () => {
             req.body = { code: 'INVALID', orderValue: 100000 };
             Coupon.findOne.mockResolvedValue(null);
 
@@ -132,7 +132,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(404);
         });
 
-        it('should return 400 when coupon expired', async () => {
+        it('return400WhenCouponExpired', async () => {
             const expiredCoupon = mockCoupon({
                 endDate: new Date(Date.now() - 24 * 60 * 60 * 1000)
             });
@@ -144,7 +144,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 400 when usage limit reached', async () => {
+        it('return400WhenUsageLimitReached', async () => {
             const coupon = mockCoupon({ usedCount: 100, usageLimit: 100 });
             req.body = { code: coupon.code, orderValue: 100000 };
 
@@ -154,7 +154,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 400 when minimum order not met', async () => {
+        it('return400WhenMinimumOrderNotMet', async () => {
             const coupon = mockCoupon({ minOrderValue: 200000 });
             req.body = { code: coupon.code, orderValue: 100000 };
 
@@ -164,7 +164,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 400 when coupon is inactive', async () => {
+        it('return400WhenCouponIsInactive', async () => {
             const coupon = mockCoupon({ isActive: false });
             req.body = { code: coupon.code, orderValue: 200000 };
 
@@ -174,7 +174,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 400 when coupon has not started yet', async () => {
+        it('return400WhenCouponHasNotStartedYet', async () => {
             const futureCoupon = mockCoupon({
                 startDate: new Date(Date.now() + 24 * 60 * 60 * 1000)
             });
@@ -186,7 +186,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should calculate percentage discount correctly', async () => {
+        it('calculatePercentageDiscountCorrectly', async () => {
             const coupon = mockCoupon({ discountType: 'percentage', discountValue: 10 });
             req.body = { code: coupon.code, orderValue: 200000 };
 
@@ -202,7 +202,7 @@ describe('couponController', () => {
             });
         });
 
-        it('should calculate fixed amount discount correctly', async () => {
+        it('calculateFixedAmountDiscountCorrectly', async () => {
             const coupon = mockCoupon({ discountType: 'fixed', discountValue: 50000 });
             req.body = { code: coupon.code, orderValue: 200000 };
 
@@ -220,7 +220,7 @@ describe('couponController', () => {
     });
 
     describe('createCoupon', () => {
-        it('should create coupon successfully', async () => {
+        it('createCouponSuccessfully', async () => {
             const couponData = {
                 code: 'NEWCODE',
                 discountType: 'percentage',
@@ -239,7 +239,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(201);
         });
 
-        it('should return 400 when code already exists', async () => {
+        it('return400WhenCodeAlreadyExists', async () => {
             req.body = { code: 'EXISTING' };
             Coupon.findOne.mockResolvedValue(mockCoupon());
 
@@ -247,7 +247,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should save coupon code in uppercase', async () => {
+        it('saveCouponCodeInUppercase', async () => {
             const couponData = {
                 code: 'lowercase',
                 discountType: 'percentage',
@@ -270,7 +270,7 @@ describe('couponController', () => {
     });
 
     describe('updateCoupon', () => {
-        it('should update coupon successfully', async () => {
+        it('updateCouponSuccessfully', async () => {
             const coupon = mockCoupon();
             req.params = { id: coupon._id };
             req.body = { discountValue: 20 };
@@ -284,7 +284,7 @@ describe('couponController', () => {
             expect(updatedCoupon.save).toHaveBeenCalled();
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             req.body = { discountValue: 20 };
             Coupon.findById.mockResolvedValue(null);
@@ -295,7 +295,7 @@ describe('couponController', () => {
     });
 
     describe('deleteCoupon', () => {
-        it('should delete coupon successfully', async () => {
+        it('deleteCouponSuccessfully', async () => {
             const coupon = mockCoupon();
             req.params = { id: coupon._id };
 
@@ -308,7 +308,7 @@ describe('couponController', () => {
             expect(coupon.deleteOne).toHaveBeenCalled();
         });
 
-        it('should return 400 when coupon is used in an order', async () => {
+        it('return400WhenCouponIsUsedInAnOrder', async () => {
             const coupon = mockCoupon();
             req.params = { id: coupon._id };
 
@@ -319,7 +319,7 @@ describe('couponController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             Coupon.findById.mockResolvedValue(null);
 

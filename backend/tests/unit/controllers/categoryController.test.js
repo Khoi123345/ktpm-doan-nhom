@@ -39,7 +39,7 @@ describe('categoryController', () => {
     });
 
     describe('getCategories', () => {
-        it('should return all categories', async () => {
+        it('returnAllCategories', async () => {
             const categories = [mockCategory(), mockCategory()];
             Category.find.mockReturnValue({
                 sort: jest.fn().mockResolvedValue(categories)
@@ -55,7 +55,7 @@ describe('categoryController', () => {
     });
 
     describe('getCategoryById', () => {
-        it('should return category when found', async () => {
+        it('returnCategoryWhenFound', async () => {
             const category = mockCategory();
             req.params = { id: category._id };
             Category.findById.mockResolvedValue(category);
@@ -68,7 +68,7 @@ describe('categoryController', () => {
             });
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             Category.findById.mockResolvedValue(null);
 
@@ -78,7 +78,7 @@ describe('categoryController', () => {
     });
 
     describe('createCategory', () => {
-        it('should create category successfully', async () => {
+        it('createCategorySuccessfully', async () => {
             const categoryData = { name: 'New Category', description: 'Description' };
             req.body = categoryData;
 
@@ -96,7 +96,7 @@ describe('categoryController', () => {
             });
         });
 
-        it('should return 400 if category already exists', async () => {
+        it('return400IfCategoryAlreadyExists', async () => {
             const categoryData = { name: 'Existing Category' };
             req.body = categoryData;
 
@@ -108,7 +108,7 @@ describe('categoryController', () => {
     });
 
     describe('updateCategory', () => {
-        it('should update category successfully', async () => {
+        it('updateCategorySuccessfully', async () => {
             const category = mockCategory();
             const updates = { name: 'Updated Name' };
             req.params = { id: category._id };
@@ -127,7 +127,7 @@ describe('categoryController', () => {
             });
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             req.body = { name: 'Updated Name' };
             Category.findById.mockResolvedValue(null);
@@ -138,7 +138,7 @@ describe('categoryController', () => {
     });
 
     describe('deleteCategory', () => {
-        it('should delete category successfully', async () => {
+        it('deleteCategorySuccessfully', async () => {
             const category = mockCategory();
             req.params = { id: category._id };
 
@@ -154,7 +154,7 @@ describe('categoryController', () => {
             });
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             Category.findById.mockResolvedValue(null);
 

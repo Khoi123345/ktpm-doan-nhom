@@ -42,7 +42,7 @@ describe('cartController', () => {
     });
 
     describe('getCart', () => {
-        it('should return existing cart', async () => {
+        it('returnExistingCart', async () => {
             const cart = mockCart({ user: req.user._id });
 
             Cart.findOne.mockReturnValue({
@@ -58,7 +58,7 @@ describe('cartController', () => {
             });
         });
 
-        it('should create new cart if not exists', async () => {
+        it('createNewCartIfNotExists', async () => {
             const newCart = mockCart({ user: req.user._id });
 
             Cart.findOne.mockReturnValue({
@@ -78,7 +78,7 @@ describe('cartController', () => {
     });
 
     describe('addToCart', () => {
-        it('should add new item to cart', async () => {
+        it('addNewItemToCart', async () => {
             const book = mockBook();
             req.body = { bookId: book._id, quantity: 2 };
 
@@ -92,7 +92,7 @@ describe('cartController', () => {
             expect(cart.save).toHaveBeenCalled();
         });
 
-        it('should update quantity for existing item', async () => {
+        it('updateQuantityForExistingItem', async () => {
             const book = mockBook();
             req.body = { bookId: book._id, quantity: 2 };
 
@@ -110,7 +110,7 @@ describe('cartController', () => {
             expect(cart.save).toHaveBeenCalled();
         });
 
-        it('should return 404 when book not found', async () => {
+        it('return404WhenBookNotFound', async () => {
             req.body = { bookId: 'nonexistent-id', quantity: 1 };
 
             Book.findById.mockResolvedValue(null);
@@ -119,7 +119,7 @@ describe('cartController', () => {
             expect(res.status).toHaveBeenCalledWith(404);
         });
 
-        it('should return 400 when stock insufficient', async () => {
+        it('return400WhenStockInsufficient', async () => {
             const book = mockBook({ stock: 5 });
             req.body = { bookId: book._id, quantity: 10 };
 
@@ -129,7 +129,7 @@ describe('cartController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 400 when missing required fields', async () => {
+        it('return400WhenMissingRequiredFields', async () => {
             req.body = { bookId: 'some-id' };
 
             await expect(addToCart(req, res)).rejects.toThrow('Vui lòng cung cấp đầy đủ thông tin');
@@ -138,7 +138,7 @@ describe('cartController', () => {
     });
 
     describe('updateCartItem', () => {
-        it('should update item quantity', async () => {
+        it('updateItemQuantity', async () => {
             const book = mockBook({ stock: 10 });
             req.params = { bookId: book._id };
             req.body = { quantity: 5 };
@@ -157,7 +157,7 @@ describe('cartController', () => {
             expect(cart.save).toHaveBeenCalled();
         });
 
-        it('should return 400 when quantity exceeds stock', async () => {
+        it('return400WhenQuantityExceedsStock', async () => {
             const book = mockBook({ stock: 5 });
             req.params = { bookId: book._id };
             req.body = { quantity: 10 };
@@ -168,7 +168,7 @@ describe('cartController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 404 when cart not found', async () => {
+        it('return404WhenCartNotFound', async () => {
             const book = mockBook();
             req.params = { bookId: book._id };
             req.body = { quantity: 2 };
@@ -182,7 +182,7 @@ describe('cartController', () => {
     });
 
     describe('removeFromCart', () => {
-        it('should remove item from cart', async () => {
+        it('removeItemFromCart', async () => {
             const bookId = '507f1f77bcf86cd799439012';
             req.params = { bookId };
 
@@ -199,7 +199,7 @@ describe('cartController', () => {
             expect(cart.save).toHaveBeenCalled();
         });
 
-        it('should return 404 when cart not found', async () => {
+        it('return404WhenCartNotFound', async () => {
             req.params = { bookId: 'some-id' };
 
             Cart.findOne.mockResolvedValue(null);
@@ -210,7 +210,7 @@ describe('cartController', () => {
     });
 
     describe('removeMultipleFromCart', () => {
-        it('should remove multiple items', async () => {
+        it('removeMultipleItems', async () => {
             const itemIds = ['id1', 'id2'];
             req.body = { itemIds };
 
@@ -231,7 +231,7 @@ describe('cartController', () => {
             expect(cart.items[0].book).toBe('id3');
         });
 
-        it('should return 400 when invalid data', async () => {
+        it('return400WhenInvalidData', async () => {
             req.body = { itemIds: 'not-an-array' };
 
             await expect(removeMultipleFromCart(req, res)).rejects.toThrow('Dữ liệu không hợp lệ');
@@ -240,7 +240,7 @@ describe('cartController', () => {
     });
 
     describe('clearCart', () => {
-        it('should clear all items from cart', async () => {
+        it('clearAllItemsFromCart', async () => {
             const cart = mockCart({
                 user: req.user._id,
                 items: [{ book: 'id1', quantity: 1 }],
@@ -258,7 +258,7 @@ describe('cartController', () => {
             expect(cart.save).toHaveBeenCalled();
         });
 
-        it('should create cart if not exists', async () => {
+        it('createCartIfNotExists', async () => {
             const newCart = mockCart({ user: req.user._id });
 
             Cart.findOne.mockResolvedValue(null);

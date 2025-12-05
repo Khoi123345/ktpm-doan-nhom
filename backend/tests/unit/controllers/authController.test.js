@@ -33,7 +33,7 @@ describe('authController', () => {
     });
 
     describe('register', () => {
-        it('should register new user successfully', async () => {
+        it('registerNewUserSuccessfully', async () => {
             const userData = {
                 name: 'Test User',
                 email: 'test@example.com',
@@ -62,7 +62,7 @@ describe('authController', () => {
             });
         });
 
-        it('should return 400 if email already exists', async () => {
+        it('return400IfEmailAlreadyExists', async () => {
             req.body = {
                 name: 'Test User',
                 email: 'existing@example.com',
@@ -76,7 +76,7 @@ describe('authController', () => {
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should return 400 if user creation fails', async () => {
+        it('return400IfUserCreationFails', async () => {
             req.body = {
                 name: 'Test User',
                 email: 'test@example.com',
@@ -93,7 +93,7 @@ describe('authController', () => {
     });
 
     describe('login', () => {
-        it('should login user with valid credentials', async () => {
+        it('loginUserWithValidCredentials', async () => {
             const credentials = {
                 email: 'test@example.com',
                 password: 'password123'
@@ -121,7 +121,7 @@ describe('authController', () => {
             });
         });
 
-        it('should return 401 if email does not exist', async () => {
+        it('return401IfEmailDoesNotExist', async () => {
             req.body = {
                 email: 'nonexistent@example.com',
                 password: 'password123'
@@ -136,7 +136,7 @@ describe('authController', () => {
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should return 401 if password is incorrect', async () => {
+        it('return401IfPasswordIsIncorrect', async () => {
             req.body = {
                 email: 'test@example.com',
                 password: 'wrongpassword'
@@ -154,7 +154,7 @@ describe('authController', () => {
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should return 403 if account is locked', async () => {
+        it('return403IfAccountIsLocked', async () => {
             req.body = {
                 email: 'test@example.com',
                 password: 'password123'
@@ -173,7 +173,7 @@ describe('authController', () => {
     });
 
     describe('getProfile', () => {
-        it('should return user profile', async () => {
+        it('returnUserProfile', async () => {
             const user = mockUser();
             req.user = { _id: user._id };
 
@@ -192,7 +192,7 @@ describe('authController', () => {
             });
         });
 
-        it('should return 404 if user not found', async () => {
+        it('return404IfUserNotFound', async () => {
             req.user = { _id: 'nonexistent-id' };
 
             User.findById.mockResolvedValue(null);
@@ -204,7 +204,7 @@ describe('authController', () => {
     });
 
     describe('updateProfile', () => {
-        it('should update user profile successfully', async () => {
+        it('updateUserProfileSuccessfully', async () => {
             const user = mockUser();
             const updates = {
                 name: 'Updated Name',
@@ -231,7 +231,7 @@ describe('authController', () => {
             });
         });
 
-        it('should update password when provided', async () => {
+        it('updatePasswordWhenProvided', async () => {
             const user = mockUser();
             req.user = { _id: user._id };
             req.body = { password: 'newpassword123' };
@@ -245,7 +245,7 @@ describe('authController', () => {
             expect(updatedUser.save).toHaveBeenCalled();
         });
 
-        it('should return 404 if user not found', async () => {
+        it('return404IfUserNotFound', async () => {
             req.user = { _id: 'nonexistent-id' };
             req.body = { name: 'New Name' };
 

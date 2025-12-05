@@ -34,7 +34,7 @@ describe('authMiddleware', () => {
     });
 
     describe('protect middleware', () => {
-        it('should authenticate user with valid token', async () => {
+        it('authenticateUserWithValidToken', async () => {
             const user = mockUser();
             const token = 'valid.jwt.token';
 
@@ -53,13 +53,13 @@ describe('authMiddleware', () => {
             expect(next).toHaveBeenCalled();
         });
 
-        it('should reject request without authorization header', async () => {
+        it('rejectRequestWithoutAuthorizationHeader', async () => {
             await protect(req, res, next);
             expect(res.status).toHaveBeenCalledWith(401);
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should reject request with invalid token format', async () => {
+        it('rejectRequestWithInvalidTokenFormat', async () => {
             req.headers.authorization = 'InvalidFormat';
 
             await protect(req, res, next);
@@ -67,7 +67,7 @@ describe('authMiddleware', () => {
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should reject request with invalid token', async () => {
+        it('rejectRequestWithInvalidToken', async () => {
             const token = 'invalid.jwt.token';
             req.headers.authorization = `Bearer ${token}`;
 
@@ -80,7 +80,7 @@ describe('authMiddleware', () => {
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should reject request when user not found', async () => {
+        it('rejectRequestWhenUserNotFound', async () => {
             const token = 'valid.jwt.token';
             req.headers.authorization = `Bearer ${token}`;
 
@@ -94,7 +94,7 @@ describe('authMiddleware', () => {
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should reject request with expired token', async () => {
+        it('rejectRequestWithExpiredToken', async () => {
             const token = 'expired.jwt.token';
             req.headers.authorization = `Bearer ${token}`;
 

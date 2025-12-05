@@ -13,7 +13,7 @@ describe('adminMiddleware', () => {
     });
 
     describe('admin middleware', () => {
-        it('should allow access for admin user', async () => {
+        it('allowAccessForAdminUser', async () => {
             const adminUser = mockUser({ role: 'admin' });
             req.user = adminUser;
 
@@ -23,7 +23,7 @@ describe('adminMiddleware', () => {
             expect(res.status).not.toHaveBeenCalled();
         });
 
-        it('should deny access for customer user', async () => {
+        it('denyAccessForCustomerUser', async () => {
             const customerUser = mockUser({ role: 'customer' });
             req.user = customerUser;
 
@@ -32,7 +32,7 @@ describe('adminMiddleware', () => {
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should deny access when user is not authenticated', async () => {
+        it('denyAccessWhenUserIsNotAuthenticated', async () => {
             req.user = null;
 
             await admin(req, res, next);
@@ -40,7 +40,7 @@ describe('adminMiddleware', () => {
             expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
 
-        it('should deny access for user without role', async () => {
+        it('denyAccessForUserWithoutRole', async () => {
             const userWithoutRole = mockUser();
             delete userWithoutRole.role;
             req.user = userWithoutRole;

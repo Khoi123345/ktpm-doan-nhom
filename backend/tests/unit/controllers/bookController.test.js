@@ -63,7 +63,7 @@ describe('bookController', () => {
     });
 
     describe('getBooks', () => {
-        it('should return paginated books', async () => {
+        it('returnPaginatedBooks', async () => {
             const books = [mockBook(), mockBook()];
             req.query = { page: '1' };
 
@@ -86,7 +86,7 @@ describe('bookController', () => {
             });
         });
 
-        it('should filter by keyword', async () => {
+        it('filterByKeyword', async () => {
             req.query = { keyword: 'test', page: '1' };
 
             Book.countDocuments.mockResolvedValue(5);
@@ -109,7 +109,7 @@ describe('bookController', () => {
             );
         });
 
-        it('should filter by category', async () => {
+        it('filterByCategory', async () => {
             const categoryId = '507f1f77bcf86cd799439013';
             req.query = { category: categoryId, page: '1' };
 
@@ -130,7 +130,7 @@ describe('bookController', () => {
             );
         });
 
-        it('should filter by price range', async () => {
+        it('filterByPriceRange', async () => {
             req.query = { minPrice: '50000', maxPrice: '200000', page: '1' };
 
             Book.countDocuments.mockResolvedValue(5);
@@ -168,7 +168,7 @@ describe('bookController', () => {
     });
 
     describe('getBookById', () => {
-        it('should return book when found', async () => {
+        it('returnBookWhenFound', async () => {
             const book = mockBook();
             req.params = { id: book._id };
 
@@ -184,7 +184,7 @@ describe('bookController', () => {
             });
         });
 
-        it('should return 404 when book not found', async () => {
+        it('return404WhenBookNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
 
             Book.findById.mockReturnValue({
@@ -197,7 +197,7 @@ describe('bookController', () => {
     });
 
     describe('createBook', () => {
-        it('should create book successfully', async () => {
+        it('createBookSuccessfully', async () => {
             const bookData = {
                 title: 'New Book',
                 author: 'Author',
@@ -221,7 +221,7 @@ describe('bookController', () => {
             });
         });
 
-        it('should use default values for discountPrice and language', async () => {
+        it('useDefaultValuesForDiscountPriceAndLanguage', async () => {
             const bookData = {
                 title: 'Default Values Book',
                 author: 'Author',
@@ -246,7 +246,7 @@ describe('bookController', () => {
     });
 
     describe('updateBook', () => {
-        it('should update book successfully', async () => {
+        it('updateBookSuccessfully', async () => {
             const book = mockBook();
             const updates = { title: 'Updated Title', price: 150000 };
             req.params = { id: book._id };
@@ -265,7 +265,7 @@ describe('bookController', () => {
             });
         });
 
-        it('should handle partial updates correctly', async () => {
+        it('handlePartialUpdatesCorrectly', async () => {
             const book = mockBook({ stock: 10, price: 100000 });
             const updates = { stock: 20 }; // Only update stock
             req.params = { id: book._id };
@@ -288,7 +288,7 @@ describe('bookController', () => {
             expect(updatedBook.save).toHaveBeenCalled();
         });
 
-        it('should return 404 when book not found', async () => {
+        it('return404WhenBookNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             req.body = { title: 'Updated Title' };
 
@@ -300,7 +300,7 @@ describe('bookController', () => {
     });
 
     describe('deleteBook', () => {
-        it('should delete book successfully', async () => {
+        it('deleteBookSuccessfully', async () => {
             const book = mockBook();
             req.params = { id: book._id };
 
@@ -317,7 +317,7 @@ describe('bookController', () => {
             });
         });
 
-        it('should return 400 if book is in orders', async () => {
+        it('return400IfBookIsInOrders', async () => {
             const book = mockBook();
             req.params = { id: book._id };
 
@@ -328,7 +328,7 @@ describe('bookController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 404 when book not found', async () => {
+        it('return404WhenBookNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
 
             Book.findById.mockResolvedValue(null);
@@ -339,7 +339,7 @@ describe('bookController', () => {
     });
 
     describe('getTopBooks', () => {
-        it('should return top rated books', async () => {
+        it('returnTopRatedBooks', async () => {
             const books = [mockBook({ rating: 5 }), mockBook({ rating: 4.5 })];
 
             Book.find.mockReturnValue({
@@ -358,7 +358,7 @@ describe('bookController', () => {
     });
 
     describe('getNewArrivals', () => {
-        it('should return newest books', async () => {
+        it('returnNewestBooks', async () => {
             const books = [mockBook(), mockBook()];
 
             Book.find.mockReturnValue({
@@ -377,7 +377,7 @@ describe('bookController', () => {
     });
 
     describe('uploadBookImages', () => {
-        it('should upload images successfully', async () => {
+        it('uploadImagesSuccessfully', async () => {
             const mockFiles = [
                 { buffer: Buffer.from('image1') },
                 { buffer: Buffer.from('image2') }
@@ -398,7 +398,7 @@ describe('bookController', () => {
             });
         });
 
-        it('should return 400 when no files provided', async () => {
+        it('return400WhenNoFilesProvided', async () => {
             req.files = [];
 
             await expect(uploadBookImages(req, res)).rejects.toThrow('Vui lòng chọn ảnh');

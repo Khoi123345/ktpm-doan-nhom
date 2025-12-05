@@ -23,7 +23,7 @@ describe('cloudinaryUpload', () => {
     });
 
     describe('uploadToCloudinary', () => {
-        it('should upload file successfully', async () => {
+        it('uploadFileSuccessfully', async () => {
             const mockBuffer = Buffer.from('test image data');
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/test.jpg';
 
@@ -57,7 +57,7 @@ describe('cloudinaryUpload', () => {
             );
         });
 
-        it('should use default folder if not provided', async () => {
+        it('useDefaultFolderIfNotProvided', async () => {
             const mockBuffer = Buffer.from('test image data');
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/test.jpg';
 
@@ -83,7 +83,7 @@ describe('cloudinaryUpload', () => {
             );
         });
 
-        it('should reject on upload error', async () => {
+        it('rejectOnUploadError', async () => {
             const mockBuffer = Buffer.from('test image data');
             const mockError = new Error('Upload failed');
 
@@ -104,7 +104,7 @@ describe('cloudinaryUpload', () => {
     });
 
     describe('deleteFromCloudinary', () => {
-        it('should delete image successfully', async () => {
+        it('deleteImageSuccessfully', async () => {
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/test.jpg';
             mockDestroy.mockResolvedValue({ result: 'ok' });
 
@@ -118,7 +118,7 @@ describe('cloudinaryUpload', () => {
             expect(mockDestroy).toHaveBeenCalledWith('bookstore/test');
         });
 
-        it('should handle deletion error', async () => {
+        it('handleDeletionError', async () => {
             const mockUrl = 'https://res.cloudinary.com/test/image/upload/v1234/bookstore/test.jpg';
             const mockError = new Error('Deletion failed');
             mockDestroy.mockRejectedValue(mockError);
@@ -126,7 +126,7 @@ describe('cloudinaryUpload', () => {
             await expect(deleteFromCloudinary(mockUrl)).rejects.toThrow('Deletion failed');
         });
 
-        it('should extract public_id correctly from complex URL', async () => {
+        it('extractPublicIdCorrectlyFromComplexURL', async () => {
             // URL: .../bookstore/books/cover.jpg
             // parts: [..., 'bookstore', 'books', 'cover.jpg']
             // filename: 'cover.jpg' -> publicId: 'cover'

@@ -77,7 +77,7 @@ describe('orderController', () => {
     });
 
     describe('createOrder', () => {
-        it('should create order successfully', async () => {
+        it('createOrderSuccessfully', async () => {
             const orderData = {
                 orderItems: [{ book: 'book-id', quantity: 2, price: 100000, title: 'Book Title' }],
                 shippingAddress: { fullName: 'Test', phone: '0123456789', address: '123 St' },
@@ -106,14 +106,14 @@ describe('orderController', () => {
             expect(book.save).not.toHaveBeenCalled();
         });
 
-        it('should return 400 when no items', async () => {
+        it('return400WhenNoItems', async () => {
             req.body = { orderItems: [] };
 
             await expect(createOrder(req, res)).rejects.toThrow('Không có sản phẩm trong đơn hàng');
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should return 400 when stock is insufficient', async () => {
+        it('return400WhenStockIsInsufficient', async () => {
             const orderData = {
                 orderItems: [{ book: 'book-id', quantity: 20, title: 'Book Title' }]
             };
@@ -127,7 +127,7 @@ describe('orderController', () => {
         });
 
 
-        it('should increment coupon usage when coupon code is provided', async () => {
+        it('incrementCouponUsageWhenCouponCodeIsProvided', async () => {
             const orderData = {
                 orderItems: [{ book: 'book-id', quantity: 1, price: 100, title: 'Book' }],
                 couponCode: 'TEST10',
@@ -154,7 +154,7 @@ describe('orderController', () => {
     });
 
     describe('getOrderById', () => {
-        it('should return order for owner', async () => {
+        it('returnOrderForOwner', async () => {
             const order = mockOrder({ user: { _id: req.user._id } });
             req.params = { id: order._id };
 
@@ -170,7 +170,7 @@ describe('orderController', () => {
             });
         });
 
-        it('should return 404 when not found', async () => {
+        it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
 
             Order.findById.mockReturnValue({
@@ -181,7 +181,7 @@ describe('orderController', () => {
             expect(res.status).toHaveBeenCalledWith(404);
         });
 
-        it('should return 403 when unauthorized', async () => {
+        it('return403WhenUnauthorized', async () => {
             const order = mockOrder({ user: { _id: 'different-user-id' } });
             req.params = { id: order._id };
             req.user = mockUser({ role: 'customer' });
@@ -196,7 +196,7 @@ describe('orderController', () => {
     });
 
     describe('getMyOrders', () => {
-        it('should return user orders', async () => {
+        it('returnUserOrders', async () => {
             const orders = [mockOrder(), mockOrder()];
 
             Order.find.mockReturnValue({
@@ -216,7 +216,7 @@ describe('orderController', () => {
 
 
     describe('getOrders', () => {
-        it('should return all orders (admin)', async () => {
+        it('returnAllOrdersAdmin', async () => {
             const orders = [mockOrder(), mockOrder()];
             Order.find.mockReturnValue({
                 populate: jest.fn().mockReturnValue({
@@ -235,7 +235,7 @@ describe('orderController', () => {
     });
 
     describe('updateOrderStatus', () => {
-        it('should update order status and reduce stock when confirmed', async () => {
+        it('updateOrderStatusAndReduceStockWhenConfirmed', async () => {
             const order = mockOrder({
                 status: 'pending',
                 orderItems: [{ book: 'book-id', quantity: 2 }]
@@ -258,7 +258,7 @@ describe('orderController', () => {
             expect(order.save).toHaveBeenCalled();
         });
 
-        it('should restore stock when cancelled (if previously confirmed)', async () => {
+        it('restoreStockWhenCancelledIfPreviouslyConfirmed', async () => {
             const order = mockOrder({
                 status: 'confirmed', // Was confirmed, so stock was reduced
                 orderItems: [{ book: 'book-id', quantity: 2 }]
@@ -280,7 +280,7 @@ describe('orderController', () => {
         });
 
 
-        it('should restore coupon usage when cancelled', async () => {
+        it('restoreCouponUsageWhenCancelled', async () => {
             const order = mockOrder({
                 status: 'pending',
                 couponApplied: { code: 'TEST10' }
@@ -302,7 +302,7 @@ describe('orderController', () => {
     });
 
     describe('updateOrderToPaid', () => {
-        it('should update order to paid', async () => {
+        it('updateOrderToPaid', async () => {
             const order = mockOrder({ isPaid: false });
             req.params = { id: order._id };
             req.body = {
@@ -330,7 +330,7 @@ describe('orderController', () => {
             });
         });
 
-        it('should return 404 when order not found', async () => {
+        it('return404WhenOrderNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             Order.findById.mockResolvedValue(null);
 
@@ -340,7 +340,7 @@ describe('orderController', () => {
     });
 
     describe('cancelOrder', () => {
-        it('should cancel order successfully (pending status, no stock restore)', async () => {
+        it('cancelOrderSuccessfullyPendingStatusNoStockRestore', async () => {
             const order = mockOrder({ status: 'pending', user: req.user._id });
             req.params = { id: order._id };
 
@@ -355,7 +355,7 @@ describe('orderController', () => {
             expect(Book.findById).not.toHaveBeenCalled();
         });
 
-        it('should cancel order and restore stock (confirmed status)', async () => {
+        it('cancelOrderAndRestoreStockConfirmedStatus', async () => {
             const order = mockOrder({
                 status: 'confirmed',
                 user: req.user._id,
@@ -377,7 +377,7 @@ describe('orderController', () => {
             expect(book.save).toHaveBeenCalled();
         });
 
-        it('should return 400 when already delivered', async () => {
+        it('return400WhenAlreadyDelivered', async () => {
             const order = mockOrder({ status: 'delivered', user: req.user._id });
             req.params = { id: order._id };
 
@@ -388,7 +388,7 @@ describe('orderController', () => {
         });
 
 
-        it('should restore coupon usage when cancelled', async () => {
+        it('restoreCouponUsageWhenCancelled', async () => {
             const order = mockOrder({
                 status: 'pending',
                 user: req.user._id,
@@ -408,7 +408,7 @@ describe('orderController', () => {
             expect(coupon.save).toHaveBeenCalled();
         });
 
-        it('should return 403 when unauthorized to cancel', async () => {
+        it('return403WhenUnauthorizedToCancel', async () => {
             const order = mockOrder({ user: 'different-user-id' });
             req.params = { id: order._id };
             req.user = mockUser({ role: 'customer' });
@@ -421,7 +421,7 @@ describe('orderController', () => {
     });
 
     describe('returnOrder', () => {
-        it('should return order and restore stock', async () => {
+        it('returnOrderAndRestoreStock', async () => {
             const order = mockOrder({
                 status: 'delivered',
                 orderItems: [{ book: 'book-id', quantity: 2 }]
@@ -443,7 +443,7 @@ describe('orderController', () => {
             expect(order.save).toHaveBeenCalled();
         });
 
-        it('should return 400 if already returned', async () => {
+        it('return400IfAlreadyReturned', async () => {
             const order = mockOrder({ status: 'returned' });
             req.params = { id: order._id };
             Order.findById.mockResolvedValue(order);
@@ -454,7 +454,7 @@ describe('orderController', () => {
     });
 
     describe('getTopSellingBooks', () => {
-        it('should return top selling books', async () => {
+        it('returnTopSellingBooks', async () => {
             const topBooks = [{ _id: 'book1', totalSold: 10 }];
             Order.aggregate.mockResolvedValue(topBooks);
 
@@ -468,7 +468,7 @@ describe('orderController', () => {
     });
 
     describe('getTopBuyers', () => {
-        it('should return top buyers', async () => {
+        it('returnTopBuyers', async () => {
             const topBuyers = [{ _id: 'user1', totalSpent: 1000 }];
             Order.aggregate.mockResolvedValue(topBuyers);
 

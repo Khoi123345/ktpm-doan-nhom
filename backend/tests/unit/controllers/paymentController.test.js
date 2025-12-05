@@ -57,7 +57,7 @@ describe('paymentController', () => {
     });
 
     describe('createMoMoPaymentUrl', () => {
-        it('should create MoMo payment successfully', async () => {
+        it('createMoMoPaymentSuccessfully', async () => {
             const order = mockOrder({ _id: 'order-id', totalPrice: 100000 });
             req.body = { orderId: order._id, orderDescription: 'Test Order' };
 
@@ -84,7 +84,7 @@ describe('paymentController', () => {
             });
         });
 
-        it('should return 404 when order not found', async () => {
+        it('return404WhenOrderNotFound', async () => {
             req.body = { orderId: 'nonexistent-id' };
             Order.findById.mockResolvedValue(null);
 
@@ -92,7 +92,7 @@ describe('paymentController', () => {
             expect(res.status).toHaveBeenCalledWith(404);
         });
 
-        it('should return 400 when MoMo creation fails', async () => {
+        it('return400WhenMoMoCreationFails', async () => {
             const order = mockOrder({ _id: 'order-id', totalPrice: 100000 });
             req.body = { orderId: order._id };
             Order.findById.mockResolvedValue(order);
@@ -107,7 +107,7 @@ describe('paymentController', () => {
     });
 
     describe('momoReturn', () => {
-        it('should handle successful payment return', async () => {
+        it('handleSuccessfulPaymentReturn', async () => {
             req.body = {
                 partnerCode: 'MOMO',
                 orderId: 'order-id',
@@ -144,7 +144,7 @@ describe('paymentController', () => {
             expect(res.redirect).toHaveBeenCalledWith(expect.stringContaining('/payment/success'));
         });
 
-        it('should redirect to fail when signature is invalid', async () => {
+        it('redirectToFailWhenSignatureIsInvalid', async () => {
             req.body = { signature: 'invalid' };
             verifyMoMoSignature.mockReturnValue(false);
 
@@ -153,7 +153,7 @@ describe('paymentController', () => {
             expect(res.redirect).toHaveBeenCalledWith(expect.stringContaining('/payment/fail'));
         });
 
-        it('should redirect to fail when payment result is not success', async () => {
+        it('redirectToFailWhenPaymentResultIsNotSuccess', async () => {
             req.body = { signature: 'valid-signature' };
             verifyMoMoSignature.mockReturnValue(true);
             parseMoMoReturn.mockReturnValue({
@@ -168,7 +168,7 @@ describe('paymentController', () => {
     });
 
     describe('momoIPN', () => {
-        it('should handle successful IPN', async () => {
+        it('handleSuccessfulIPN', async () => {
             req.body = {
                 partnerCode: 'MOMO',
                 orderId: 'order-id',
@@ -195,7 +195,7 @@ describe('paymentController', () => {
             expect(res.json).toHaveBeenCalledWith({ resultCode: 0, message: 'Success' });
         });
 
-        it('should return 97 when signature is invalid', async () => {
+        it('return97WhenSignatureIsInvalid', async () => {
             req.body = { signature: 'invalid' };
             verifyMoMoSignature.mockReturnValue(false);
 
@@ -204,7 +204,7 @@ describe('paymentController', () => {
             expect(res.json).toHaveBeenCalledWith({ resultCode: 97, message: 'Invalid signature' });
         });
 
-        it('should return 1 when payment result is not success', async () => {
+        it('return1WhenPaymentResultIsNotSuccess', async () => {
             req.body = { signature: 'valid-signature' };
             verifyMoMoSignature.mockReturnValue(true);
             parseMoMoReturn.mockReturnValue({
@@ -217,7 +217,7 @@ describe('paymentController', () => {
             expect(res.json).toHaveBeenCalledWith({ resultCode: 1, message: 'Payment failed' });
         });
 
-        it('should not update order if already paid', async () => {
+        it('notUpdateOrderIfAlreadyPaid', async () => {
             req.body = { signature: 'valid-signature' };
             const order = mockOrder({ _id: 'order-id', isPaid: true });
             order.save = jest.fn();

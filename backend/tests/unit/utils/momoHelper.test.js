@@ -38,7 +38,7 @@ describe('momoHelper', () => {
             orderDescription: 'Payment for order 123',
         };
 
-        it('should create payment request successfully', async () => {
+        it('createPaymentRequestSuccessfully', async () => {
             const mockResponse = { payUrl: 'https://momo.vn/pay' };
             mockAxiosPost.mockResolvedValue({ data: mockResponse });
 
@@ -63,7 +63,7 @@ describe('momoHelper', () => {
             );
         });
 
-        it('should generate correct signature', async () => {
+        it('generateCorrectSignature', async () => {
             mockAxiosPost.mockResolvedValue({ data: {} });
 
             await createMoMoPayment(mockOrderInfo);
@@ -81,7 +81,7 @@ describe('momoHelper', () => {
             expect(signature).toBe(expectedSignature);
         });
 
-        it('should throw error if axios fails', async () => {
+        it('throwErrorIfAxiosFails', async () => {
             const mockError = new Error('Network error');
             mockAxiosPost.mockRejectedValue(mockError);
 
@@ -105,7 +105,7 @@ describe('momoHelper', () => {
             extraData: '',
         };
 
-        it('should return true for valid signature', () => {
+        it('returnTrueForValidSignature', () => {
             const rawSignature = `accessKey=MOMO_ACCESS_KEY&amount=${baseParams.amount}&extraData=${baseParams.extraData}&message=${baseParams.message}&orderId=${baseParams.orderId}&orderInfo=${baseParams.orderInfo}&orderType=${baseParams.orderType}&partnerCode=${baseParams.partnerCode}&payType=${baseParams.payType}&requestId=${baseParams.requestId}&responseTime=${baseParams.responseTime}&resultCode=${baseParams.resultCode}&transId=${baseParams.transId}`;
 
             const validSignature = crypto
@@ -119,7 +119,7 @@ describe('momoHelper', () => {
             expect(isValid).toBe(true);
         });
 
-        it('should return false for invalid signature', () => {
+        it('returnFalseForInvalidSignature', () => {
             const params = { ...baseParams, signature: 'invalid_signature' };
 
             const isValid = verifyMoMoSignature(params);
@@ -128,7 +128,7 @@ describe('momoHelper', () => {
     });
 
     describe('parseMoMoReturn', () => {
-        it('should parse success return data correctly', () => {
+        it('parseSuccessReturnDataCorrectly', () => {
             const momoParams = {
                 orderId: 'ORDER_123',
                 amount: 50000,
@@ -155,7 +155,7 @@ describe('momoHelper', () => {
             });
         });
 
-        it('should parse failed return data correctly', () => {
+        it('parseFailedReturnDataCorrectly', () => {
             const momoParams = {
                 orderId: 'ORDER_123',
                 amount: 50000,

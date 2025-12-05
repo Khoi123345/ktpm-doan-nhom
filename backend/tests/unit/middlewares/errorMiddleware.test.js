@@ -29,7 +29,7 @@ describe('errorMiddleware', () => {
     });
 
     describe('notFound middleware', () => {
-        it('should create 404 error with correct message', () => {
+        it('create404ErrorWithCorrectMessage', () => {
             req.originalUrl = '/api/nonexistent';
 
             notFound(req, res, next);
@@ -43,7 +43,7 @@ describe('errorMiddleware', () => {
     });
 
     describe('errorHandler middleware', () => {
-        it('should handle generic errors', () => {
+        it('handleGenericErrors', () => {
             const error = new Error('Test error');
             res.statusCode = 500;
 
@@ -57,7 +57,7 @@ describe('errorMiddleware', () => {
             });
         });
 
-        it('should use 500 status code when statusCode is 200', () => {
+        it('use500StatusCodeWhenStatusCodeIs200', () => {
             const error = new Error('Test error');
             res.statusCode = 200;
 
@@ -66,7 +66,7 @@ describe('errorMiddleware', () => {
             expect(res.status).toHaveBeenCalledWith(500);
         });
 
-        it('should not include stack trace in production', () => {
+        it('notIncludeStackTraceInProduction', () => {
             process.env.NODE_ENV = 'production';
             const error = new Error('Test error');
             res.statusCode = 500;
@@ -80,7 +80,7 @@ describe('errorMiddleware', () => {
             });
         });
 
-        it('should include stack trace in development', () => {
+        it('includeStackTraceInDevelopment', () => {
             process.env.NODE_ENV = 'development';
             const error = new Error('Test error');
             res.statusCode = 500;
