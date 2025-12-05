@@ -10,7 +10,7 @@ import { uploadToCloudinary } from '../utils/cloudinaryUpload.js';
  * @access  Public
  */
 export const getBooks = asyncHandler(async (req, res) => {
-    const pageSize = 12;
+    const pageSize = Number(req.query.limit) || 6;
     const page = Number(req.query.page) || 1;
 
     const keyword = req.query.keyword

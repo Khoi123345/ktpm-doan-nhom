@@ -8,16 +8,18 @@ import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import ActionButtons from '../../components/common/ActionButtons';
 import Badge from '../../components/common/Badge';
+import Pagination from '../../components/common/Pagination';
 
 const AdminBooks = () => {
     const dispatch = useDispatch();
-    const { books, loading, error } = useSelector((state) => state.books);
+    const { books, loading, error, pages } = useSelector((state) => state.books);
     const [showModal, setShowModal] = useState(false);
     const [editingBook, setEditingBook] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        dispatch(getBooks({}));
-    }, [dispatch]);
+        dispatch(getBooks({ page: currentPage }));
+    }, [dispatch, currentPage]);
 
     const handleDelete = (id) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa sách này?')) {
@@ -48,14 +50,14 @@ const AdminBooks = () => {
                 toast.success('Thêm sách mới thành công');
             }
             setShowModal(false);
-            dispatch(getBooks({})); // Refresh list
+            dispatch(getBooks({ page: currentPage })); // Refresh list on current page
         } catch (err) {
             toast.error(err || 'Có lỗi xảy ra');
         }
     };
 
     if (loading && !showModal) return <LoadingState />;
-    if (error && !showModal) return <ErrorState message={error} onRetry={() => dispatch(getBooks({}))} />;
+    if (error && !showModal) return <ErrorState message={error} onRetry={() => dispatch(getBooks({ page: currentPage }))} />;
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -69,7 +71,7 @@ const AdminBooks = () => {
                 </button>
             </div>
 
-            <div className="card overflow-x-auto">
+            <div className="card overflow-x-auto mb-6">
                 <table className="w-full">
                     <thead>
                         <tr className="text-left border-b bg-gray-50">
@@ -116,6 +118,17 @@ const AdminBooks = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Pagination */}
+            {pages > 1 && (
+                <div className="flex justify-center">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={pages}
+                        onPageChange={setCurrentPage}
+                    />
+                </div>
+            )}
 
             {showModal && (
                 <AdminBookForm
