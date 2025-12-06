@@ -85,7 +85,7 @@ const categorySlice = createSlice({
             })
             .addCase(createCategory.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                // state.error = action.payload; // Handled by toast
             })
             .addCase(updateCategory.pending, (state) => {
                 state.loading = true;
@@ -99,7 +99,7 @@ const categorySlice = createSlice({
             })
             .addCase(updateCategory.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                // state.error = action.payload; // Handled by toast
             })
             .addCase(deleteCategory.pending, (state) => {
                 state.loading = true;
@@ -110,7 +110,7 @@ const categorySlice = createSlice({
             })
             .addCase(deleteCategory.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                // state.error = action.payload; // Handled by toast
             });
     },
 });

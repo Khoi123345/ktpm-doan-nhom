@@ -7,11 +7,31 @@ import User from '../models/User.js';
  * @access  Private/Admin
  */
 export const getAllUsers = asyncHandler(async (req, res) => {
-    const users = await User.find({}).select('-password').sort({ createdAt: -1 });
+    const pageSize = Number(req.query.limit) || 10;
+    const page = Number(req.query.page) || 1;
+
+    const keyword = req.query.keyword
+        ? {
+            $or: [
+                { name: { $regex: req.query.keyword, $options: 'i' } },
+                { email: { $regex: req.query.keyword, $options: 'i' } },
+            ],
+        }
+        : {};
+
+    const count = await User.countDocuments({ ...keyword });
+    const users = await User.find({ ...keyword })
+        .select('-password')
+        .limit(pageSize)
+        .skip(pageSize * (page - 1))
+        .sort({ createdAt: -1 });
 
     res.json({
         success: true,
         data: users,
+        page,
+        pages: Math.ceil(count / pageSize),
+        total: count,
     });
 });
 

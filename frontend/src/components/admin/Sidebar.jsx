@@ -47,10 +47,7 @@ const Sidebar = () => {
             </div>
 
             <div className="absolute bottom-0 w-full p-4 border-t border-gray-200">
-                <div className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-gray-900 cursor-pointer rounded-lg hover:bg-gray-50 transition">
-                    <FiSettings className="w-5 h-5 text-gray-400" />
-                    <span>Cài đặt</span>
-                </div>
+
             </div>
         </aside>
     );

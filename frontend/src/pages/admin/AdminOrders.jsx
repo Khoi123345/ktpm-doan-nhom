@@ -52,7 +52,7 @@ const AdminOrders = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Quản lý đơn hàng</h1>
                 <div className="text-sm text-gray-500">
-                    Page: {page} | Pages: {pages} | Total: {total}
+                    Trang: {page} | Tổng trang: {pages} | Tổng đơn: {total}
                 </div>
             </div>
 

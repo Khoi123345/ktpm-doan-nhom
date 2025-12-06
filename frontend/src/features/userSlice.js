@@ -12,10 +12,10 @@ const initialState = {
 // Get all users (Admin)
 export const getUsers = createAsyncThunk(
     'users/getUsers',
-    async (_, { rejectWithValue }) => {
+    async ({ keyword = '', page = 1, limit = 10 } = {}, { rejectWithValue }) => {
         try {
-            const { data } = await api.get('/users');
-            return data.data;
+            const { data } = await api.get(`/users?keyword=${keyword}&page=${page}&limit=${limit}`);
+            return data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Lỗi khi tải danh sách người dùng');
         }
@@ -90,7 +90,10 @@ const userSlice = createSlice({
             })
             .addCase(getUsers.fulfilled, (state, action) => {
                 state.loading = false;
-                state.users = action.payload;
+                state.users = action.payload.data;
+                state.page = action.payload.page;
+                state.pages = action.payload.pages;
+                state.total = action.payload.total;
             })
             .addCase(getUsers.rejected, (state, action) => {
                 state.loading = false;
