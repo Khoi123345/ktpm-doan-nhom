@@ -7,6 +7,7 @@ import categoryReducer from '../features/categorySlice';
 import couponReducer from '../features/couponSlice';
 import userReducer from '../features/userSlice';
 import reviewReducer from '../features/reviewSlice';
+import statsReducer from '../features/statsSlice';
 
 const store = configureStore({
     reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
         coupons: couponReducer,
         users: userReducer,
         reviews: reviewReducer,
+        stats: statsReducer,
     },
 });
 

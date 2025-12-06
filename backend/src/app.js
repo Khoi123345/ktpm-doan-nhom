@@ -13,6 +13,7 @@ import couponRoutes from './routes/couponRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import statsRoutes from './routes/statsRoutes.js';
 
 // Load env vars
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/stats', statsRoutes);
 
 // Error handling middleware
 app.use(notFound);

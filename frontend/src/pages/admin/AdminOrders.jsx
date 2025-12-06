@@ -75,8 +75,6 @@ const AdminOrders = () => {
 
     if (error) return <ErrorState message={error} onRetry={() => dispatch(getOrders({ page: currentPage, limit: 10 }))} />;
 
-    console.log('AdminOrders render:', { orders, loading, error });
-
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">

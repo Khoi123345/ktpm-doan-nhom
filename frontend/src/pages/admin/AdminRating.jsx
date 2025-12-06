@@ -24,7 +24,7 @@ const AdminRating = () => {
                 {/* Top Selling Books */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                     <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">
-                        Top 10 Sách Bán Chạy
+                        Top 5 Sách Bán Chạy
                     </h2>
                     <div className="overflow-x-auto">
                         <table className="w-full">
@@ -56,7 +56,7 @@ const AdminRating = () => {
                                             {book.totalSold}
                                         </td>
                                         <td className="py-3 text-right text-gray-600">
-                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.totalRevenue)}
+                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.revenue || 0)}
                                         </td>
                                     </tr>
                                 ))}
@@ -75,7 +75,7 @@ const AdminRating = () => {
                 {/* Top Buyers */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                     <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">
-                        Top 10 Khách Hàng Mua Nhiều
+                        Top 5 Khách Hàng Mua Nhiều
                     </h2>
                     <div className="overflow-x-auto">
                         <table className="w-full">
@@ -98,10 +98,10 @@ const AdminRating = () => {
                                             </div>
                                         </td>
                                         <td className="py-3 text-right font-semibold text-blue-600">
-                                            {user.totalOrders}
+                                            {user.orderCount || 0}
                                         </td>
                                         <td className="py-3 text-right text-green-600 font-medium">
-                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(user.totalSpent)}
+                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(user.totalSpent || 0)}
                                         </td>
                                     </tr>
                                 ))}

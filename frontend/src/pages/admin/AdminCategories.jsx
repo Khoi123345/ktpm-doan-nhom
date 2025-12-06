@@ -14,9 +14,13 @@ const AdminCategories = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
     const [name, setName] = useState('');
+    const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
     useEffect(() => {
-        dispatch(getCategories());
+        dispatch(getCategories())
+            .unwrap()
+            .then(() => setInitialLoadComplete(true))
+            .catch(() => setInitialLoadComplete(true));
     }, [dispatch]);
 
     const handleEdit = (category) => {
@@ -61,8 +65,8 @@ const AdminCategories = () => {
         }
     };
 
-    if (loading && !showModal) return <LoadingState />;
-    if (error && !showModal) return <ErrorState message={error} onRetry={() => dispatch(getCategories())} />;
+    if (loading && !initialLoadComplete) return <LoadingState />;
+    if (error && !initialLoadComplete) return <ErrorState message={error} onRetry={() => dispatch(getCategories())} />;
 
     return (
         <div className="container mx-auto px-4 py-8">

@@ -112,4 +112,14 @@ export const reviewsAPI = {
     deleteReview: (id) => api.delete(`/reviews/${id}`),
 };
 
+// Statistics API (Admin)
+export const statsAPI = {
+    getOverviewStats: () => api.get('/stats/overview'),
+    getRevenueStats: (period) => api.get('/stats/revenue', { params: { period } }),
+    getOrderStats: () => api.get('/stats/orders'),
+    getTopProducts: (limit) => api.get('/stats/top-products', { params: { limit } }),
+    getCategoryStats: () => api.get('/stats/categories'),
+    getUserGrowth: (period) => api.get('/stats/user-growth', { params: { period } }),
+};
+
 export default api;
