@@ -61,7 +61,7 @@ export const login = asyncHandler(async (req, res) => {
 
     if (user.isLocked) {
         res.status(403);
-        throw new Error('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin.');
+        throw new Error('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ nhà sách để giải quyết.');
     }
 
     if (await user.matchPassword(password)) {

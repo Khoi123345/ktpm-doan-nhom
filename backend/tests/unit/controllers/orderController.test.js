@@ -432,6 +432,14 @@ describe('orderController', () => {
             await expect(cancelOrder(req, res)).rejects.toThrow('Không có quyền hủy đơn hàng này');
             expect(res.status).toHaveBeenCalledWith(403);
         });
+
+        it('return404WhenOrderNotFound', async () => {
+            req.params = { id: 'nonexistent-id' };
+            Order.findById.mockResolvedValue(null);
+
+            await expect(cancelOrder(req, res)).rejects.toThrow('Không tìm thấy đơn hàng');
+            expect(res.status).toHaveBeenCalledWith(404);
+        });
     });
 
     describe('returnOrder', () => {
@@ -463,7 +471,16 @@ describe('orderController', () => {
             Order.findById.mockResolvedValue(order);
 
             await expect(returnOrder(req, res)).rejects.toThrow('Đơn hàng đã hủy hoặc đã hoàn');
+            await expect(returnOrder(req, res)).rejects.toThrow('Đơn hàng đã hủy hoặc đã hoàn');
             expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it('return404WhenOrderNotFound', async () => {
+            req.params = { id: 'nonexistent-id' };
+            Order.findById.mockResolvedValue(null);
+
+            await expect(returnOrder(req, res)).rejects.toThrow('Không tìm thấy đơn hàng');
+            expect(res.status).toHaveBeenCalledWith(404);
         });
     });
 

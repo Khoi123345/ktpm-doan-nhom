@@ -130,28 +130,120 @@ export const getMyOrders = asyncHandler(async (req, res) => {
 export const getOrders = asyncHandler(async (req, res) => {
     const pageSize = Number(req.query.limit) || 10;
     const page = Number(req.query.page) || 1;
+    const status = req.query.status;
+    const keyword = req.query.keyword;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    const minPrice = req.query.minPrice;
+    const maxPrice = req.query.maxPrice;
 
-    const count = await Order.countDocuments({});
-    const orders = await Order.find({})
-        .populate('user', 'name email')
-        .limit(pageSize)
-        .skip(pageSize * (page - 1))
-        .sort({ createdAt: -1 });
+    const pipeline = [];
+
+    // Lookup user to search by user name/email
+    pipeline.push({
+        $lookup: {
+            from: 'users',
+            localField: 'user',
+            foreignField: '_id',
+            as: 'user'
+        }
+    });
+
+    pipeline.push({
+        $unwind: {
+            path: '$user',
+            preserveNullAndEmptyArrays: true
+        }
+    });
+
+    // Add string version of _id for partial search
+    pipeline.push({
+        $addFields: {
+            orderIdString: { $toString: '$_id' }
+        }
+    });
+
+    // Match stage
+    const matchConditions = {};
+
+    if (status) {
+        matchConditions.status = status;
+    }
+
+    if (keyword) {
+        matchConditions.$or = [
+            { 'shippingAddress.fullName': { $regex: keyword, $options: 'i' } },
+            { 'shippingAddress.phone': { $regex: keyword, $options: 'i' } },
+            { 'user.name': { $regex: keyword, $options: 'i' } },
+            { 'user.email': { $regex: keyword, $options: 'i' } },
+            { orderIdString: { $regex: keyword, $options: 'i' } }
+        ];
+    }
+
+    // Date filter
+    if (startDate || endDate) {
+        matchConditions.createdAt = {};
+        if (startDate) {
+            matchConditions.createdAt.$gte = new Date(startDate);
+        }
+        if (endDate) {
+            // Set end date to end of day
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            matchConditions.createdAt.$lte = end;
+        }
+    }
+
+    // Price filter
+    if (minPrice || maxPrice) {
+        matchConditions.totalPrice = {};
+        if (minPrice) matchConditions.totalPrice.$gte = Number(minPrice);
+        if (maxPrice) matchConditions.totalPrice.$lte = Number(maxPrice);
+    }
+
+    if (Object.keys(matchConditions).length > 0) {
+        pipeline.push({ $match: matchConditions });
+    }
+
+    // Sort
+    pipeline.push({ $sort: { createdAt: -1 } });
+
+    // Pagination facet
+    pipeline.push({
+        $facet: {
+            metadata: [{ $count: 'total' }],
+            data: [
+                { $skip: pageSize * (page - 1) },
+                { $limit: pageSize },
+                {
+                    $project: {
+                        orderIdString: 0, // Remove temp field
+                        'user.password': 0 // Don't send password
+                    }
+                }
+            ]
+        }
+    });
+
+    const result = await Order.aggregate(pipeline);
+
+    const metadata = result[0].metadata[0];
+    const orders = result[0].data;
+    const total = metadata ? metadata.total : 0;
 
     res.json({
         success: true,
         data: orders,
         page,
-        pages: Math.ceil(count / pageSize),
-        total: count,
+        pages: Math.ceil(total / pageSize),
+        total
     });
 });
 
 /**
- * @desc    Update order status
- * @route   PUT /api/orders/:id/status
- * @access  Private/Admin
- */
+ * @route   PUT / api / orders /: id / status
+        * @access  Private / Admin
+            */
 export const updateOrderStatus = asyncHandler(async (req, res) => {
     const { status } = req.body;
     const order = await Order.findById(req.params.id);
@@ -361,12 +453,13 @@ export const getTopSellingBooks = asyncHandler(async (req, res) => {
                 _id: '$orderItems.book',
                 title: { $first: '$orderItems.title' },
                 image: { $first: '$orderItems.image' },
+                price: { $first: '$orderItems.price' },
                 totalSold: { $sum: '$orderItems.quantity' },
-                totalRevenue: { $sum: { $multiply: ['$orderItems.price', '$orderItems.quantity'] } }
+                revenue: { $sum: { $multiply: ['$orderItems.price', '$orderItems.quantity'] } }
             }
         },
         { $sort: { totalSold: -1 } },
-        { $limit: 10 }
+        { $limit: 5 }
     ]);
 
     res.json({
@@ -384,38 +477,36 @@ export const getTopBuyers = asyncHandler(async (req, res) => {
     const topBuyers = await Order.aggregate([
         {
             $match: {
-                $or: [
-                    { isPaid: true },
-                    { status: 'delivered' }
-                ]
+                isPaid: true
             }
         },
         {
             $group: {
                 _id: '$user',
-                totalOrders: { $sum: 1 },
-                totalSpent: { $sum: '$totalPrice' }
+                totalSpent: { $sum: '$totalPrice' },
+                orderCount: { $sum: 1 }
             }
         },
-        { $sort: { totalSpent: -1 } },
-        { $limit: 10 },
         {
             $lookup: {
                 from: 'users',
                 localField: '_id',
                 foreignField: '_id',
-                as: 'userDetails'
+                as: 'user'
             }
         },
+        { $unwind: '$user' },
         {
             $project: {
                 _id: 1,
-                totalOrders: 1,
+                name: '$user.name',
+                email: '$user.email',
                 totalSpent: 1,
-                name: { $arrayElemAt: ['$userDetails.name', 0] },
-                email: { $arrayElemAt: ['$userDetails.email', 0] }
+                orderCount: 1
             }
-        }
+        },
+        { $sort: { totalSpent: -1 } },
+        { $limit: 5 }
     ]);
 
     res.json({
@@ -423,16 +514,3 @@ export const getTopBuyers = asyncHandler(async (req, res) => {
         data: topBuyers,
     });
 });
-
-export default {
-    createOrder,
-    getOrderById,
-    getMyOrders,
-    getOrders,
-    updateOrderStatus,
-    updateOrderToPaid,
-    cancelOrder,
-    returnOrder,
-    getTopSellingBooks,
-    getTopBuyers,
-};

@@ -92,6 +92,27 @@ describe('cartController', () => {
             expect(cart.save).toHaveBeenCalled();
         });
 
+        it('createNewCartAndAddItem', async () => {
+            const book = mockBook();
+            req.body = { bookId: book._id, quantity: 1 };
+
+            Book.findById.mockResolvedValue(book);
+            // First findOne returns null (no cart)
+            Cart.findOne.mockResolvedValue(null);
+
+            const newCart = mockCart({ user: req.user._id, items: [] });
+            Cart.create.mockResolvedValue(newCart);
+
+            await addToCart(req, res);
+
+            expect(Cart.create).toHaveBeenCalledWith({
+                user: req.user._id,
+                items: []
+            });
+            expect(newCart.items).toHaveLength(1);
+            expect(newCart.save).toHaveBeenCalled();
+        });
+
         it('updateQuantityForExistingItem', async () => {
             const book = mockBook();
             req.body = { bookId: book._id, quantity: 2 };

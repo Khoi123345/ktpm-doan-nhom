@@ -22,6 +22,7 @@ Object.assign(CouponMock, {
     findById: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
+    updateMany: jest.fn(),
 });
 
 // Import modules dynamically
@@ -62,6 +63,23 @@ describe('couponController', () => {
                 data: coupons
             });
         });
+
+        it('should auto-expire coupons with past endDate', async () => {
+            Coupon.find.mockReturnValue({
+                sort: jest.fn().mockResolvedValue([])
+            });
+
+            await getCoupons(req, res);
+
+            expect(Coupon.updateMany).toHaveBeenCalled();
+            const updateCall = Coupon.updateMany.mock.calls[0];
+            const filter = updateCall[0];
+            const update = updateCall[1];
+
+            expect(filter.isActive).toBe(true);
+            expect(filter.endDate.$lt).toBeInstanceOf(Date);
+            expect(update.isActive).toBe(false);
+        });
     });
 
     describe('getAllCoupons', () => {
@@ -79,6 +97,23 @@ describe('couponController', () => {
             });
             expect(mockSort).toHaveBeenCalledWith({ createdAt: -1 });
             expect(mockPopulate).toHaveBeenCalledWith('createdBy', 'name email');
+        });
+
+        it('should auto-expire coupons with past endDate', async () => {
+            const mockPopulate = jest.fn().mockResolvedValue([]);
+            const mockSort = jest.fn().mockReturnValue({ populate: mockPopulate });
+            Coupon.find.mockReturnValue({ sort: mockSort });
+
+            await getAllCoupons(req, res);
+
+            expect(Coupon.updateMany).toHaveBeenCalled();
+            const updateCall = Coupon.updateMany.mock.calls[0];
+            const filter = updateCall[0];
+            const update = updateCall[1];
+
+            expect(filter.isActive).toBe(true);
+            expect(filter.endDate.$lt).toBeInstanceOf(Date);
+            expect(update.isActive).toBe(false);
         });
     });
 
@@ -142,6 +177,28 @@ describe('couponController', () => {
 
             await expect(validateCoupon(req, res)).rejects.toThrow('Mã giảm giá đã hết hạn hoặc chưa có hiệu lực');
             expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it('should mark coupon as inactive if expired', async () => {
+            const expiredDate = new Date();
+            expiredDate.setDate(expiredDate.getDate() - 2); // 2 days ago
+
+            const expiredCoupon = mockCoupon({
+                code: 'EXPIRED',
+                isActive: true,
+                startDate: new Date('2023-01-01'),
+                endDate: expiredDate,
+            });
+            // Mock save method on the instance
+            expiredCoupon.save = jest.fn();
+
+            req.body = { code: 'EXPIRED', orderValue: 100000 };
+            Coupon.findOne.mockResolvedValue(expiredCoupon);
+
+            await expect(validateCoupon(req, res)).rejects.toThrow('Mã giảm giá đã hết hạn hoặc chưa có hiệu lực');
+
+            expect(expiredCoupon.isActive).toBe(false);
+            expect(expiredCoupon.save).toHaveBeenCalled();
         });
 
         it('return400WhenUsageLimitReached', async () => {

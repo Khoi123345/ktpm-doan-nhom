@@ -8,6 +8,11 @@ import Order from '../models/Order.js';
  * @access  Public
  */
 export const getCoupons = asyncHandler(async (req, res) => {
+    // Auto-expire coupons
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    await Coupon.updateMany({ endDate: { $lt: startOfToday }, isActive: true }, { isActive: false });
+
     const coupons = await Coupon.find({ isActive: true }).sort({ createdAt: -1 });
 
     res.json({
@@ -67,6 +72,11 @@ export const validateCoupon = asyncHandler(async (req, res) => {
 
 
     if (now < startDate || now > endDate) {
+        // If expired, update status to inactive
+        if (now > endDate) {
+            coupon.isActive = false;
+            await coupon.save();
+        }
         res.status(400);
         throw new Error('Mã giảm giá đã hết hạn hoặc chưa có hiệu lực');
     }
@@ -205,6 +215,11 @@ export const deleteCoupon = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 export const getAllCoupons = asyncHandler(async (req, res) => {
+    // Auto-expire coupons
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    await Coupon.updateMany({ endDate: { $lt: startOfToday }, isActive: true }, { isActive: false });
+
     const coupons = await Coupon.find({}).sort({ createdAt: -1 }).populate('createdBy', 'name email');
 
     res.json({

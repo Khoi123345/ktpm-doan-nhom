@@ -16,6 +16,7 @@ Object.assign(UserMock, {
     findById: jest.fn(),
     create: jest.fn(),
     findOne: jest.fn(),
+    countDocuments: jest.fn(),
 });
 
 // Import modules dynamically
@@ -46,14 +47,20 @@ describe('userController', () => {
 
             User.find.mockReturnValue({
                 select: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
+                skip: jest.fn().mockReturnThis(),
                 sort: jest.fn().mockResolvedValue(users)
             });
+            User.countDocuments.mockResolvedValue(2);
 
             await getAllUsers(req, res);
 
             expect(res.json).toHaveBeenCalledWith({
                 success: true,
-                data: users
+                data: users,
+                page: 1,
+                pages: 1,
+                total: 2
             });
         });
     });

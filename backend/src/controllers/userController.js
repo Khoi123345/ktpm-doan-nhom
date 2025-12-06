@@ -19,6 +19,10 @@ export const getAllUsers = asyncHandler(async (req, res) => {
         }
         : {};
 
+    if (req.query.role) {
+        keyword.role = req.query.role;
+    }
+
     const count = await User.countDocuments({ ...keyword });
     const users = await User.find({ ...keyword })
         .select('-password')

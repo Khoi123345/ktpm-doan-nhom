@@ -165,6 +165,64 @@ describe('bookController', () => {
                 })
             );
         });
+
+        it('filterByMinPriceOnly', async () => {
+            req.query = { minPrice: '50000', page: '1' };
+
+            Book.countDocuments.mockResolvedValue(5);
+            Book.find.mockReturnValue({
+                populate: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
+                skip: jest.fn().mockReturnThis(),
+                sort: jest.fn().mockResolvedValue([])
+            });
+
+            await getBooks(req, res);
+
+            expect(Book.find).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    $expr: {
+                        $and: expect.arrayContaining([
+                            {
+                                $gte: [
+                                    { $cond: { if: { $gt: ["$discountPrice", 0] }, then: "$discountPrice", else: "$price" } },
+                                    50000
+                                ]
+                            }
+                        ])
+                    }
+                })
+            );
+        });
+
+        it('filterByMaxPriceOnly', async () => {
+            req.query = { maxPrice: '200000', page: '1' };
+
+            Book.countDocuments.mockResolvedValue(5);
+            Book.find.mockReturnValue({
+                populate: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
+                skip: jest.fn().mockReturnThis(),
+                sort: jest.fn().mockResolvedValue([])
+            });
+
+            await getBooks(req, res);
+
+            expect(Book.find).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    $expr: {
+                        $and: expect.arrayContaining([
+                            {
+                                $lte: [
+                                    { $cond: { if: { $gt: ["$discountPrice", 0] }, then: "$discountPrice", else: "$price" } },
+                                    200000
+                                ]
+                            }
+                        ])
+                    }
+                })
+            );
+        });
     });
 
     describe('getBookById', () => {

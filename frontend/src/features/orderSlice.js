@@ -57,9 +57,9 @@ export const getOrderById = createAsyncThunk(
 // Get all orders (Admin)
 export const getOrders = createAsyncThunk(
     'orders/getOrders',
-    async ({ page = 1, limit = 10 } = {}, { rejectWithValue }) => {
+    async ({ page = 1, limit = 10, keyword = '', status = '', startDate = '', endDate = '', minPrice = '', maxPrice = '' } = {}, { rejectWithValue }) => {
         try {
-            const { data } = await api.get(`/orders?page=${page}&limit=${limit}`);
+            const { data } = await api.get(`/orders?page=${page}&limit=${limit}&keyword=${keyword}&status=${status}&startDate=${startDate}&endDate=${endDate}&minPrice=${minPrice}&maxPrice=${maxPrice}`);
             return data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Lỗi khi tải danh sách đơn hàng');

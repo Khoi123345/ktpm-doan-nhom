@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Category from '../models/Category.js';
+import Book from '../models/Book.js';
 import { uploadToCloudinary } from '../utils/cloudinaryUpload.js';
 
 /**
@@ -95,6 +96,13 @@ export const deleteCategory = asyncHandler(async (req, res) => {
     const category = await Category.findById(req.params.id);
 
     if (category) {
+        // Check if any book uses this category
+        const book = await Book.findOne({ category: req.params.id });
+        if (book) {
+            res.status(400);
+            throw new Error('Không thể xóa danh mục đã có sản phẩm');
+        }
+
         await category.deleteOne();
         res.json({
             success: true,

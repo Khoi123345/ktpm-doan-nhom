@@ -12,9 +12,9 @@ const initialState = {
 // Get all users (Admin)
 export const getUsers = createAsyncThunk(
     'users/getUsers',
-    async ({ keyword = '', page = 1, limit = 10 } = {}, { rejectWithValue }) => {
+    async ({ keyword = '', page = 1, limit = 10, role = '' } = {}, { rejectWithValue }) => {
         try {
-            const { data } = await api.get(`/users?keyword=${keyword}&page=${page}&limit=${limit}`);
+            const { data } = await api.get(`/users?keyword=${keyword}&page=${page}&limit=${limit}&role=${role}`);
             return data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Lỗi khi tải danh sách người dùng');

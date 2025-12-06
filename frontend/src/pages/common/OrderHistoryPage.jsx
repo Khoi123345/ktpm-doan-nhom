@@ -24,6 +24,8 @@ const OrderHistoryPage = () => {
                 return <FiCheckCircle className="text-green-500" />;
             case 'cancelled':
                 return <FiXCircle className="text-red-500" />;
+            case 'returned':
+                return <FiPackage className="text-orange-500" />;
             default:
                 return <FiClock className="text-gray-500" />;
         }
@@ -36,6 +38,7 @@ const OrderHistoryPage = () => {
             shipped: 'Đang giao',
             delivered: 'Đã giao',
             cancelled: 'Đã hủy',
+            returned: 'Đã hoàn',
         };
         return statusMap[status] || status;
     };
@@ -83,8 +86,8 @@ const OrderHistoryPage = () => {
                                         <span className="font-medium">{getStatusText(order.status)}</span>
                                     </div>
                                     <span className={`px-3 py-1 rounded-full text-sm ${order.isPaid
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-yellow-100 text-yellow-800'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-yellow-100 text-yellow-800'
                                         }`}>
                                         {getPaymentStatusText(order.isPaid)}
                                     </span>

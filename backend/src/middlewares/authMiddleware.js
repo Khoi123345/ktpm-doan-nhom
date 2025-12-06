@@ -27,11 +27,16 @@ export const protect = asyncHandler(async (req, res, next) => {
                 throw new Error('Không tìm thấy người dùng');
             }
 
+            if (req.user.isLocked) {
+                res.status(401);
+                throw new Error('Tài khoản của bạn đã bị khóa');
+            }
+
             next();
         } catch (error) {
             console.error(error);
             res.status(401);
-            throw new Error('Không có quyền truy cập, token không hợp lệ');
+            throw new Error('Bạn đã bị chặn quyền truy cập. Vui lòng liên hệ nhà sách để giải quyết');
         }
     }
 
