@@ -25,7 +25,7 @@ export const config = {
         accessKey: process.env.MOMO_ACCESS_KEY,
         secretKey: process.env.MOMO_SECRET_KEY,
         endpoint: process.env.MOMO_ENDPOINT,
-        returnUrl: process.env.MOMO_RETURN_URL,
+        redirectUrl: process.env.MOMO_REDIRECT_URL,
         ipnUrl: process.env.MOMO_IPN_URL,
     },
 };

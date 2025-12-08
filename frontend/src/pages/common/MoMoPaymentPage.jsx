@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import Loader from '../../components/common/Loader';
+import { paymentAPI } from '../../services/api';
 
 const MoMoPaymentPage = () => {
     const { orderId } = useParams();
@@ -21,11 +21,12 @@ const MoMoPaymentPage = () => {
         const createPayment = async () => {
             try {
                 setLoading(true);
-                const { data } = await axios.post(`/api/payment/momo/create`, {
+                // amount is 0 because backend calculates it from order
+                const { data } = await paymentAPI.createMoMoPayment(
                     orderId,
-                    amount: 0, // Backend will get from order
-                    orderInfo: `Thanh toán đơn hàng ${orderId}`,
-                });
+                    0,
+                    `Thanh toán đơn hàng ${orderId}`
+                );
 
                 if (data.success && data.data && data.data.paymentUrl) {
                     // Redirect to MoMo
@@ -35,10 +36,11 @@ const MoMoPaymentPage = () => {
                 }
             } catch (err) {
                 console.error('Payment error:', err);
-                setError(err.response?.data?.message || 'Không thể tạo link thanh toán MoMo');
+                const errorMessage = err.response?.data?.message || err.message || 'Không thể tạo link thanh toán MoMo';
+                setError(errorMessage);
                 setLoading(false);
-                toast.error('Không thể tạo link thanh toán');
-                setTimeout(() => navigate(`/orders/${orderId}`), 2000);
+                toast.error(errorMessage);
+                // Don't auto redirect immediately on error so user can see the error
             }
         };
 
@@ -65,7 +67,12 @@ const MoMoPaymentPage = () => {
                 </div>
                 <h2 className="text-2xl font-bold text-red-600 mb-2">Lỗi thanh toán</h2>
                 <p className="text-gray-600 mb-4">{error}</p>
-                <p className="text-sm text-gray-500">Đang chuyển về trang đơn hàng...</p>
+                <button
+                    onClick={() => navigate(`/orders/${orderId}`)}
+                    className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition"
+                >
+                    Quay lại đơn hàng
+                </button>
             </div>
         );
     }

@@ -1,19 +1,13 @@
 import express from 'express';
-import {
-
-    createMoMoPaymentUrl,
-    momoReturn,
-    momoIPN,
-} from '../controllers/paymentController.js';
+import paymentController from '../controllers/paymentController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-
-
 // MoMo routes
-router.post('/momo/create', protect, createMoMoPaymentUrl);
-router.post('/momo/return', momoReturn);
-router.post('/momo/ipn', momoIPN);
+router.post('/momo/create', protect, paymentController.create);
+router.post('/momo/ipn', paymentController.handleMomoIPN);
+router.post('/momo/check-status', paymentController.checkStatus);
+// router.post('/momo/return', paymentController.momoReturn); // Frontend handles return URL
 
 export default router;

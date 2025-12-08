@@ -240,27 +240,29 @@ const CheckoutPage = () => {
             if (createOrder.fulfilled.match(resultAction)) {
                 const order = resultAction.payload;
 
-                // Remove bought items from cart
-                // Extract Book IDs for removal (Backend expects Book IDs, Guest Local expects Book IDs)
-                const bookIdsToRemove = checkoutItems.map(item =>
-                    userInfo ? item.book._id : item._id
-                );
+                // Remove bought items from cart (Only for COD, MoMo handles it in backend after success)
+                if (selectedPayment !== 'MoMo') {
+                    // Extract Book IDs for removal (Backend expects Book IDs, Guest Local expects Book IDs)
+                    const bookIdsToRemove = checkoutItems.map(item =>
+                        userInfo ? item.book._id : item._id
+                    );
 
-                if (userInfo) {
-                    dispatch(removeMultipleFromCartAsync(bookIdsToRemove));
-                } else {
-                    dispatch(removeItemsFromCart(bookIdsToRemove));
+                    if (userInfo) {
+                        dispatch(removeMultipleFromCartAsync(bookIdsToRemove));
+                    } else {
+                        dispatch(removeItemsFromCart(bookIdsToRemove));
+                    }
                 }
 
                 // Clear coupon
                 dispatch(removeCoupon());
 
-                toast.success('Đặt hàng thành công!');
-
                 // Navigate based on payment method
                 if (selectedPayment === 'MoMo') {
+                    toast.info('Đang chuyển đến trang thanh toán MoMo...');
                     navigate(`/payment/momo/${order._id}`);
                 } else {
+                    toast.success('Đặt hàng thành công!');
                     navigate(`/orders/${order._id}`);
                 }
             } else {

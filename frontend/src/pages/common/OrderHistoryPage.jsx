@@ -16,9 +16,12 @@ const OrderHistoryPage = () => {
         switch (status) {
             case 'pending':
                 return <FiClock className="text-yellow-500" />;
+            case 'confirmed':
+                return <FiCheckCircle className="text-blue-500" />;
             case 'processing':
                 return <FiPackage className="text-blue-500" />;
             case 'shipped':
+            case 'shipping':
                 return <FiPackage className="text-purple-500" />;
             case 'delivered':
                 return <FiCheckCircle className="text-green-500" />;
@@ -34,8 +37,10 @@ const OrderHistoryPage = () => {
     const getStatusText = (status) => {
         const statusMap = {
             pending: 'Chờ xác nhận',
+            confirmed: 'Đã xác nhận',
             processing: 'Đang xử lý',
             shipped: 'Đang giao',
+            shipping: 'Đang giao hàng',
             delivered: 'Đã giao',
             cancelled: 'Đã hủy',
             returned: 'Đã hoàn',

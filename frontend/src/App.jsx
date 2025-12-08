@@ -14,6 +14,7 @@ import OrderHistoryPage from './pages/common/OrderHistoryPage';
 import OrderDetailPage from './pages/common/OrderDetailPage';
 import PaymentSuccessPage from './pages/common/PaymentSuccessPage';
 import PaymentFailPage from './pages/common/PaymentFailPage';
+import PaymentStatusPage from './pages/common/PaymentStatusPage';
 
 import MoMoPaymentPage from './pages/common/MoMoPaymentPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -57,6 +58,7 @@ function App() {
                             {/* Payment Routes */}
 
                             <Route path="/payment/momo/:orderId" element={<PrivateRoute><MoMoPaymentPage /></PrivateRoute>} />
+                            <Route path="/payment/status" element={<PrivateRoute><PaymentStatusPage /></PrivateRoute>} />
                             <Route path="/payment/success" element={<PrivateRoute><PaymentSuccessPage /></PrivateRoute>} />
                             <Route path="/payment/fail" element={<PrivateRoute><PaymentFailPage /></PrivateRoute>} />
                         </Routes>

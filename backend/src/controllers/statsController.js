@@ -13,7 +13,7 @@ export const getOverviewStats = asyncHandler(async (req, res) => {
     const [orders, books, users, categories] = await Promise.all([
         Order.find({}),
         Book.countDocuments({}),
-        User.countDocuments({ isAdmin: false }),
+        User.countDocuments({ role: 'user' }),
         Category.countDocuments({})
     ]);
 
@@ -54,11 +54,11 @@ export const getOverviewStats = asyncHandler(async (req, res) => {
     // Calculate user growth
     const recentUsers = await User.countDocuments({
         createdAt: { $gte: thirtyDaysAgo },
-        isAdmin: false
+        role: 'user'
     });
     const previousUsers = await User.countDocuments({
         createdAt: { $gte: sixtyDaysAgo, $lt: thirtyDaysAgo },
-        isAdmin: false
+        role: 'user'
     });
     const userTrend = previousUsers > 0
         ? ((recentUsers - previousUsers) / previousUsers * 100).toFixed(1)
@@ -321,7 +321,7 @@ export const getUserGrowth = asyncHandler(async (req, res) => {
         {
             $match: {
                 createdAt: { $gte: startDate },
-                isAdmin: false
+                role: 'user'
             }
         },
         {

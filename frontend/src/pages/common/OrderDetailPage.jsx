@@ -267,14 +267,17 @@ const OrderDetailPage = () => {
                             </div>
                         )}
 
-                        {/* Cancel Button */}
+                        {/* Actions */}
                         {currentOrder.status === 'pending' && (
-                            <button
-                                onClick={handleCancelOrder}
-                                className="w-full mt-4 bg-red-50 text-red-600 border border-red-200 py-2 rounded font-medium hover:bg-red-100 transition-colors"
-                            >
-                                Hủy đơn hàng
-                            </button>
+                            <div className="space-y-3 mt-4">
+
+                                <button
+                                    onClick={handleCancelOrder}
+                                    className="w-full bg-red-50 text-red-600 border border-red-200 py-2 rounded font-medium hover:bg-red-100 transition-colors"
+                                >
+                                    Hủy đơn hàng
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>

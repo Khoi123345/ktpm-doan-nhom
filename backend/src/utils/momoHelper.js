@@ -14,7 +14,7 @@ export const createMoMoPayment = async (orderInfo) => {
     const accessKey = config.momo.accessKey;
     const secretKey = config.momo.secretKey;
     const endpoint = config.momo.endpoint;
-    const returnUrl = config.momo.returnUrl;
+    const returnUrl = config.momo.redirectUrl;
     const ipnUrl = config.momo.ipnUrl;
 
     const requestId = orderId;

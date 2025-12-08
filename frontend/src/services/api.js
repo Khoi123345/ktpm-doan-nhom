@@ -91,9 +91,9 @@ export const couponsAPI = {
 
 // Payment API
 export const paymentAPI = {
-
     createMoMoPayment: (orderId, amount, orderDescription) =>
         api.post('/payment/momo/create', { orderId, amount, orderDescription }),
+    checkMoMoStatus: (data) => api.post('/payment/momo/check-status', data),
 };
 
 // Users API (Admin)
