@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # MongoDB for testing (in-memory)
+  mongodb-test:
+    image: mongo:7.0
+    container_name: bookstore-mongodb-test
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: testuser
+      MONGO_INITDB_ROOT_PASSWORD: testpass
+      MONGO_INITDB_DATABASE: bookstore_test
+    ports:
+      - "27018:27017"
+    tmpfs:
+      - /data/db
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Backend tests
+  backend-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: bookstore-backend-test
+    environment:
+      NODE_ENV: test
+      MONGODB_URI: mongodb://testuser:testpass@mongodb-test:27017/bookstore_test?authSource=admin
+      JWT_SECRET: test_jwt_secret
+    depends_on:
+      mongodb-test:
+        condition: service_healthy
+    networks:
+      - test-network
+    command: npm test
+
+networks:
+  test-network:
+    driver: bridge
