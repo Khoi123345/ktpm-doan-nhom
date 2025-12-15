@@ -97,11 +97,11 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker-compose -f docker-compose.test.yml build mongodb-test backend-integration newman
+          docker compose -f docker-compose.test.yml build mongodb-test backend-integration newman
 
       - name: Start test environment
         run: |
-          docker-compose -f docker-compose.test.yml up -d mongodb-test backend-integration
+          docker compose -f docker-compose.test.yml up -d mongodb-test backend-integration
 
       - name: Wait for backend to be healthy
         run: |
@@ -116,14 +116,32 @@ jobs:
           
           if [ "$(docker inspect --format='{{.State.Health.Status}}' bookstore-backend-integration)" != "healthy" ]; then
             echo "Backend failed to become healthy"
-            docker-compose -f docker-compose.test.yml logs backend-integration
+            docker compose -f docker-compose.test.yml logs backend-integration
             exit 1
           fi
           echo "Backend is healthy!"
 
+      - name: Check backend health endpoint
+        run: |
+          echo "Testing backend health endpoint..."
+          max_attempts=10
+          attempt=0
+          until curl -f http://localhost:5001/api/health || [ $attempt -eq $max_attempts ]; do
+            echo "Health check attempt $((attempt + 1))/$max_attempts failed, retrying..."
+            sleep 3
+            attempt=$((attempt + 1))
+          done
+          
+          if [ $attempt -eq $max_attempts ]; then
+            echo "Backend health check failed after $max_attempts attempts"
+            docker compose -f docker-compose.test.yml logs backend-integration
+            exit 1
+          fi
+          echo "Backend health check passed!"
+
       - name: Run Newman integration tests
         run: |
-          docker-compose -f docker-compose.test.yml run --rm newman
+          docker compose -f docker-compose.test.yml run --rm newman
 
       - name: Copy Newman results from container
         if: always()
@@ -151,7 +169,7 @@ jobs:
       - name: Stop containers
         if: always()
         run: |
-          docker-compose -f docker-compose.test.yml down -v
+          docker compose -f docker-compose.test.yml down -v
 
       - name: Check Newman test results
         if: always()
