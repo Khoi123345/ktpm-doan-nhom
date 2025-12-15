@@ -1,19 +1,22 @@
-name: Backend CI
+name: Backend CI/CD
 
 on:
   push:
     branches: [ main, develop, setup ]
     paths:
       - 'backend/**'
+      - 'postman/**'
+      - 'docker-compose.test.yml'
       - '.github/workflows/ci-backend.yml'
   pull_request:
     branches: [ main, develop ]
     paths:
       - 'backend/**'
+      - 'postman/**'
 
 jobs:
-  test:
-    name: Test Backend
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
 
     strategy:
@@ -53,7 +56,7 @@ jobs:
         working-directory: ./backend
         run: npm run lint --if-present
 
-      - name: Run tests
+      - name: Run unit & integration tests
         working-directory: ./backend
         run: npm test
         env:
@@ -61,13 +64,13 @@ jobs:
           MONGODB_URI: mongodb://testuser:testpass@localhost:27017/bookstore_test?authSource=admin
           JWT_SECRET: test_jwt_secret
 
-      - name: Upload coverage
+      - name: Upload coverage to Codecov
         if: matrix.node-version == '18.x'
         uses: codecov/codecov-action@v3
         with:
           files: ./backend/coverage/lcov.info
-          flags: backend
-          name: backend-coverage
+          flags: backend-unit-tests
+          name: backend-unit-coverage
           fail_ci_if_error: false
         continue-on-error: true
 
@@ -75,15 +78,96 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.node-version }}
+          name: unit-test-results-${{ matrix.node-version }}
           path: |
             backend/coverage/
-            backend/*.log
+            backend/test-results/
+
+  integration-tests:
+    name: Integration Tests (Newman)
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker images
+        run: |
+          docker-compose -f docker-compose.test.yml build mongodb-test backend-integration newman
+
+      - name: Start test environment
+        run: |
+          docker-compose -f docker-compose.test.yml up -d mongodb-test backend-integration
+
+      - name: Wait for backend to be healthy
+        run: |
+          echo "Waiting for backend to be healthy..."
+          timeout=60
+          count=0
+          until [ "$(docker inspect --format='{{.State.Health.Status}}' bookstore-backend-integration)" == "healthy" ] || [ $count -eq $timeout ]; do
+            echo "Waiting... ($count/$timeout)"
+            sleep 2
+            count=$((count + 2))
+          done
+          
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' bookstore-backend-integration)" != "healthy" ]; then
+            echo "Backend failed to become healthy"
+            docker-compose -f docker-compose.test.yml logs backend-integration
+            exit 1
+          fi
+          echo "Backend is healthy!"
+
+      - name: Run Newman integration tests
+        run: |
+          docker-compose -f docker-compose.test.yml run --rm newman
+
+      - name: Copy Newman results from container
+        if: always()
+        run: |
+          mkdir -p postman/results
+          docker cp bookstore-newman:/etc/newman/results/. postman/results/ 2>/dev/null || true
+
+      - name: Display Newman summary
+        if: always()
+        run: |
+          if [ -f postman/results/results.json ]; then
+            echo "=== Newman Test Summary ==="
+            cat postman/results/results.json | jq -r '.run.stats | "Requests: \(.requests.total) total, \(.requests.failed) failed\nAssertions: \(.assertions.total) total, \(.assertions.failed) failed"'
+          fi
+
+      - name: Upload Newman results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-test-results
+          path: |
+            postman/results/
+          retention-days: 30
+
+      - name: Stop containers
+        if: always()
+        run: |
+          docker-compose -f docker-compose.test.yml down -v
+
+      - name: Check Newman test results
+        if: always()
+        run: |
+          if [ -f postman/results/results.json ]; then
+            failed=$(cat postman/results/results.json | jq -r '.run.stats.requests.failed')
+            if [ "$failed" != "0" ]; then
+              echo "Newman tests had $failed failed requests"
+              exit 1
+            fi
+          fi
 
   build:
     name: Build Backend Docker Image
     runs-on: ubuntu-latest
-    needs: test
+    needs: [unit-tests, integration-tests]
 
     steps:
       - name: Checkout code
@@ -105,6 +189,7 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
+    needs: unit-tests
 
     steps:
       - name: Checkout code

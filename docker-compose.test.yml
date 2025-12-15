@@ -21,7 +21,58 @@ services:
       timeout: 3s
       retries: 5
 
-  # Backend tests
+  # Backend for integration tests
+  backend-integration:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: bookstore-backend-integration
+    environment:
+      NODE_ENV: test
+      MONGODB_URI: mongodb://testuser:testpass@mongodb-test:27017/bookstore_test?authSource=admin
+      JWT_SECRET: test_jwt_secret
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      mongodb-test:
+        condition: service_healthy
+    networks:
+      - test-network
+    command: npm start
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Newman - Postman CLI for integration tests
+  newman:
+    build:
+      context: ./postman
+      dockerfile: Dockerfile
+    container_name: bookstore-newman
+    depends_on:
+      backend-integration:
+        condition: service_healthy
+    networks:
+      - test-network
+    volumes:
+      - ./postman/results:/etc/newman/results
+      - ./postman/collections:/etc/newman/collections:ro
+      - ./postman/environments:/etc/newman/environments:ro
+      - ./postman/globals:/etc/newman/globals:ro
+    command: >
+      run "/etc/newman/collections/Integration Testing.postman_collection.json"
+      -e "/etc/newman/environments/BookStore_Node_Env.postman_environment.json"
+      -g "/etc/newman/globals/workspace.postman_globals.json"
+      --env-var "base_url=http://backend-integration:5000/api"
+      -r htmlextra,json,cli
+      --reporter-htmlextra-export=/etc/newman/results/report.html
+      --reporter-json-export=/etc/newman/results/results.json
+      --color on
+
+  # Backend unit tests
   backend-test:
     build:
       context: ./backend
