@@ -126,7 +126,7 @@ jobs:
           echo "Testing backend health endpoint..."
           max_attempts=10
           attempt=0
-          until curl -f http://localhost:5001/api/health || [ $attempt -eq $max_attempts ]; do
+          until curl -f http://localhost:5000/api/health || [ $attempt -eq $max_attempts ]; do
             echo "Health check attempt $((attempt + 1))/$max_attempts failed, retrying..."
             sleep 3
             attempt=$((attempt + 1))
