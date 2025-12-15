@@ -14,6 +14,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import healthRoutes from './routes/healthRoutes.js';
 
 // Load env vars
 dotenv.config();
@@ -35,6 +36,7 @@ app.get('/', (req, res) => {
     res.json({ message: 'Bookstore API is running...' });
 });
 
+app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/categories', categoryRoutes);

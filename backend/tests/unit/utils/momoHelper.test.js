@@ -17,7 +17,7 @@ jest.unstable_mockModule('../../../src/config/env.js', () => ({
             accessKey: 'MOMO_ACCESS_KEY',
             secretKey: 'MOMO_SECRET_KEY',
             endpoint: 'https://test-momo.com/pay',
-            returnUrl: 'https://mysite.com/return',
+            redirectUrl: 'https://mysite.com/return',
             ipnUrl: 'https://mysite.com/ipn',
         },
     },

@@ -220,30 +220,101 @@ describe('orderController', () => {
             const orders = [mockOrder(), mockOrder()];
             const count = 2;
 
-            Order.countDocuments = jest.fn().mockResolvedValue(count);
-
-            Order.find.mockReturnValue({
-                populate: jest.fn().mockReturnValue({
-                    limit: jest.fn().mockReturnValue({
-                        skip: jest.fn().mockReturnValue({
-                            sort: jest.fn().mockResolvedValue(orders)
-                        })
-                    })
-                })
-            });
+            // Mock aggregate instead of countDocuments/find
+            Order.aggregate = jest.fn().mockResolvedValue([{
+                metadata: [{ total: count }],
+                data: orders
+            }]);
 
             req.query = { page: 1, limit: 10 };
 
             await getOrders(req, res);
 
-            expect(Order.countDocuments).toHaveBeenCalledWith({});
-            expect(Order.find).toHaveBeenCalledWith({});
+            expect(Order.aggregate).toHaveBeenCalled();
             expect(res.json).toHaveBeenCalledWith({
                 success: true,
                 data: orders,
                 page: 1,
                 pages: 1,
                 total: 2
+            });
+        });
+
+        it('filterOrdersByStatus', async () => {
+            req.query = { status: 'pending', page: 1, limit: 10 };
+
+            Order.aggregate.mockResolvedValue([{
+                metadata: [{ total: 1 }],
+                data: [mockOrder({ status: 'pending' })]
+            }]);
+
+            await getOrders(req, res);
+
+            expect(Order.aggregate).toHaveBeenCalled();
+        });
+
+        it('filterOrdersByKeyword', async () => {
+            req.query = { keyword: 'John', page: 1, limit: 10 };
+
+            Order.aggregate.mockResolvedValue([{
+                metadata: [{ total: 1 }],
+                data: [mockOrder()]
+            }]);
+
+            await getOrders(req, res);
+
+            expect(Order.aggregate).toHaveBeenCalled();
+        });
+
+        it('filterOrdersByDateRange', async () => {
+            req.query = { 
+                startDate: '2024-01-01', 
+                endDate: '2024-01-31',
+                page: 1,
+                limit: 10
+            };
+
+            Order.aggregate.mockResolvedValue([{
+                metadata: [{ total: 0 }],
+                data: []
+            }]);
+
+            await getOrders(req, res);
+
+            expect(Order.aggregate).toHaveBeenCalled();
+        });
+
+        it('filterOrdersByPriceRange', async () => {
+            req.query = { 
+                minPrice: 100000, 
+                maxPrice: 500000,
+                page: 1,
+                limit: 10
+            };
+
+            Order.aggregate.mockResolvedValue([{
+                metadata: [{ total: 0 }],
+                data: []
+            }]);
+
+            await getOrders(req, res);
+
+            expect(Order.aggregate).toHaveBeenCalled();
+        });
+
+        it('handleEmptyResult', async () => {
+            req.query = { page: 1, limit: 10 };
+
+            Order.aggregate.mockResolvedValue([]);
+
+            await getOrders(req, res);
+
+            expect(res.json).toHaveBeenCalledWith({
+                success: true,
+                data: [],
+                page: 1,
+                pages: 0,
+                total: 0
             });
         });
     });

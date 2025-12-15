@@ -1,0 +1,164 @@
+name: 🧪 Test Case
+description: Document a new test case or test failure
+title: "[TEST] "
+labels: ["testing", "qa"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to document test cases or report test failures.
+
+  - type: dropdown
+    id: test-type
+    attributes:
+      label: Test Type
+      description: What type of test is this?
+      options:
+        - Unit Test
+        - Integration Test
+        - System Test
+        - E2E Test
+        - Performance Test
+        - Security Test
+        - Regression Test
+        - Acceptance Test
+    validations:
+      required: true
+
+  - type: dropdown
+    id: test-level
+    attributes:
+      label: Test Level
+      description: At what level is this test?
+      options:
+        - Unit
+        - Integration
+        - System
+        - Acceptance
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-case-id
+    attributes:
+      label: Test Case ID
+      description: Unique identifier for this test case
+      placeholder: e.g., TC-AUTH-01, TC-CART-05
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-description
+    attributes:
+      label: Test Description
+      description: What does this test verify?
+      placeholder: Clear description of what is being tested
+    validations:
+      required: true
+
+  - type: textarea
+    id: preconditions
+    attributes:
+      label: Preconditions
+      description: What needs to be set up before running this test?
+      placeholder: |
+        - User must be logged in
+        - Database must have test data
+        - etc.
+
+  - type: textarea
+    id: test-steps
+    attributes:
+      label: Test Steps
+      description: Step-by-step instructions to execute the test
+      placeholder: |
+        1. Navigate to...
+        2. Click on...
+        3. Enter...
+        4. Verify...
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-data
+    attributes:
+      label: Test Data
+      description: Data needed to execute the test
+      placeholder: |
+        - Username: test@example.com
+        - Password: Test123!
+        - etc.
+
+  - type: textarea
+    id: expected-result
+    attributes:
+      label: Expected Result
+      description: What should happen when the test passes?
+      placeholder: Describe the expected outcome
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-result
+    attributes:
+      label: Actual Result (if failed)
+      description: What actually happened?
+      placeholder: Describe what happened if test failed
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: Test Status
+      options:
+        - Passed
+        - Failed
+        - Blocked
+        - Not Executed
+        - New Test Case
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P1 - Critical
+        - P2 - High
+        - P3 - Medium
+        - P4 - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: automation
+    attributes:
+      label: Automation Status
+      description: Is this test automated?
+      placeholder: |
+        - [ ] Automated
+        - [ ] Manual only
+        - [ ] Automation in progress
+
+  - type: textarea
+    id: related-files
+    attributes:
+      label: Related Files
+      description: List files related to this test
+      placeholder: |
+        - backend/tests/integration/auth.test.js
+        - backend/src/controllers/authController.js
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Evidence
+      description: Attach any relevant screenshots or logs
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Notes
+      description: Any other relevant information
