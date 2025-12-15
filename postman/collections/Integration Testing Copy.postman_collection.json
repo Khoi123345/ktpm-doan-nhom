@@ -235,7 +235,7 @@
                 {
                   "listen": "test",
                   "script": {
-                    "type": "text/javascript",
+                    "id": "7b229cd8-a077-4d4b-aed2-172925c8aa4f",
                     "exec": [
                       "if (pm.response.code === 200 || pm.response.code === 201) {",
                       "    const response = pm.response.json();",
@@ -281,7 +281,9 @@
                       "    pm.expect(jsonData.user).to.have.property('name');",
                       "})"
                     ],
-                    "id": "7b229cd8-a077-4d4b-aed2-172925c8aa4f"
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
                   }
                 },
                 {
@@ -1951,37 +1953,37 @@
   ],
   "variable": [
     {
-      "id": "1547b32e-24ad-45d0-ac62-49717d1c57ed",
+      "id": "78429b83-e073-4b1e-91ff-41e6f656b68c",
       "key": "token",
       "value": ""
     },
     {
-      "id": "1697601c-ce30-4c85-8cb2-eb9b15094a57",
+      "id": "59da437a-6ef4-47e1-bceb-a2acb9d7c8ef",
       "key": "baseUrl",
       "value": "http://localhost:5000/api"
     },
     {
-      "id": "c89144bf-0fc2-4202-b47c-2237e3a2b798",
+      "id": "3a2d00f2-2a79-461b-b140-ca022e39e978",
       "key": "timestamp",
       "value": ""
     },
     {
-      "id": "cf275391-bea5-44fd-96e8-e3c9c61e3f19",
+      "id": "46273e56-b2fe-40d8-8da8-83e8cd95748a",
       "key": "testUsername",
       "value": ""
     },
     {
-      "id": "6cb2a325-83c1-4d30-9c3a-8de3510416cc",
+      "id": "c1f4a759-57da-4a3c-aeb6-f24ad59a0062",
       "key": "testPassword",
       "value": ""
     },
     {
-      "id": "a58280b4-8a23-4ed2-88c8-b70e9b174f31",
+      "id": "bb67fff3-f6b7-4ef4-805a-2351f0f7bc9c",
       "key": "username",
       "value": ""
     },
     {
-      "id": "bc061e99-7eae-417f-a48b-d379a59027c0",
+      "id": "35291e4c-8a3d-40e9-ad02-90cfc308b1be",
       "key": "userId",
       "value": ""
     }
