@@ -97,6 +97,7 @@ export const deleteCategory = asyncHandler(async (req, res) => {
 
     if (category) {
         // Check if any book uses this category
+        const Book = (await import('../models/Book.js')).default;
         const book = await Book.findOne({ category: req.params.id });
         if (book) {
             res.status(400);

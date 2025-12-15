@@ -227,8 +227,19 @@ export const getOrders = asyncHandler(async (req, res) => {
 
     const result = await Order.aggregate(pipeline);
 
-    const metadata = result[0].metadata[0];
-    const orders = result[0].data;
+    // Handle empty result
+    if (!result || result.length === 0 || !result[0]) {
+        return res.json({
+            success: true,
+            data: [],
+            page,
+            pages: 0,
+            total: 0
+        });
+    }
+
+    const metadata = result[0].metadata && result[0].metadata[0] ? result[0].metadata[0] : null;
+    const orders = result[0].data || [];
     const total = metadata ? metadata.total : 0;
 
     res.json({

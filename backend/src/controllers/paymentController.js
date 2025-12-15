@@ -276,4 +276,16 @@ class PaymentController {
     }
 }
 
-export default new PaymentController();
+const paymentController = new PaymentController();
+
+// Export individual methods for testing (bound to instance)
+export const createMoMoPaymentUrl = paymentController.create.bind(paymentController);
+export const momoIPN = paymentController.handleMomoIPN.bind(paymentController);
+export const checkPaymentStatus = paymentController.checkStatus.bind(paymentController);
+export const getPaymentById = paymentController.getById.bind(paymentController);
+export const getPaymentByOrder = paymentController.getByOrder.bind(paymentController);
+export const getPaymentByStatus = paymentController.getByStatus.bind(paymentController);
+export const updatePayment = paymentController.update.bind(paymentController);
+export const deletePayment = paymentController.delete.bind(paymentController);
+
+export default paymentController;

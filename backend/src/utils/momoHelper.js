@@ -44,6 +44,9 @@ export const createMoMoPayment = async (orderInfo) => {
         lang: 'vi',
     };
 
+    console.log('MoMo Request Body:', requestBody);
+    console.log('Raw Signature String:', rawSignature);
+
     try {
         const response = await axios.post(endpoint, requestBody);
         return response.data;

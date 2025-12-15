@@ -156,6 +156,22 @@ describe('cartController', () => {
             await expect(addToCart(req, res)).rejects.toThrow('Vui lòng cung cấp đầy đủ thông tin');
             expect(res.status).toHaveBeenCalledWith(400);
         });
+
+        it('return400WhenAddingExceedsStock', async () => {
+            const book = mockBook({ stock: 5 });
+            req.body = { bookId: book._id, quantity: 2 };
+
+            const cart = mockCart({
+                user: req.user._id,
+                items: [{ book: book._id, quantity: 4, price: book.price }]
+            });
+
+            Book.findById.mockResolvedValue(book);
+            Cart.findOne.mockResolvedValue(cart);
+
+            await expect(addToCart(req, res)).rejects.toThrow('Số lượng sách trong kho không đủ');
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
     });
 
     describe('updateCartItem', () => {
@@ -178,6 +194,24 @@ describe('cartController', () => {
             expect(cart.save).toHaveBeenCalled();
         });
 
+        it('return400WhenQuantityInvalid', async () => {
+            req.params = { bookId: 'book-id' };
+            req.body = { quantity: 0 };
+
+            await expect(updateCartItem(req, res)).rejects.toThrow('Số lượng không hợp lệ');
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it('return404WhenBookNotFound', async () => {
+            req.params = { bookId: 'nonexistent-id' };
+            req.body = { quantity: 2 };
+
+            Book.findById.mockResolvedValue(null);
+
+            await expect(updateCartItem(req, res)).rejects.toThrow('Không tìm thấy sách');
+            expect(res.status).toHaveBeenCalledWith(404);
+        });
+
         it('return400WhenQuantityExceedsStock', async () => {
             const book = mockBook({ stock: 5 });
             req.params = { bookId: book._id };
@@ -198,6 +232,23 @@ describe('cartController', () => {
             Cart.findOne.mockResolvedValue(null);
 
             await expect(updateCartItem(req, res)).rejects.toThrow('Không tìm thấy giỏ hàng');
+            expect(res.status).toHaveBeenCalledWith(404);
+        });
+
+        it('return404WhenItemNotInCart', async () => {
+            const book = mockBook();
+            req.params = { bookId: book._id };
+            req.body = { quantity: 2 };
+
+            const cart = mockCart({
+                user: req.user._id,
+                items: [{ book: 'different-id', quantity: 1 }]
+            });
+
+            Book.findById.mockResolvedValue(book);
+            Cart.findOne.mockResolvedValue(cart);
+
+            await expect(updateCartItem(req, res)).rejects.toThrow('Không tìm thấy sản phẩm trong giỏ hàng');
             expect(res.status).toHaveBeenCalledWith(404);
         });
     });
@@ -257,6 +308,15 @@ describe('cartController', () => {
 
             await expect(removeMultipleFromCart(req, res)).rejects.toThrow('Dữ liệu không hợp lệ');
             expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it('return404WhenCartNotFound', async () => {
+            req.body = { itemIds: ['id1'] };
+
+            Cart.findOne.mockResolvedValue(null);
+
+            await expect(removeMultipleFromCart(req, res)).rejects.toThrow('Không tìm thấy giỏ hàng');
+            expect(res.status).toHaveBeenCalledWith(404);
         });
     });
 

@@ -8,6 +8,13 @@ jest.unstable_mockModule('../../../src/models/Category.js', () => ({
     })),
 }));
 
+jest.unstable_mockModule('../../../src/models/Book.js', () => ({
+    __esModule: true,
+    default: {
+        findOne: jest.fn()
+    }
+}));
+
 // Add static methods to the mock
 const { default: CategoryMock } = await import('../../../src/models/Category.js');
 Object.assign(CategoryMock, {
@@ -27,6 +34,7 @@ const {
 } = await import('../../../src/controllers/categoryController.js');
 
 const { default: Category } = await import('../../../src/models/Category.js');
+const { default: Book } = await import('../../../src/models/Book.js');
 const { mockRequest, mockResponse, mockCategory } = await import('../helpers/testHelpers.js');
 
 describe('categoryController', () => {
@@ -144,6 +152,9 @@ describe('categoryController', () => {
 
             category.deleteOne = jest.fn().mockResolvedValue(true);
             Category.findById.mockResolvedValue(category);
+            
+            // Mock Book.findOne to return null (no books using this category)
+            Book.findOne.mockResolvedValue(null);
 
             await deleteCategory(req, res);
 
