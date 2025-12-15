@@ -338,20 +338,20 @@
                       "",
                       "pm.test('Profile contains required user fields', function () {",
                       "    const jsonData = pm.response.json();",
-                      "    pm.expect(jsonData).to.have.property('_id');",
-                      "    pm.expect(jsonData).to.have.property('name');",
-                      "    pm.expect(jsonData).to.have.property('email');",
+                      "    pm.expect(jsonData.data).to.have.property('_id');",
+                      "    pm.expect(jsonData.data).to.have.property('name');",
+                      "    pm.expect(jsonData.data).to.have.property('email');",
                       "})",
                       "",
                       "pm.test('Email is a valid format', function () {",
                       "    const jsonData = pm.response.json();",
-                      "    pm.expect(jsonData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);",
+                      "    pm.expect(jsonData.data.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);",
                       "})",
                       "",
-                      "pm.test('Profile has isAdmin property', function () {",
+                      "pm.test('Profile has role property', function () {",
                       "    const jsonData = pm.response.json();",
-                      "    pm.expect(jsonData).to.have.property('isAdmin');",
-                      "    pm.expect(jsonData.isAdmin).to.be.a('boolean');",
+                      "    pm.expect(jsonData.data).to.have.property('role');",
+                      "    pm.expect(jsonData.data.role).to.be.a('string');",
                       "})"
                     ]
                   }
@@ -449,6 +449,44 @@
         {
           "name": "Book",
           "item": [
+            {
+              "name": "Setup - Get default category",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "setup-category-001",
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.data && response.data.length > 0) {",
+                      "        pm.environment.set('category_id', response.data[0]._id);",
+                      "        console.log('Category ID set:', response.data[0]._id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "setup-cat-get",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/categories",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "categories"
+                  ]
+                }
+              },
+              "response": []
+            },
             {
               "name": "Create book",
               "event": [

@@ -1,7 +1,8 @@
 import User from '../models/User.js';
+import Category from '../models/Category.js';
 
 /**
- * Seed admin account for testing
+ * Seed admin account and default category for testing
  * Only runs in test environment
  */
 export const seedAdminUser = async () => {
@@ -26,7 +27,21 @@ export const seedAdminUser = async () => {
         } else {
             console.log('ℹ️  Admin user already exists');
         }
+
+        // Seed default category
+        const defaultCategoryName = 'Fiction';
+        const categoryExists = await Category.findOne({ name: defaultCategoryName });
+        
+        if (!categoryExists) {
+            await Category.create({
+                name: defaultCategoryName,
+                description: 'Fiction books category',
+            });
+            console.log('✅ Default category seeded successfully');
+        } else {
+            console.log('ℹ️  Default category already exists');
+        }
     } catch (error) {
-        console.error('❌ Error seeding admin user:', error.message);
+        console.error('❌ Error seeding test data:', error.message);
     }
 };
