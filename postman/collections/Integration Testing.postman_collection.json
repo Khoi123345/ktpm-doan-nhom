@@ -164,7 +164,7 @@
                       "    const jsonData = pm.response.json();",
                       "    pm.expect(jsonData.data).to.have.property('role');",
                       "    pm.expect(jsonData.data.role).to.be.oneOf(['user', 'admin']);",
-                      "})",
+                      "})"
                     ]
                   }
                 },
