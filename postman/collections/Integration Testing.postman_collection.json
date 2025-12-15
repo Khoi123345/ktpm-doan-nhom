@@ -1612,7 +1612,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"orderItems\": [\r\n    {\r\n      \"book\": \"{{book_id}}\",\r\n      \"title\": \"The Great Gatsby\",\r\n      \"quantity\": 2,\r\n      \"image\": \"https://example.com/gatsby.jpg\",\r\n      \"price\": 15.99\r\n    }\r\n  ],\r\n  \"shippingAddress\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"Hanoi\",\r\n    \"postalCode\": \"100000\",\r\n    \"country\": \"Vietnam\"\r\n  },\r\n  \"paymentMethod\": \"COD\",\r\n  \"itemsPrice\": 31.98,\r\n  \"shippingPrice\": 0,\r\n  \"discountAmount\": 0,\r\n  \"totalPrice\": 31.98,\r\n  \"couponCode\": \"\"\r\n}",
+                  "raw": "{\r\n  \"orderItems\": [\r\n    {\r\n      \"book\": \"{{book_id}}\",\r\n      \"title\": \"The Great Gatsby\",\r\n      \"quantity\": 2,\r\n      \"image\": \"https://example.com/gatsby.jpg\",\r\n      \"price\": 15.99\r\n    }\r\n  ],\r\n  \"shippingAddress\": {\r\n    \"fullName\": \"Test User\",\r\n    \"phone\": \"0123456789\",\r\n    \"address\": \"123 Main St\",\r\n    \"city\": \"Hanoi\",\r\n    \"district\": \"Ba Dinh\",\r\n    \"ward\": \"Quan Thanh\"\r\n  },\r\n  \"paymentMethod\": \"COD\",\r\n  \"itemsPrice\": 31.98,\r\n  \"shippingPrice\": 0,\r\n  \"discountAmount\": 0,\r\n  \"totalPrice\": 31.98,\r\n  \"couponCode\": \"\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
