@@ -79,7 +79,7 @@
                       "pm.test('Email format is valid', function () {",
                       "    const jsonData = pm.response.json();",
                       "    pm.expect(jsonData.data.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);",
-                      "})",
+                      "})"
                     ]
                   }
                 }
