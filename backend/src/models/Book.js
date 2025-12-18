@@ -55,7 +55,7 @@ const bookSchema = new mongoose.Schema(
         },
         pages: {
             type: Number,
-            min: 0,
+            min: [1, 'Số trang phải lớn hơn 0'],
         },
         language: {
             type: String,

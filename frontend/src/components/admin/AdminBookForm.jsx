@@ -139,6 +139,7 @@ const AdminBookForm = ({ initialData, onSubmit, onClose }) => {
                                         value={formData.price}
                                         onChange={handleChange}
                                         className="input-field"
+                                        min="0"
                                         required
                                     />
                                 </div>
@@ -150,6 +151,7 @@ const AdminBookForm = ({ initialData, onSubmit, onClose }) => {
                                         value={formData.discountPrice}
                                         onChange={handleChange}
                                         className="input-field"
+                                        min="0"
                                     />
                                 </div>
                             </div>
@@ -162,6 +164,7 @@ const AdminBookForm = ({ initialData, onSubmit, onClose }) => {
                                         value={formData.stock}
                                         onChange={handleChange}
                                         className="input-field"
+                                        min="0"
                                         required
                                     />
                                 </div>
@@ -214,6 +217,7 @@ const AdminBookForm = ({ initialData, onSubmit, onClose }) => {
                                         value={formData.pages}
                                         onChange={handleChange}
                                         className="input-field"
+                                        min="1"
                                     />
                                 </div>
                             </div>
