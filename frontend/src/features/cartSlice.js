@@ -100,6 +100,37 @@ export const clearCartAsync = createAsyncThunk(
     }
 );
 
+// Sync local cart with backend after login
+export const syncCartAfterLogin = createAsyncThunk(
+    'cart/syncCartAfterLogin',
+    async (_, { getState, rejectWithValue }) => {
+        try {
+            const localCartItems = getCartFromStorage();
+            
+            // If no local cart, just fetch from backend
+            if (localCartItems.length === 0) {
+                const { data } = await cartAPI.getCart();
+                return data.data.items;
+            }
+
+            // Sync each local cart item to backend
+            for (const item of localCartItems) {
+                await cartAPI.addToCart(item._id, item.quantity);
+            }
+
+            // Fetch updated cart from backend
+            const { data } = await cartAPI.getCart();
+            
+            // Clear local storage after successful sync
+            localStorage.removeItem('cartItems');
+            
+            return data.data.items;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Không thể đồng bộ giỏ hàng');
+        }
+    }
+);
+
 const cartSlice = createSlice({
     name: 'cart',
     initialState,
@@ -289,6 +320,23 @@ const cartSlice = createSlice({
                 state.cartItems = [];
                 state.appliedCoupon = null;
                 localStorage.removeItem('cartItems');
+            });
+
+        // Sync cart after login
+        builder
+            .addCase(syncCartAfterLogin.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(syncCartAfterLogin.fulfilled, (state, action) => {
+                state.loading = false;
+                state.cartItems = action.payload || [];
+                state.syncedWithBackend = true;
+                localStorage.setItem('cartItems', JSON.stringify(action.payload || []));
+            })
+            .addCase(syncCartAfterLogin.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     },
 });

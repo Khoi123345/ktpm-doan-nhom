@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { login, clearError } from '../../features/authSlice';
+import { syncCartAfterLogin } from '../../features/cartSlice';
 import { toast } from 'react-toastify';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -21,6 +22,9 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (userInfo) {
+            // Sync cart after successful login
+            dispatch(syncCartAfterLogin());
+            
             // Redirect admin to admin dashboard, customers to home
             if (userInfo.role === 'admin') {
                 navigate('/admin/dashboard');
@@ -28,7 +32,7 @@ const LoginPage = () => {
                 navigate('/');
             }
         }
-    }, [userInfo, navigate]);
+    }, [userInfo, navigate, dispatch]);
 
     useEffect(() => {
         if (error) {
