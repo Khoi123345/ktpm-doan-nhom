@@ -1,0 +1,256 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 4,
+    "passes": 2,
+    "pending": 2,
+    "failures": 0,
+    "start": "2025-12-18T09:02:32.924Z",
+    "end": "2025-12-18T09:03:09.898Z",
+    "duration": 36974,
+    "testsRegistered": 4,
+    "passPercent": 100,
+    "pendingPercent": 50,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "ff7330f7-df45-4c91-aa4e-5a9fa12efb0e",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "b0af028a-f824-435c-8749-db8fdd6d20dd",
+          "title": "Home Page Tests",
+          "fullFile": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\home.spec.js",
+          "file": "\\tests\\home.spec.js",
+          "beforeHooks": [
+            {
+              "title": "\"before each\" hook in \"Home Page Tests\"",
+              "fullTitle": "Home Page Tests \"before each\" hook in \"Home Page Tests\"",
+              "timedOut": false,
+              "duration": 744,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "driver = await createDriver();\nhomePage = new HomePage(driver);",
+              "err": {},
+              "uuid": "9268812c-552b-4980-91c8-5fc8e0a85d39",
+              "parentUUID": "b0af028a-f824-435c-8749-db8fdd6d20dd",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after each\" hook in \"Home Page Tests\"",
+              "fullTitle": "Home Page Tests \"after each\" hook in \"Home Page Tests\"",
+              "timedOut": false,
+              "duration": 77,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (this.currentTest.state === 'failed' && config.screenshotOnFailure) {\n    await takeScreenshot(driver, `FAILED_${this.currentTest.title}`);\n}\nawait driver.quit();",
+              "err": {},
+              "uuid": "45d6dac4-9a22-45ac-aaa3-238489321565",
+              "parentUUID": "b0af028a-f824-435c-8749-db8fdd6d20dd",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should load home page successfully",
+              "fullTitle": "Home Page Tests should load home page successfully",
+              "timedOut": false,
+              "duration": 2693,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await homePage.navigate();\n\n// Wait for page to load\nawait driver.sleep(2000);\n\n// Verify we're on the home page\nconst currentUrl = await driver.getCurrentUrl();\nexpect(currentUrl).to.include(config.baseUrl);\n\n// Verify page has a title\nconst title = await homePage.getPageTitle();\nexpect(title).to.have.length.greaterThan(0);",
+              "err": {},
+              "uuid": "4f77a1d8-8bf0-42a7-96ef-223e9667c458",
+              "parentUUID": "b0af028a-f824-435c-8749-db8fdd6d20dd",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should have search functionality",
+              "fullTitle": "Home Page Tests should have search functionality",
+              "timedOut": false,
+              "duration": 12626,
+              "state": "pending",
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": true,
+              "context": null,
+              "code": "await homePage.navigate();\nawait driver.sleep(2000);\n\n// Try to find search input\ntry {\n    const searchElements = await driver.findElements(homePage.searchInput);\n    expect(searchElements).to.have.length.greaterThan(0);\n} catch (error) {\n    this.skip();\n}",
+              "err": {},
+              "uuid": "4058210c-d10f-48af-9ead-5afe915107ed",
+              "parentUUID": "b0af028a-f824-435c-8749-db8fdd6d20dd",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should navigate to login page from home",
+              "fullTitle": "Home Page Tests should navigate to login page from home",
+              "timedOut": false,
+              "duration": 4699,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await homePage.navigate();\nawait driver.sleep(2000);\n\n// Try to click login link\ntry {\n    await homePage.clickLogin();\n    await driver.sleep(2000);\n    \n    // Verify redirected to login page\n    const currentUrl = await driver.getCurrentUrl();\n    expect(currentUrl).to.include('/login');\n} catch (error) {\n    this.skip();\n}",
+              "err": {},
+              "uuid": "59894e8b-76ce-499b-81fc-d023a2a1fd67",
+              "parentUUID": "b0af028a-f824-435c-8749-db8fdd6d20dd",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "4f77a1d8-8bf0-42a7-96ef-223e9667c458",
+            "59894e8b-76ce-499b-81fc-d023a2a1fd67"
+          ],
+          "failures": [],
+          "pending": [
+            "4058210c-d10f-48af-9ead-5afe915107ed"
+          ],
+          "skipped": [],
+          "duration": 20018,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 30000
+        },
+        {
+          "uuid": "60a60459-dae4-4194-93b2-51a81e271de8",
+          "title": "Book Browsing Tests",
+          "fullFile": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\home.spec.js",
+          "file": "\\tests\\home.spec.js",
+          "beforeHooks": [
+            {
+              "title": "\"before each\" hook in \"Book Browsing Tests\"",
+              "fullTitle": "Book Browsing Tests \"before each\" hook in \"Book Browsing Tests\"",
+              "timedOut": false,
+              "duration": 779,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "driver = await createDriver();\nhomePage = new HomePage(driver);",
+              "err": {},
+              "uuid": "34f282c6-218c-4424-a480-0f1241ecd15d",
+              "parentUUID": "60a60459-dae4-4194-93b2-51a81e271de8",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after each\" hook in \"Book Browsing Tests\"",
+              "fullTitle": "Book Browsing Tests \"after each\" hook in \"Book Browsing Tests\"",
+              "timedOut": false,
+              "duration": 64,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (this.currentTest.state === 'failed' && config.screenshotOnFailure) {\n    await takeScreenshot(driver, `FAILED_${this.currentTest.title}`);\n}\nawait driver.quit();",
+              "err": {},
+              "uuid": "ea5d3cec-bf00-44cf-8009-7b7f0967d32e",
+              "parentUUID": "60a60459-dae4-4194-93b2-51a81e271de8",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should display books on homepage",
+              "fullTitle": "Book Browsing Tests should display books on homepage",
+              "timedOut": false,
+              "duration": 13610,
+              "state": "pending",
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": true,
+              "context": null,
+              "code": "await homePage.navigate();\nawait driver.sleep(3000); // Wait for books to load\n\ntry {\n    const bookItems = await homePage.getBookItems();\n    \n    if (bookItems.length > 0) {\n        expect(bookItems).to.have.length.greaterThan(0);\n    } else {\n        this.skip();\n    }\n} catch (error) {\n    this.skip();\n}",
+              "err": {},
+              "uuid": "8a3b68e5-9325-47c0-8884-1a88fda58633",
+              "parentUUID": "60a60459-dae4-4194-93b2-51a81e271de8",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [],
+          "pending": [
+            "8a3b68e5-9325-47c0-8884-1a88fda58633"
+          ],
+          "skipped": [],
+          "duration": 13610,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 30000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 30000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.5"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "[object Object]": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}
