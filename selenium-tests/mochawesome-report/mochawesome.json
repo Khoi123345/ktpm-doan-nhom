@@ -1,0 +1,160 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-12-18T14:06:02.834Z",
+    "end": "2025-12-18T14:06:36.249Z",
+    "duration": 33415,
+    "testsRegistered": 2,
+    "passPercent": 50,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 1,
+    "hasSkipped": true
+  },
+  "results": [
+    {
+      "uuid": "589d2724-41fc-483b-86e6-db85b14f8426",
+      "title": "",
+      "fullFile": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\e2e-user-view-book-detail.spec.js",
+      "file": "\\tests\\e2e-user-view-book-detail.spec.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "0dac814a-4613-4a51-81df-f849e75f6423",
+          "title": "E2E Test: User Login and View Book Details",
+          "fullFile": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\e2e-user-view-book-detail.spec.js",
+          "file": "\\tests\\e2e-user-view-book-detail.spec.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"E2E Test: User Login and View Book Details\"",
+              "fullTitle": "E2E Test: User Login and View Book Details \"before all\" hook in \"E2E Test: User Login and View Book Details\"",
+              "timedOut": false,
+              "duration": 759,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "this.timeout(30000);\ndriver = await createDriver();",
+              "err": {},
+              "uuid": "ec148fac-ff0c-4cb4-aadd-10c45568afed",
+              "parentUUID": "0dac814a-4613-4a51-81df-f849e75f6423",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"E2E Test: User Login and View Book Details\"",
+              "fullTitle": "E2E Test: User Login and View Book Details \"after all\" hook in \"E2E Test: User Login and View Book Details\"",
+              "timedOut": false,
+              "duration": 78,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await quitDriver(driver);",
+              "err": {},
+              "uuid": "5adc3b12-70f4-4145-a151-2b3cbec907a4",
+              "parentUUID": "0dac814a-4613-4a51-81df-f849e75f6423",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should login as customer and view book details",
+              "fullTitle": "E2E Test: User Login and View Book Details should login as customer and view book details",
+              "timedOut": false,
+              "duration": 32571,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "this.timeout(60000);\n// Step 1: Navigate to customer login page\nconsole.log('Step 1: Navigating to login page...');\nconst loginUrl = `${config.baseUrl}/login`;\nawait driver.get(loginUrl);\nawait driver.sleep(2000);\n// Step 2: Login with customer credentials\nconsole.log('Step 2: Logging in as customer...');\n\n// Fill in login form\nconst emailInput = await waitForElement(driver, By.css('input[type=\"email\"]'), 10000);\nawait emailInput.clear();\nawait emailInput.sendKeys(config.testUser.email);\n\nconst passwordInput = await driver.findElement(By.css('input[type=\"password\"]'));\nawait passwordInput.clear();\nawait passwordInput.sendKeys(config.testUser.password);\n\n// Submit form\nawait passwordInput.sendKeys('\\n');\nawait driver.sleep(3000);\n// Step 3: Verify successful login\nconsole.log('Step 3: Verifying login success...');\nconst currentUrl = await driver.getCurrentUrl();\nconsole.log('Current URL after login:', currentUrl);\n\n// Check if we're still on login page - if yes, check for errors\nif (currentUrl.includes('/login')) {\n    console.log('Still on login page, checking for error messages...');\n    try {\n        const errorMessage = await driver.findElement(\n            By.css('.error, .alert, [class*=\"error\"], [class*=\"alert\"]')\n        );\n        const errorText = await errorMessage.getText();\n        console.log('Error message found:', errorText);\n    } catch (e) {\n        console.log('No error message found, but still on login page');\n    }\n    \n    // Try to check if user is logged in by looking for user menu or profile link\n    try {\n        const userMenu = await driver.findElement(\n            By.css('[class*=\"user\"], [class*=\"profile\"], a[href*=\"profile\"]')\n        );\n        if (userMenu) {\n            console.log('User menu found, login might be successful');\n        }\n    } catch (e) {\n        console.log('User menu not found');\n    }\n} else {\n    console.log('Redirected from login page - login successful');\n    expect(currentUrl).to.not.include('/login');\n}\n\n// Step 4: Navigate to books page\nconsole.log('Step 4: Navigating to books page...');\nawait driver.get(`${config.baseUrl}/books`);\nawait driver.sleep(3000);\n// Step 5: Wait for books to load\nconsole.log('Step 5: Waiting for books to load...');\nconst bookLinks = await waitForElements(\n    driver, \n    By.css('a[href*=\"/books/\"]'),\n    10000\n);\nexpect(bookLinks.length).to.be.greaterThan(0);\nconsole.log(`Found ${bookLinks.length} books`);\n// Step 6: Get book title before clicking\nconsole.log('Step 6: Getting first book information...');\nconst firstBookLink = bookLinks[0];\nconst bookHref = await firstBookLink.getAttribute('href');\nconsole.log('Book URL:', bookHref);\n// Try to get book title from the card\ntry {\n    const bookTitle = await firstBookLink.findElement(By.css('h2, h3, .book-title, [class*=\"title\"]'));\n    const titleText = await bookTitle.getText();\n    console.log('Book title:', titleText);\n} catch (e) {\n    console.log('Could not find book title element');\n}\n// Step 7: Click on the first book to view details\nconsole.log('Step 7: Clicking on first book...');\nawait firstBookLink.click();\nawait driver.sleep(3000);\n// Step 8: Verify we're on book detail page\nconsole.log('Step 8: Verifying book detail page...');\nconst detailUrl = await driver.getCurrentUrl();\nconsole.log('Detail page URL:', detailUrl);\nexpect(detailUrl).to.include('/books/');\nexpect(detailUrl).to.not.equal(`${config.baseUrl}/books`);\n// Step 9: Verify book detail elements are present\nconsole.log('Step 9: Checking book detail elements...');\n\n// Check for book title\ntry {\n    const detailTitle = await waitForElement(\n        driver,\n        By.css('h1, h2, .book-title, [class*=\"title\"]'),\n        5000\n    );\n    const detailTitleText = await detailTitle.getText();\n    console.log('Book detail title:', detailTitleText);\n    expect(detailTitleText).to.not.be.empty;\n} catch (e) {\n    console.error('Could not find book title on detail page');\n    throw e;\n}\n// Check for book price\ntry {\n    const priceElement = await driver.findElement(\n        By.css('[class*=\"price\"], .book-price, [class*=\"Price\"]')\n    );\n    const priceText = await priceElement.getText();\n    console.log('Book price:', priceText);\n    expect(priceText).to.not.be.empty;\n} catch (e) {\n    console.log('Price element not found or not visible');\n}\n// Check for book description\ntry {\n    const descriptionElement = await driver.findElement(\n        By.css('[class*=\"description\"], .book-description, p')\n    );\n    const descriptionText = await descriptionElement.getText();\n    console.log('Book description (first 100 chars):', descriptionText.substring(0, 100));\n} catch (e) {\n    console.log('Description element not found or not visible');\n}\n// Check for Add to Cart button (should be visible for logged-in customer)\ntry {\n    const addToCartButton = await driver.findElement(\n        By.css('button[class*=\"cart\"], button:contains(\"Add to Cart\"), button:contains(\"Thêm vào giỏ\")')\n    );\n    const isDisplayed = await addToCartButton.isDisplayed();\n    console.log('Add to Cart button visible:', isDisplayed);\n    expect(isDisplayed).to.be.true;\n} catch (e) {\n    console.log('Add to Cart button not found');\n}\n// Step 10: Verify book image\ntry {\n    const bookImage = await driver.findElement(\n        By.css('img[class*=\"book\"], img[alt*=\"book\"], .book-image img, img')\n    );\n    const imageSrc = await bookImage.getAttribute('src');\n    console.log('Book image src:', imageSrc);\n    expect(imageSrc).to.not.be.empty;\n} catch (e) {\n    console.log('Book image not found');\n}\nconsole.log('✓ E2E Test completed successfully: User logged in and viewed book details');",
+              "err": {},
+              "uuid": "03fa3948-0a57-4a19-8e9d-1175d2523a9a",
+              "parentUUID": "0dac814a-4613-4a51-81df-f849e75f6423",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should be able to navigate back to books list from detail page",
+              "fullTitle": "E2E Test: User Login and View Book Details should be able to navigate back to books list from detail page",
+              "timedOut": false,
+              "duration": 0,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "this.timeout(30000);\nconsole.log('Test: Navigation from detail to list...');\n\n// Should already be on a book detail page from previous test\nconst currentUrl = await driver.getCurrentUrl();\n\nif (!currentUrl.includes('/books/')) {\n    // If not on detail page, navigate there first\n    await driver.get(`${config.baseUrl}/books`);\n    await driver.sleep(2000);\n    const bookLinks = await waitForElements(driver, By.css('a[href*=\"/books/\"]'), 5000);\n    await bookLinks[0].click();\n    await driver.sleep(2000);\n}\n// Try to find and click back button or navigation link\ntry {\n    const backButton = await driver.findElement(\n        By.css('button[class*=\"back\"], a[href=\"/books\"], a:contains(\"Back\"), a:contains(\"Quay lại\")')\n    );\n    await backButton.click();\n    await driver.sleep(2000);\n    const newUrl = await driver.getCurrentUrl();\n    console.log('URL after clicking back:', newUrl);\n    expect(newUrl).to.include('/books');\n    expect(newUrl).to.not.include('/books/');\n} catch (e) {\n    console.log('Back button not found, using browser back navigation');\n    await driver.navigate().back();\n    await driver.sleep(2000);\n}\n// Verify we're back on books list\nconst booksAfterBack = await waitForElements(\n    driver,\n    By.css('a[href*=\"/books/\"]'),\n    5000\n);\nexpect(booksAfterBack.length).to.be.greaterThan(0);\nconsole.log('✓ Successfully navigated back to books list');",
+              "err": {},
+              "uuid": "040cd9f4-ca2e-486d-9d36-c6334f72cd95",
+              "parentUUID": "0dac814a-4613-4a51-81df-f849e75f6423",
+              "isHook": false,
+              "skipped": true
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "03fa3948-0a57-4a19-8e9d-1175d2523a9a"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [
+            "040cd9f4-ca2e-486d-9d36-c6334f72cd95"
+          ],
+          "duration": 32571,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 90000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.5"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "[object Object]": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

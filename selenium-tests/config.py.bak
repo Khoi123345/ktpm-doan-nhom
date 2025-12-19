@@ -1,0 +1,31 @@
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Base URLs
+BASE_URL = os.getenv("BASE_URL", "http://frontend:3000")
+ADMIN_URL = os.getenv("ADMIN_URL", "http://frontend:3001")
+API_URL = os.getenv("API_URL", "http://backend:5000/api")
+
+# Timeouts
+DEFAULT_TIMEOUT = 10
+PAGE_LOAD_TIMEOUT = 30
+
+# Test User Credentials
+TEST_USER_EMAIL = "testuser@example.com"
+TEST_USER_PASSWORD = "Test@123456"
+TEST_USER_NAME = "Test User"
+
+# Admin Credentials
+ADMIN_EMAIL = "admin@bookstore.com"
+ADMIN_PASSWORD = "Admin@123456"
+
+# Browser Configuration
+HEADLESS = True
+WINDOW_SIZE = "1920,1080"
+
+# Screenshot Configuration
+SCREENSHOT_ON_FAILURE = True
+SCREENSHOT_DIR = "reports/screenshots"

@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: bookstore-mongodb-test
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: bookstore
+    ports:
+      - "27018:27017"
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: bookstore-backend-test
+    env_file:
+      - ./backend/.env
+    environment:
+      MONGODB_URI: mongodb://admin:admin123@mongodb:27017/bookstore?authSource=admin
+      NODE_ENV: test
+    ports:
+      - "5001:5000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => { process.exit(1); });"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Frontend (Customer + Admin)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: bookstore-frontend-test
+    environment:
+      VITE_API_URL: http://backend:5000/api
+    ports:
+      - "3002:3000"  # Customer
+      - "3003:3001"  # Admin
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => { process.exit(1); });"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+
+  # Selenium Tests (UI Tests)
+  ui-tests:
+    build:
+      context: ./selenium-tests
+      dockerfile: Dockerfile
+    container_name: ui-tests
+    environment:
+      BASE_URL: http://host.docker.internal:3002
+      ADMIN_URL: http://host.docker.internal:3003
+      API_URL: http://backend:5000/api
+    volumes:
+      - ./selenium-tests/reports:/selenium-tests/reports
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - test-network
+    command: >
+      sh -c "
+        echo 'Waiting for frontend to be ready...'
+        sleep 10
+        wget --retry-connrefused --tries=30 --waitretry=1 --timeout=5 -q http://frontend:3000 -O /dev/null
+        wget --retry-connrefused --tries=30 --waitretry=1 --timeout=5 -q http://frontend:3001 -O /dev/null
+        echo 'Frontend is ready! Starting tests...'
+        npm test
+      "
+
+networks:
+  test-network:
+    driver: bridge
