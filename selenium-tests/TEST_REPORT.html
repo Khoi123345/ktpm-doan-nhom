@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenium Test Report - BookStore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .stat-card.pass h3 { color: #28a745; }
+        .stat-card.fail h3 { color: #dc3545; }
+        .stat-card.skip h3 { color: #ffc107; }
+        .stat-card.total h3 { color: #007bff; }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        h2 {
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .test-file {
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .test-file-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .test-file-header:hover {
+            background: #e9ecef;
+        }
+        
+        .test-file-header h3 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .test-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .status-pass { background: #d4edda; color: #155724; }
+        .status-fail { background: #f8d7da; color: #721c24; }
+        .status-partial { background: #fff3cd; color: #856404; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        
+        .test-details {
+            padding: 20px;
+            background: #f9f9f9;
+        }
+        
+        .test-case {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #ccc;
+        }
+        
+        .test-case.pass { border-left-color: #28a745; }
+        .test-case.fail { border-left-color: #dc3545; }
+        .test-case.skip { border-left-color: #ffc107; }
+        
+        .test-case-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .test-case-info {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .icon-pass { background: #28a745; color: white; }
+        .icon-fail { background: #dc3545; color: white; }
+        .icon-skip { background: #ffc107; color: white; }
+        
+        .issue-section {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .issue-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .issue-section ul {
+            margin-left: 20px;
+        }
+        
+        .issue-section li {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        .solution-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .solution-box h3 {
+            color: #155724;
+            margin-bottom: 15px;
+        }
+        
+        .solution-box p {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .badge-pass { background: #d4edda; color: #155724; }
+        .badge-fail { background: #f8d7da; color: #721c24; }
+        .badge-skip { background: #fff3cd; color: #856404; }
+        
+        footer {
+            background: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            display: flex;
+        }
+        
+        .progress-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .progress-pass { background: #28a745; }
+        .progress-fail { background: #dc3545; }
+        .progress-skip { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Selenium Test Report</h1>
+            <p>BookStore Application - Test Automation Suite</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Ngày: 18/12/2024</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-card total">
+                <h3>10</h3>
+                <p>Tổng Test Files</p>
+            </div>
+            <div class="stat-card pass">
+                <h3>1</h3>
+                <p>Hoàn Toàn Pass</p>
+            </div>
+            <div class="stat-card fail">
+                <h3>5</h3>
+                <p>Có Lỗi</p>
+            </div>
+            <div class="stat-card skip">
+                <h3>4</h3>
+                <p>Chưa Chạy/Timeout</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <h2>🎯 Tổng Quan</h2>
+            <div class="progress-bar">
+                <div class="progress-fill">
+                    <div class="progress-segment progress-pass" style="width: 10%">10%</div>
+                    <div class="progress-segment progress-fail" style="width: 50%">50%</div>
+                    <div class="progress-segment progress-skip" style="width: 40%">40%</div>
+                </div>
+            </div>
+            
+            <div class="issue-section">
+                <h3>🔍 Vấn Đề Chính Đã Phát Hiện</h3>
+                <ul>
+                    <li><strong>Login Form Submission:</strong> Nhiều test sử dụng <code>button.click()</code> nhưng React form không trigger. Cần dùng <code>Key.RETURN</code>.</li>
+                    <li><strong>Multiple Submit Buttons:</strong> Các trang có nhiều nút submit, cần chọn theo text thay vì index.</li>
+                    <li><strong>Element Timeouts:</strong> Một số test bị timeout khi đợi element không tồn tại.</li>
+                    <li><strong>Dashboard Elements:</strong> CSS selectors không khớp với UI thực tế.</li>
+                </ul>
+            </div>
+            
+            <div class="solution-box">
+                <h3>✅ Giải Pháp Đã Áp Dụng</h3>
+                <p><strong>1. Tạo Login Helper Function</strong> (<code>helpers/login-helper.js</code>)</p>
+                <p>Cung cấp hàm <code>adminLogin()</code> và <code>customerLogin()</code> sử dụng Enter key method.</p>
+                <p><strong>2. Fix E2E Create Book Test</strong> (<code>e2e-admin-create-book.spec.js</code>)</p>
+                <p>Hoàn toàn working với login bằng Enter key và button selection theo text.</p>
+                <p><strong>3. Documented Issues</strong> (<code>TEST_SUMMARY.md</code>)</p>
+                <p>Chi tiết tất cả vấn đề và cách fix cho từng test file.</p>
+            </div>
+            
+            <h2>📝 Chi Tiết Test Files</h2>
+            
+            <!-- Test File 1: E2E Admin Create Book -->
+            <div class="test-file">
+                <div class="test-file-header">
+                    <h3>📄 e2e-admin-create-book.spec.js</h3>
+                    <span class="test-status status-pass">✓ PASS</span>
+                </div>
+                <div class="test-details">
+                    <div class="test-case pass">
+                        <div class="test-case-title">
+                            <span class="icon icon-pass">✓</span>
+                            Admin Create Book Flow
+                        </div>
+                        <div class="test-case-info">
+                            Tất cả bước đều pass: Login → Navigate → Fill Form → Submit → Verify
+                        </div>
+                    </div>
+                    <p><strong>Thời gian:</strong> ~24s | <strong>Status:</strong> Working perfectly</p>
+                </div>
+            </div>
+            
+            <!-- Test File 2: Admin Dashboard -->
+            <div class="test-file">
+                <div class="test-file-header">
+                    <h3>📄 admin-dashboard.spec.js</h3>
+                    <span class="test-status status-partial">⚠ PARTIAL (2/7)</span>
+                </div>
+                <div class="test-details">
+                    <div class="test-case pass">
+                        <div class="test-case-title">
+                            <span class="icon icon-pass">✓</span>
+                            Navigate to orders management
+                        </div>
+                        <div class="test-case-info">Duration: 10.19s</div>
+                    </div>
+                    <div class="test-case pass">
+                        <div class="test-case-title">
+                            <span class="icon icon-pass">✓</span>
+                            Navigate to users management
+                        </div>
+                        <div class="test-case-info">Duration: 10.24s</div>
+                    </div>
+                    <div class="test-case fail">
+                        <div class="test-case-title">
+                            <span class="icon icon-fail">✗</span>
+                            Display dashboard with statistics
+                        </div>
+                        <div class="test-case-info">Error: TimeoutError - Element không tìm thấy (.stat-card)</div>
+                    </div>
+                    <div class="test-case fail">
+                        <div class="test-case-title">
+                            <span class="icon icon-fail">✗</span>
+                            Show total revenue, recent orders, charts
+                        </div>
+                        <div class="test-case-info">Error: Expected > 0, got 0</div>
+                    </div>
+                    <div class="test-case fail">
+                        <div class="test-case-title">
+                            <span class="icon icon-fail">✗</span>
+                            Navigate to books management
+                        </div>
+                        <div class="test-case-info">Error: URL không chuyển đến /books</div>
+                    </div>
+                    <p><strong>Vấn đề:</strong> Login needs Enter key fix, CSS selectors cần update</p>
+                </div>
+            </div>
+            
+            <!-- Test File 3: Admin Books -->
+            <div class="test-file">
+                <div class="test-file-header">
+                    <h3>📄 admin-books.spec.js</h3>
+                    <span class="test-status status-fail">✗ FAIL</span>
+                </div>
+                <div class="test-details">
+                    <div class="test-case fail">
+                        <div class="test-case-title">
+                            <span class="icon icon-fail">✗</span>
+                            Display books list
+                        </div>
+                        <div class="test-case-info">Login không thành công - cần Enter key fix</div>
+                    </div>
+                    <p><strong>Fix cần thiết:</strong> Update login method trong beforeEach hook</p>
+                </div>
+            </div>
+            
+            <!-- Test File 4: Home -->
+            <div class="test-file">
+                <div class="test-file-header">
+                    <h3>📄 home.spec.js</h3>
+                    <span class="test-status status-partial">⚠ PARTIAL (2/4)</span>
+                </div>
+                <div class="test-details">
+                    <div class="test-case pass">
+                        <div class="test-case-title">
+                            <span class="icon icon-pass">✓</span>
+                            Load home page successfully
+                        </div>
+                    </div>
+                    <div class="test-case pass">
+                        <div class="test-case-title">
+                            <span class="icon icon-pass">✓</span>
+                            Navigate to login page from home
+                        </div>
+                    </div>
+                    <div class="test-case skip">
+                        <div class="test-case-title">
+                            <span class="icon icon-skip">−</span>
+                            Search functionality
+                        </div>
+                        <div class="test-case-info">Skipped - not implemented</div>
+                    </div>
+                    <div class="test-case fail">
+                        <div class="test-case-title">
+                            <span class="icon icon-fail">✗</span>
+                            Display books on homepage
+                        </div>
+                        <div class="test-case-info">Timeout - test hangs on sleep(3000)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Test File 5: Login -->
+            <div class="test-file">
+                <div class="test-file-header">
+                    <h3>📄 login.spec.js</h3>
+                    <span class="test-status status-partial">⚠ PARTIAL (1/3)</span>
+                </div>
+                <div class="test-details">
+                    <div class="test-case pass">
+                        <div class="test-case-title">
+                            <span class="icon icon-pass">✓</span>
+                            Display registration form
+                        </div>
+                    </div>
+                    <div class="test-case fail">
+                        <div class="test-case-title">
+                            <span class="icon icon-fail">✗</span>
+                            Register with valid information
+                        </div>
+                        <div class="test-case-info">Form submission needs Enter key fix</div>
+                    </div>
+                    <div class="test-case fail">
+                        <div class="test-case-title">
+                            <span class="icon icon-fail">✗</span>
+                            Show error for duplicate email
+                        </div>
+                        <div class="test-case-info">Depends on registration working</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Remaining Test Files -->
+            <div class="test-file">
+                <div class="test-file-header">
+                    <h3>📄 customer-*.spec.js (4 files)</h3>
+                    <span class="test-status status-error">⏱ TIMEOUT</span>
+                </div>
+                <div class="test-details">
+                    <p>customer-books.spec.js, customer-cart.spec.js, customer-checkout.spec.js, customer-profile.spec.js</p>
+                    <p><strong>Vấn đề:</strong> Tất cả timeout - cần update login method</p>
+                </div>
+            </div>
+            
+            <div class="test-file">
+                <div class="test-file-header">
+                    <h3>📄 admin-orders.spec.js</h3>
+                    <span class="test-status status-error">⏱ CHƯA CHẠY</span>
+                </div>
+                <div class="test-details">
+                    <p><strong>Dự đoán:</strong> Cần update login method tương tự các file khác</p>
+                </div>
+            </div>
+            
+            <h2>📋 Next Steps - Ưu Tiên</h2>
+            <div style="padding: 20px; background: #f8f9fa; border-radius: 5px; margin: 20px 0;">
+                <h3 style="color: #dc3545; margin-bottom: 15px;">Priority 1: Fix Admin Tests</h3>
+                <ul style="margin-left: 20px;">
+                    <li>Update <code>admin-books.spec.js</code> login method</li>
+                    <li>Update <code>admin-dashboard.spec.js</code> login method</li>
+                    <li>Update <code>admin-orders.spec.js</code> login method</li>
+                    <li>Fix CSS selectors trong dashboard tests</li>
+                </ul>
+                
+                <h3 style="color: #ffc107; margin: 20px 0 15px 0;">Priority 2: Fix Customer Tests</h3>
+                <ul style="margin-left: 20px;">
+                    <li>Update login method trong tất cả customer test files</li>
+                    <li>Test cart, checkout, profile flows</li>
+                </ul>
+                
+                <h3 style="color: #28a745; margin: 20px 0 15px 0;">Priority 3: Improve Test Infrastructure</h3>
+                <ul style="margin-left: 20px;">
+                    <li>Add better timeout handling</li>
+                    <li>Create more helper functions</li>
+                    <li>Generate automated HTML reports</li>
+                </ul>
+            </div>
+            
+            <h2>🛠 Files Created/Modified</h2>
+            <ul style="margin-left: 20px;">
+                <li><code>helpers/login-helper.js</code> - New helper function</li>
+                <li><code>tests/e2e-admin-create-book.spec.js</code> - Fixed and working</li>
+                <li><code>TEST_SUMMARY.md</code> - Documentation</li>
+                <li><code>TEST_REPORT.html</code> - This report</li>
+                <li><code>config.js</code> - Password updated to Admin@123456</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p><strong>BookStore Test Automation</strong></p>
+            <p>Generated by Selenium WebDriver 4.27.0 | Mocha Test Framework</p>
+            <p style="margin-top: 10px; opacity: 0.8;">Powered by Node.js & Chrome</p>
+        </footer>
+    </div>
+</body>
+</html>

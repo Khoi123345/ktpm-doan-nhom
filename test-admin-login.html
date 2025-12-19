@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Admin Login</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .result { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Test Admin Login - Manual Debug</h1>
+    
+    <div class="step">
+        <h2>Step 1: Check Current State</h2>
+        <button onclick="checkLocalStorage()">Check LocalStorage</button>
+        <button onclick="clearStorage()">Clear Storage</button>
+        <div id="storage-result" class="result"></div>
+    </div>
+    
+    <div class="step">
+        <h2>Step 2: Login via API</h2>
+        <input type="email" id="email" value="admin@bookstore.com" style="width: 200px; padding: 5px;" />
+        <input type="password" id="password" value="Test123!" style="width: 200px; padding: 5px;" />
+        <button onclick="loginAdmin()">Login Admin</button>
+        <div id="login-result" class="result"></div>
+    </div>
+    
+    <div class="step">
+        <h2>Step 3: Check After Login</h2>
+        <button onclick="checkUserInfo()">Check User Info</button>
+        <button onclick="goToAdminDashboard()">Go to Admin Dashboard</button>
+        <div id="check-result" class="result"></div>
+    </div>
+    
+    <script>
+        function checkLocalStorage() {
+            const userInfo = localStorage.getItem('userInfo');
+            const result = document.getElementById('storage-result');
+            if (userInfo) {
+                const parsed = JSON.parse(userInfo);
+                result.innerHTML = `
+                    <strong>User Info:</strong><br>
+                    Email: ${parsed.email}<br>
+                    Name: ${parsed.name}<br>
+                    Role: <strong>${parsed.role}</strong><br>
+                    Has Token: ${!!parsed.token}
+                `;
+            } else {
+                result.innerHTML = '<strong>No user info in localStorage</strong>';
+            }
+        }
+        
+        function clearStorage() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('storage-result').innerHTML = '<strong>Storage cleared!</strong>';
+        }
+        
+        async function loginAdmin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const result = document.getElementById('login-result');
+            
+            result.innerHTML = 'Logging in...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    localStorage.setItem('userInfo', JSON.stringify(data.data));
+                    result.innerHTML = `
+                        <strong>✅ Login successful!</strong><br>
+                        Email: ${data.data.email}<br>
+                        Role: <strong>${data.data.role}</strong><br>
+                        <br>
+                        ${data.data.role === 'admin' 
+                            ? '<span style="color: green;">✅ Role is ADMIN - should redirect to /admin/dashboard</span>'
+                            : '<span style="color: red;">❌ Role is NOT admin</span>'}
+                    `;
+                } else {
+                    result.innerHTML = `<strong>❌ Login failed:</strong> ${data.message}`;
+                }
+            } catch (error) {
+                result.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+            }
+        }
+        
+        function checkUserInfo() {
+            checkLocalStorage();
+            const resultDiv = document.getElementById('check-result');
+            resultDiv.innerHTML = 'Check storage result above ↑';
+        }
+        
+        function goToAdminDashboard() {
+            window.location.href = '/admin/dashboard';
+        }
+        
+        // Auto-check on load
+        window.onload = function() {
+            checkLocalStorage();
+        };
+    </script>
+</body>
+</html>

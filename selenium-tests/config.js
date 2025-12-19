@@ -29,7 +29,7 @@ export default {
     // Admin Credentials
     admin: {
         email: process.env.ADMIN_EMAIL || 'admin@bookstore.com',
-        password: process.env.ADMIN_PASSWORD || 'Test123!'
+        password: process.env.ADMIN_PASSWORD || 'Admin@123456'
     },
 
     // Screenshot Configuration

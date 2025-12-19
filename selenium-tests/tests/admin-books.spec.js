@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { createDriver, quitDriver } from '../helpers/driver-manager.js';
 import { waitForElement, waitForElements } from '../helpers/wait-helpers.js';
-import { By } from 'selenium-webdriver';
+import { By, Key } from 'selenium-webdriver';
 import config from '../config.js';
 
 describe('Admin Book Management Tests', function() {
@@ -21,15 +21,17 @@ describe('Admin Book Management Tests', function() {
         
         try {
             const emailInput = await waitForElement(driver, By.css('input[type="email"]'), 5000);
+            await emailInput.clear();
             await emailInput.sendKeys(config.admin.email);
             
             const passwordInput = await driver.findElement(By.css('input[type="password"]'));
+            await passwordInput.clear();
             await passwordInput.sendKeys(config.admin.password);
             
-            const submitButton = await driver.findElement(By.css('button[type="submit"]'));
-            await submitButton.click();
+            // Submit form using Enter key (more reliable than button click)
+            await passwordInput.sendKeys(Key.RETURN);
             
-            await driver.sleep(2000);
+            await driver.sleep(3000);
         } catch (error) {
             console.log('Already logged in');
         }
@@ -39,8 +41,11 @@ describe('Admin Book Management Tests', function() {
         it('should display books list', async function() {
             await driver.get(`${config.adminUrl}/books`);
             
-            // Wait for table or list
-            const booksList = await waitForElement(driver, By.css('table, .books-list, [data-testid="books-table"]'));
+            // Wait for page to load completely
+            await driver.sleep(2000);
+            
+            // Wait for the books table
+            const booksList = await waitForElement(driver, By.css('table'), 15000);
             expect(await booksList.isDisplayed()).to.be.true;
         });
 

@@ -19,8 +19,21 @@ describe('Book Browsing & Search Tests', function() {
         it('should display list of books', async function() {
             await driver.get(`${config.baseUrl}/books`);
             
-            // Chờ books load
-            const books = await waitForElements(driver, By.css('.book-card, [data-testid="book-item"]'), 5000);
+            // Debug: wait and check page title
+            await driver.sleep(3000);
+            const title = await driver.getTitle();
+            console.log('Page title:', title);
+            
+            const url = await driver.getCurrentUrl();
+            console.log('Current URL:', url);
+            
+            // Try to find any visible element first
+            const body = await driver.findElement(By.css('body'));
+            const bodyText = await body.getText();
+            console.log('Body text (first 200 chars):', bodyText.substring(0, 200));
+            
+            // Chờ books load - ProductCard uses 'card' class or has link to book detail
+            const books = await waitForElements(driver, By.css('.card, a[href*="/books/"]'), 5000);
             expect(books.length).to.be.greaterThan(0);
         });
 
@@ -37,8 +50,8 @@ describe('Book Browsing & Search Tests', function() {
             
             await driver.sleep(1000); // Chờ filter
             
-            // Kiểm tra có books
-            const books = await driver.findElements(By.css('.book-card, [data-testid="book-item"]'));
+            // Kiểm tra có books - ProductCard uses 'card' class
+            const books = await driver.findElements(By.css('.card, a[href*="/books/"]'));
             expect(books.length).to.be.greaterThan(0);
         });
 
@@ -53,7 +66,7 @@ describe('Book Browsing & Search Tests', function() {
             await driver.sleep(1000); // Chờ search
             
             // Kiểm tra results
-            const results = await driver.findElements(By.css('.book-card, [data-testid="book-item"]'));
+            const results = await driver.findElements(By.css('.card, a[href*="/books/"]'));
             expect(results.length).to.be.greaterThan(0);
         });
 
@@ -71,7 +84,7 @@ describe('Book Browsing & Search Tests', function() {
             await driver.sleep(1000);
             
             // Verify books still displayed
-            const books = await driver.findElements(By.css('.book-card'));
+            const books = await driver.findElements(By.css('.card, a[href*="/books/"]'));
             expect(books.length).to.be.greaterThan(0);
         });
     });
@@ -80,8 +93,8 @@ describe('Book Browsing & Search Tests', function() {
         it('should display book details', async function() {
             await driver.get(`${config.baseUrl}/books`);
             
-            // Click vào book đầu tiên
-            const firstBook = await waitForElement(driver, By.css('.book-card, [data-testid="book-item"]'));
+            // Click vào book đầu tiên - click on the link
+            const firstBook = await waitForElement(driver, By.css('a[href*="/books/"]'));
             await firstBook.click();
             
             await driver.sleep(1000);

@@ -1,0 +1,547 @@
+﻿Already logged in
+Already logged in
+Already logged in
+Already logged in
+Already logged in
+Already logged in
+Already logged in
+Already logged in
+Already logged in as admin
+Already logged in as admin
+Already logged in as admin
+Already logged in as admin
+Already logged in as admin
+Already logged in as admin
+Already logged in
+Already logged in
+Already logged in
+Already logged in
+Already logged in
+Already logged in
+{
+  "stats": {
+    "suites": 12,
+    "tests": 23,
+    "passes": 14,
+    "pending": 0,
+    "failures": 9,
+    "start": "2025-12-18T13:52:34.161Z",
+    "end": "2025-12-18T14:00:01.924Z",
+    "duration": 447763
+  },
+  "tests": [
+    {
+      "title": "should display books list",
+      "fullTitle": "Admin Book Management Tests View Books should display books list",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 22514,
+      "currentRetry": 0,
+      "err": {
+        "stack": "TimeoutError: Waiting for element to be located By(css selector, table)\nWait timed out after 20288ms\n    at C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\node_modules\\selenium-webdriver\\lib\\webdriver.js:929:22\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "Waiting for element to be located By(css selector, table)\nWait timed out after 20288ms",
+        "name": "TimeoutError",
+        "remoteStacktrace": ""
+      }
+    },
+    {
+      "title": "should show book details in table",
+      "fullTitle": "Admin Book Management Tests View Books should show book details in table",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10272,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-books.spec.js:57:42)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should search books",
+      "fullTitle": "Admin Book Management Tests View Books should search books",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10217,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should open create book form",
+      "fullTitle": "Admin Book Management Tests Create Book should open create book form",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10190,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should validate required fields",
+      "fullTitle": "Admin Book Management Tests Create Book should validate required fields",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10266,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should fill book form",
+      "fullTitle": "Admin Book Management Tests Create Book should fill book form",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10233,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should open edit book form",
+      "fullTitle": "Admin Book Management Tests Edit Book should open edit book form",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10274,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should update book information",
+      "fullTitle": "Admin Book Management Tests Edit Book should update book information",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10264,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should show delete confirmation",
+      "fullTitle": "Admin Book Management Tests Delete Book should show delete confirmation",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10243,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should display dashboard with statistics",
+      "fullTitle": "Admin Dashboard Tests Dashboard Overview should display dashboard with statistics",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10226,
+      "currentRetry": 0,
+      "err": {
+        "stack": "TimeoutError: Waiting for at least one element to be located By(css selector, .stat-card, .dashboard-card, [data-testid=\"stat-card\"])\nWait timed out after 10035ms\n    at C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\node_modules\\selenium-webdriver\\lib\\webdriver.js:929:22\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "Waiting for at least one element to be located By(css selector, .stat-card, .dashboard-card, [data-testid=\"stat-card\"])\nWait timed out after 10035ms",
+        "name": "TimeoutError",
+        "remoteStacktrace": ""
+      }
+    },
+    {
+      "title": "should show total revenue",
+      "fullTitle": "Admin Dashboard Tests Dashboard Overview should show total revenue",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10353,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-dashboard.spec.js:54:50)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should display recent orders",
+      "fullTitle": "Admin Dashboard Tests Dashboard Overview should display recent orders",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10729,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-dashboard.spec.js:65:48)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should show charts or graphs",
+      "fullTitle": "Admin Dashboard Tests Dashboard Overview should show charts or graphs",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10197,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-dashboard.spec.js:73:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should navigate to books management",
+      "fullTitle": "Admin Dashboard Tests Navigation should navigate to books management",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 1294,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected 'http://localhost:3001/' to include 'books'\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-dashboard.spec.js:88:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected 'http://localhost:3001/' to include 'books'",
+        "actual": "http://localhost:3001/",
+        "showDiff": false,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should navigate to orders management",
+      "fullTitle": "Admin Dashboard Tests Navigation should navigate to orders management",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10154,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should navigate to users management",
+      "fullTitle": "Admin Dashboard Tests Navigation should navigate to users management",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10162,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should display orders list",
+      "fullTitle": "Admin Order Management Tests View Orders should display orders list",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10247,
+      "currentRetry": 0,
+      "err": {
+        "stack": "TimeoutError: Waiting for element to be located By(css selector, table, .orders-list)\nWait timed out after 10011ms\n    at C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\node_modules\\selenium-webdriver\\lib\\webdriver.js:929:22\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "Waiting for element to be located By(css selector, table, .orders-list)\nWait timed out after 10011ms",
+        "name": "TimeoutError",
+        "remoteStacktrace": ""
+      }
+    },
+    {
+      "title": "should show order details",
+      "fullTitle": "Admin Order Management Tests View Orders should show order details",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10195,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should filter orders by status",
+      "fullTitle": "Admin Order Management Tests View Orders should filter orders by status",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10202,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should change order status",
+      "fullTitle": "Admin Order Management Tests Update Order Status should change order status",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10207,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should mark order as delivered",
+      "fullTitle": "Admin Order Management Tests Update Order Status should mark order as delivered",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10214,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should show total orders count",
+      "fullTitle": "Admin Order Management Tests Order Analytics should show total orders count",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 210,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "should display order revenue",
+      "fullTitle": "Admin Order Management Tests Order Analytics should display order revenue",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10203,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-orders.spec.js:135:50)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    }
+  ],
+  "pending": [],
+  "failures": [
+    {
+      "title": "should display books list",
+      "fullTitle": "Admin Book Management Tests View Books should display books list",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 22514,
+      "currentRetry": 0,
+      "err": {
+        "stack": "TimeoutError: Waiting for element to be located By(css selector, table)\nWait timed out after 20288ms\n    at C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\node_modules\\selenium-webdriver\\lib\\webdriver.js:929:22\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "Waiting for element to be located By(css selector, table)\nWait timed out after 20288ms",
+        "name": "TimeoutError",
+        "remoteStacktrace": ""
+      }
+    },
+    {
+      "title": "should show book details in table",
+      "fullTitle": "Admin Book Management Tests View Books should show book details in table",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10272,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-books.spec.js:57:42)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should display dashboard with statistics",
+      "fullTitle": "Admin Dashboard Tests Dashboard Overview should display dashboard with statistics",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10226,
+      "currentRetry": 0,
+      "err": {
+        "stack": "TimeoutError: Waiting for at least one element to be located By(css selector, .stat-card, .dashboard-card, [data-testid=\"stat-card\"])\nWait timed out after 10035ms\n    at C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\node_modules\\selenium-webdriver\\lib\\webdriver.js:929:22\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "Waiting for at least one element to be located By(css selector, .stat-card, .dashboard-card, [data-testid=\"stat-card\"])\nWait timed out after 10035ms",
+        "name": "TimeoutError",
+        "remoteStacktrace": ""
+      }
+    },
+    {
+      "title": "should show total revenue",
+      "fullTitle": "Admin Dashboard Tests Dashboard Overview should show total revenue",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10353,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-dashboard.spec.js:54:50)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should display recent orders",
+      "fullTitle": "Admin Dashboard Tests Dashboard Overview should display recent orders",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10729,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-dashboard.spec.js:65:48)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should show charts or graphs",
+      "fullTitle": "Admin Dashboard Tests Dashboard Overview should show charts or graphs",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10197,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-dashboard.spec.js:73:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should navigate to books management",
+      "fullTitle": "Admin Dashboard Tests Navigation should navigate to books management",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 1294,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected 'http://localhost:3001/' to include 'books'\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-dashboard.spec.js:88:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected 'http://localhost:3001/' to include 'books'",
+        "actual": "http://localhost:3001/",
+        "showDiff": false,
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "title": "should display orders list",
+      "fullTitle": "Admin Order Management Tests View Orders should display orders list",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10247,
+      "currentRetry": 0,
+      "err": {
+        "stack": "TimeoutError: Waiting for element to be located By(css selector, table, .orders-list)\nWait timed out after 10011ms\n    at C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\node_modules\\selenium-webdriver\\lib\\webdriver.js:929:22\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "Waiting for element to be located By(css selector, table, .orders-list)\nWait timed out after 10011ms",
+        "name": "TimeoutError",
+        "remoteStacktrace": ""
+      }
+    },
+    {
+      "title": "should display order revenue",
+      "fullTitle": "Admin Order Management Tests Order Analytics should display order revenue",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10203,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError: expected +0 to be above +0\n    at Context.<anonymous> (file:///C:/Users/Hoquo/OneDrive/Desktop/KTPM_doan/ktpm-doan-nhom/selenium-tests/tests/admin-orders.spec.js:135:50)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+        "message": "expected +0 to be above +0",
+        "actual": "0",
+        "expected": "0",
+        "showDiff": true,
+        "operator": "strictEqual"
+      }
+    }
+  ],
+  "passes": [
+    {
+      "title": "should search books",
+      "fullTitle": "Admin Book Management Tests View Books should search books",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10217,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should open create book form",
+      "fullTitle": "Admin Book Management Tests Create Book should open create book form",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10190,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should validate required fields",
+      "fullTitle": "Admin Book Management Tests Create Book should validate required fields",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10266,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should fill book form",
+      "fullTitle": "Admin Book Management Tests Create Book should fill book form",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10233,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should open edit book form",
+      "fullTitle": "Admin Book Management Tests Edit Book should open edit book form",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10274,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should update book information",
+      "fullTitle": "Admin Book Management Tests Edit Book should update book information",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10264,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should show delete confirmation",
+      "fullTitle": "Admin Book Management Tests Delete Book should show delete confirmation",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-books.spec.js",
+      "duration": 10243,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should navigate to orders management",
+      "fullTitle": "Admin Dashboard Tests Navigation should navigate to orders management",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10154,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should navigate to users management",
+      "fullTitle": "Admin Dashboard Tests Navigation should navigate to users management",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-dashboard.spec.js",
+      "duration": 10162,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should show order details",
+      "fullTitle": "Admin Order Management Tests View Orders should show order details",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10195,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should filter orders by status",
+      "fullTitle": "Admin Order Management Tests View Orders should filter orders by status",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10202,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should change order status",
+      "fullTitle": "Admin Order Management Tests Update Order Status should change order status",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10207,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should mark order as delivered",
+      "fullTitle": "Admin Order Management Tests Update Order Status should mark order as delivered",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 10214,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "should show total orders count",
+      "fullTitle": "Admin Order Management Tests Order Analytics should show total orders count",
+      "file": "C:\\Users\\Hoquo\\OneDrive\\Desktop\\KTPM_doan\\ktpm-doan-nhom\\selenium-tests\\tests\\admin-orders.spec.js",
+      "duration": 210,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    }
+  ]
+}

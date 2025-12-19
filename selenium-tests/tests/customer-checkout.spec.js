@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { createDriver, quitDriver } from '../helpers/driver-manager.js';
 import { waitForElement } from '../helpers/wait-helpers.js';
-import { By } from 'selenium-webdriver';
+import { By, Key } from 'selenium-webdriver';
 import config from '../config.js';
 
 describe('Checkout & Order Tests', function() {
@@ -21,15 +21,17 @@ describe('Checkout & Order Tests', function() {
         
         try {
             const emailInput = await waitForElement(driver, By.css('input[type="email"]'), 5000);
+            await emailInput.clear();
             await emailInput.sendKeys(config.testUser.email);
             
             const passwordInput = await driver.findElement(By.css('input[type="password"]'));
+            await passwordInput.clear();
             await passwordInput.sendKeys(config.testUser.password);
             
-            const submitButton = await driver.findElement(By.css('button[type="submit"]'));
-            await submitButton.click();
+            // Submit form using Enter key (more reliable than button click)
+            await passwordInput.sendKeys(Key.RETURN);
             
-            await driver.sleep(2000);
+            await driver.sleep(3000);
         } catch (error) {
             console.log('Already logged in');
         }
