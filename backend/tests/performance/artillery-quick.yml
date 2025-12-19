@@ -1,0 +1,44 @@
+config:
+  target: "http://localhost:5000"
+  phases:
+    - duration: 30
+      arrivalRate: 10
+      name: "Quick load test"
+  
+  ensure:
+    maxErrorRate: 2
+    p95: 500
+  
+  http:
+    timeout: 10
+
+scenarios:
+  - name: "Quick API Test"
+    flow:
+      # Test health endpoint
+      - get:
+          url: "/api/health"
+          expect:
+            - statusCode: 200
+      
+      # Test books list
+      - get:
+          url: "/api/books"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      # Test search
+      - get:
+          url: "/api/books?search=test&limit=10"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      # Test categories
+      - get:
+          url: "/api/categories"
+          expect:
+            - statusCode: 200

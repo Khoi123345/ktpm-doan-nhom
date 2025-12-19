@@ -1,0 +1,205 @@
+config:
+  target: "http://localhost:5000"
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm up"
+    
+    # Ramp up phase
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp up load"
+    
+    # Sustained load phase
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustained load"
+    
+    # Peak load phase
+    - duration: 60
+      arrivalRate: 100
+      name: "Peak load"
+    
+    # Cool down
+    - duration: 30
+      arrivalRate: 5
+      name: "Cool down"
+  
+  # Performance thresholds
+  ensure:
+    maxErrorRate: 1                    # Maximum 1% error rate
+    p95: 500                           # 95th percentile response time < 500ms
+    p99: 1000                          # 99th percentile response time < 1000ms
+  
+  # Load generator settings
+  http:
+    timeout: 10
+  
+  # Variables
+  variables:
+    adminEmail: "admin@gmail.com"
+    adminPassword: "Admin@123"
+    customerEmail: "khoi123@gmail.com"
+    customerPassword: "Khoi@123456"
+
+scenarios:
+  # Scenario 1: Browse and search books (most common)
+  - name: "Browse and Search Books"
+    weight: 50
+    flow:
+      - get:
+          url: "/api/books"
+          capture:
+            - json: "$"
+              as: "books"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: data
+      
+      - think: 2
+      
+      - get:
+          url: "/api/books?search=test&limit=10"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      
+      - think: 1
+      
+      - get:
+          url: "/api/categories"
+          expect:
+            - statusCode: 200
+            - contentType: json
+
+  # Scenario 2: User authentication and profile
+  - name: "User Authentication Flow"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ customerEmail }}"
+            password: "{{ customerPassword }}"
+          capture:
+            - json: "$.token"
+              as: "userToken"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      
+      - think: 1
+      
+      - get:
+          url: "/api/users/profile"
+          headers:
+            Authorization: "Bearer {{ userToken }}"
+          expect:
+            - statusCode: 200
+            - contentType: json
+
+  # Scenario 3: Shopping cart operations
+  - name: "Shopping Cart Operations"
+    weight: 15
+    flow:
+      # Login first
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ customerEmail }}"
+            password: "{{ customerPassword }}"
+          capture:
+            - json: "$.token"
+              as: "token"
+      
+      - think: 1
+      
+      # Get cart
+      - get:
+          url: "/api/cart"
+          headers:
+            Authorization: "Bearer {{ token }}"
+          expect:
+            - statusCode: 200
+      
+      - think: 2
+      
+      # Get books to add to cart
+      - get:
+          url: "/api/books?limit=5"
+          capture:
+            - json: "$.data[0]._id"
+              as: "bookId"
+
+  # Scenario 4: View book details
+  - name: "View Book Details"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/books?limit=1"
+          capture:
+            - json: "$.data[0]._id"
+              as: "bookId"
+      
+      - think: 1
+      
+      - get:
+          url: "/api/books/{{ bookId }}"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      
+      - think: 1
+      
+      # Get reviews for the book
+      - get:
+          url: "/api/reviews/book/{{ bookId }}"
+          expect:
+            - statusCode: 200
+
+  # Scenario 5: Admin operations
+  - name: "Admin Operations"
+    weight: 5
+    flow:
+      # Admin login
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ adminEmail }}"
+            password: "{{ adminPassword }}"
+          capture:
+            - json: "$.token"
+              as: "adminToken"
+      
+      - think: 1
+      
+      # Get dashboard stats
+      - get:
+          url: "/api/stats/dashboard"
+          headers:
+            Authorization: "Bearer {{ adminToken }}"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      # Get all users
+      - get:
+          url: "/api/users"
+          headers:
+            Authorization: "Bearer {{ adminToken }}"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      # Get all orders
+      - get:
+          url: "/api/orders"
+          headers:
+            Authorization: "Bearer {{ adminToken }}"
+          expect:
+            - statusCode: 200

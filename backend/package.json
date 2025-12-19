@@ -8,7 +8,11 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --coverage --detectOpenHandles --forceExit",
-    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --watch"
+    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --watch",
+    "test:security": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest tests/security --detectOpenHandles --forceExit",
+    "test:performance": "artillery run tests/performance/artillery-config.yml --output tests/performance/report.json",
+    "test:performance:quick": "artillery run tests/performance/artillery-quick.yml",
+    "test:performance:spike": "artillery run tests/performance/artillery-spike.yml"
   },
   "keywords": [
     "bookstore",
@@ -33,6 +37,7 @@
     "querystring": "^0.2.1"
   },
   "devDependencies": {
+    "artillery": "^2.0.0",
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^10.4.0",

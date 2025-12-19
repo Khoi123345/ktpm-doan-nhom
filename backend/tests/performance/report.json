@@ -1,0 +1,832 @@
+{
+  "aggregate": {
+    "counters": {
+      "vusers.created_by_name.User Authentication Flow": 2811,
+      "vusers.created": 14100,
+      "http.requests": 14100,
+      "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 5558,
+      "errors.ECONNREFUSED": 14100,
+      "vusers.failed": 14100,
+      "vusers.created_by_name.Browse and Search Books": 7093,
+      "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 8542,
+      "vusers.created_by_name.Shopping Cart Operations": 2091,
+      "vusers.created_by_name.View Book Details": 1449,
+      "vusers.created_by_name.Admin Operations": 656
+    },
+    "rates": {
+      "http.request_rate": 27
+    },
+    "firstCounterAt": 1766143069209,
+    "lastCounterAt": 1766143368986,
+    "firstMetricAt": 1766143069209,
+    "lastMetricAt": 1766143368986,
+    "period": 1766143360000,
+    "summaries": {},
+    "histograms": {}
+  },
+  "intermediate": [
+    {
+      "counters": {
+        "vusers.created_by_name.User Authentication Flow": 1,
+        "vusers.created": 5,
+        "http.requests": 5,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 1,
+        "errors.ECONNREFUSED": 5,
+        "vusers.failed": 5,
+        "vusers.created_by_name.View Book Details": 1,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 4,
+        "vusers.created_by_name.Browse and Search Books": 3
+      },
+      "rates": {
+        "http.request_rate": 5
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143069209,
+      "lastCounterAt": 1766143069518,
+      "firstMetricAt": 1766143069209,
+      "lastMetricAt": 1766143069518,
+      "period": "1766143060000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 19,
+        "vusers.created": 50,
+        "http.requests": 50,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 24,
+        "errors.ECONNREFUSED": 50,
+        "vusers.failed": 50,
+        "vusers.created_by_name.User Authentication Flow": 14,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 26,
+        "vusers.created_by_name.Shopping Cart Operations": 7,
+        "vusers.created_by_name.View Book Details": 5,
+        "vusers.created_by_name.Admin Operations": 5
+      },
+      "rates": {
+        "http.request_rate": 5
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143070279,
+      "lastCounterAt": 1766143079451,
+      "firstMetricAt": 1766143070279,
+      "lastMetricAt": 1766143079451,
+      "period": "1766143070000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 27,
+        "vusers.created": 50,
+        "http.requests": 50,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 31,
+        "errors.ECONNREFUSED": 50,
+        "vusers.failed": 50,
+        "vusers.created_by_name.View Book Details": 4,
+        "vusers.created_by_name.Admin Operations": 2,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 19,
+        "vusers.created_by_name.User Authentication Flow": 13,
+        "vusers.created_by_name.Shopping Cart Operations": 4
+      },
+      "rates": {
+        "http.request_rate": 5
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143080201,
+      "lastCounterAt": 1766143089449,
+      "firstMetricAt": 1766143080201,
+      "lastMetricAt": 1766143089449,
+      "period": "1766143080000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 28,
+        "vusers.created": 55,
+        "http.requests": 55,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 33,
+        "errors.ECONNREFUSED": 55,
+        "vusers.failed": 55,
+        "vusers.created_by_name.User Authentication Flow": 13,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 22,
+        "vusers.created_by_name.View Book Details": 5,
+        "vusers.created_by_name.Shopping Cart Operations": 9
+      },
+      "rates": {
+        "http.request_rate": 10
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143090201,
+      "lastCounterAt": 1766143099831,
+      "firstMetricAt": 1766143090201,
+      "lastMetricAt": 1766143099831,
+      "period": "1766143090000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 83,
+        "vusers.created": 141,
+        "http.requests": 140,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 96,
+        "errors.ECONNREFUSED": 140,
+        "vusers.failed": 140,
+        "vusers.created_by_name.User Authentication Flow": 28,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 44,
+        "vusers.created_by_name.View Book Details": 14,
+        "vusers.created_by_name.Shopping Cart Operations": 10,
+        "vusers.created_by_name.Admin Operations": 6
+      },
+      "rates": {
+        "http.request_rate": 15
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143100241,
+      "lastCounterAt": 1766143109998,
+      "firstMetricAt": 1766143100241,
+      "lastMetricAt": 1766143109998,
+      "period": "1766143100000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 101,
+        "vusers.created": 202,
+        "http.requests": 203,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 128,
+        "errors.ECONNREFUSED": 203,
+        "vusers.failed": 203,
+        "vusers.created_by_name.View Book Details": 26,
+        "vusers.created_by_name.User Authentication Flow": 37,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 75,
+        "vusers.created_by_name.Shopping Cart Operations": 29,
+        "vusers.created_by_name.Admin Operations": 9
+      },
+      "rates": {
+        "http.request_rate": 22
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143110000,
+      "lastCounterAt": 1766143119977,
+      "firstMetricAt": 1766143110000,
+      "lastMetricAt": 1766143119977,
+      "period": "1766143110000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.User Authentication Flow": 40,
+        "vusers.created": 274,
+        "http.requests": 273,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 106,
+        "errors.ECONNREFUSED": 273,
+        "vusers.failed": 273,
+        "vusers.created_by_name.Browse and Search Books": 138,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 167,
+        "vusers.created_by_name.Shopping Cart Operations": 52,
+        "vusers.created_by_name.View Book Details": 29,
+        "vusers.created_by_name.Admin Operations": 15
+      },
+      "rates": {
+        "http.request_rate": 28
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143120005,
+      "lastCounterAt": 1766143129999,
+      "firstMetricAt": 1766143120005,
+      "lastMetricAt": 1766143129999,
+      "period": "1766143120000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Admin Operations": 13,
+        "vusers.created": 338,
+        "http.requests": 339,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 121,
+        "errors.ECONNREFUSED": 339,
+        "vusers.failed": 339,
+        "vusers.created_by_name.Browse and Search Books": 184,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 218,
+        "vusers.created_by_name.User Authentication Flow": 61,
+        "vusers.created_by_name.Shopping Cart Operations": 46,
+        "vusers.created_by_name.View Book Details": 34
+      },
+      "rates": {
+        "http.request_rate": 35
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143130003,
+      "lastCounterAt": 1766143139991,
+      "firstMetricAt": 1766143130003,
+      "lastMetricAt": 1766143139991,
+      "period": "1766143130000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.User Authentication Flow": 80,
+        "vusers.created": 406,
+        "http.requests": 406,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 160,
+        "errors.ECONNREFUSED": 406,
+        "vusers.failed": 406,
+        "vusers.created_by_name.View Book Details": 34,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 246,
+        "vusers.created_by_name.Browse and Search Books": 212,
+        "vusers.created_by_name.Shopping Cart Operations": 58,
+        "vusers.created_by_name.Admin Operations": 22
+      },
+      "rates": {
+        "http.request_rate": 41
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143140017,
+      "lastCounterAt": 1766143149991,
+      "firstMetricAt": 1766143140017,
+      "lastMetricAt": 1766143149991,
+      "period": "1766143140000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.View Book Details": 49,
+        "vusers.created": 474,
+        "http.requests": 474,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 272,
+        "errors.ECONNREFUSED": 474,
+        "vusers.failed": 474,
+        "vusers.created_by_name.User Authentication Flow": 96,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 202,
+        "vusers.created_by_name.Browse and Search Books": 223,
+        "vusers.created_by_name.Admin Operations": 28,
+        "vusers.created_by_name.Shopping Cart Operations": 78
+      },
+      "rates": {
+        "http.request_rate": 48
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143150001,
+      "lastCounterAt": 1766143159983,
+      "firstMetricAt": 1766143150001,
+      "lastMetricAt": 1766143159983,
+      "period": "1766143150000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.User Authentication Flow": 104,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 195,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.Browse and Search Books": 265,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 305,
+        "vusers.created_by_name.Shopping Cart Operations": 76,
+        "vusers.created_by_name.Admin Operations": 15,
+        "vusers.created_by_name.View Book Details": 40
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143160040,
+      "lastCounterAt": 1766143169980,
+      "firstMetricAt": 1766143160040,
+      "lastMetricAt": 1766143169980,
+      "period": "1766143160000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 244,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 304,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.User Authentication Flow": 95,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 196,
+        "vusers.created_by_name.Shopping Cart Operations": 73,
+        "vusers.created_by_name.View Book Details": 60,
+        "vusers.created_by_name.Admin Operations": 28
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143170040,
+      "lastCounterAt": 1766143179980,
+      "firstMetricAt": 1766143170040,
+      "lastMetricAt": 1766143179980,
+      "period": "1766143170000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 258,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 309,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.Shopping Cart Operations": 61,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 191,
+        "vusers.created_by_name.User Authentication Flow": 106,
+        "vusers.created_by_name.View Book Details": 51,
+        "vusers.created_by_name.Admin Operations": 24
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143180040,
+      "lastCounterAt": 1766143189980,
+      "firstMetricAt": 1766143180040,
+      "lastMetricAt": 1766143189980,
+      "period": "1766143180000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 243,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 300,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.View Book Details": 57,
+        "vusers.created_by_name.User Authentication Flow": 99,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 200,
+        "vusers.created_by_name.Shopping Cart Operations": 88,
+        "vusers.created_by_name.Admin Operations": 13
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143190040,
+      "lastCounterAt": 1766143199980,
+      "firstMetricAt": 1766143190040,
+      "lastMetricAt": 1766143199980,
+      "period": "1766143190000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.View Book Details": 57,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 311,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.Shopping Cart Operations": 83,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 189,
+        "vusers.created_by_name.Browse and Search Books": 254,
+        "vusers.created_by_name.User Authentication Flow": 88,
+        "vusers.created_by_name.Admin Operations": 18
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143200040,
+      "lastCounterAt": 1766143209982,
+      "firstMetricAt": 1766143200040,
+      "lastMetricAt": 1766143209982,
+      "period": "1766143200000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Shopping Cart Operations": 80,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 199,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.Browse and Search Books": 263,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 301,
+        "vusers.created_by_name.Admin Operations": 23,
+        "vusers.created_by_name.User Authentication Flow": 96,
+        "vusers.created_by_name.View Book Details": 38
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143210040,
+      "lastCounterAt": 1766143219981,
+      "firstMetricAt": 1766143210040,
+      "lastMetricAt": 1766143219981,
+      "period": "1766143210000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 230,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 292,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.View Book Details": 62,
+        "vusers.created_by_name.User Authentication Flow": 101,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 208,
+        "vusers.created_by_name.Admin Operations": 22,
+        "vusers.created_by_name.Shopping Cart Operations": 85
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143220040,
+      "lastCounterAt": 1766143229984,
+      "firstMetricAt": 1766143220040,
+      "lastMetricAt": 1766143229984,
+      "period": "1766143220000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 252,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 307,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.Admin Operations": 24,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 193,
+        "vusers.created_by_name.View Book Details": 55,
+        "vusers.created_by_name.Shopping Cart Operations": 73,
+        "vusers.created_by_name.User Authentication Flow": 96
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143230040,
+      "lastCounterAt": 1766143239982,
+      "firstMetricAt": 1766143230040,
+      "lastMetricAt": 1766143239982,
+      "period": "1766143230000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 250,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 304,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.Shopping Cart Operations": 67,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 196,
+        "vusers.created_by_name.User Authentication Flow": 108,
+        "vusers.created_by_name.Admin Operations": 21,
+        "vusers.created_by_name.View Book Details": 54
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143240040,
+      "lastCounterAt": 1766143249981,
+      "firstMetricAt": 1766143240040,
+      "lastMetricAt": 1766143249981,
+      "period": "1766143240000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.View Book Details": 41,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 295,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.Browse and Search Books": 254,
+        "vusers.created_by_name.User Authentication Flow": 119,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 205,
+        "vusers.created_by_name.Shopping Cart Operations": 71,
+        "vusers.created_by_name.Admin Operations": 15
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143250040,
+      "lastCounterAt": 1766143259992,
+      "firstMetricAt": 1766143250040,
+      "lastMetricAt": 1766143259992,
+      "period": "1766143250000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 247,
+        "vusers.created": 500,
+        "http.requests": 500,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 300,
+        "errors.ECONNREFUSED": 500,
+        "vusers.failed": 500,
+        "vusers.created_by_name.User Authentication Flow": 103,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 200,
+        "vusers.created_by_name.View Book Details": 53,
+        "vusers.created_by_name.Shopping Cart Operations": 69,
+        "vusers.created_by_name.Admin Operations": 28
+      },
+      "rates": {
+        "http.request_rate": 50
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143260040,
+      "lastCounterAt": 1766143269983,
+      "firstMetricAt": 1766143260040,
+      "lastMetricAt": 1766143269983,
+      "period": "1766143260000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Shopping Cart Operations": 86,
+        "vusers.created": 552,
+        "http.requests": 551,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 221,
+        "errors.ECONNREFUSED": 551,
+        "vusers.failed": 551,
+        "vusers.created_by_name.Browse and Search Books": 273,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 330,
+        "vusers.created_by_name.View Book Details": 58,
+        "vusers.created_by_name.User Authentication Flow": 103,
+        "vusers.created_by_name.Admin Operations": 32
+      },
+      "rates": {
+        "http.request_rate": 58
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143270040,
+      "lastCounterAt": 1766143279999,
+      "firstMetricAt": 1766143270040,
+      "lastMetricAt": 1766143279999,
+      "period": "1766143270000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 516,
+        "vusers.created": 1000,
+        "http.requests": 1000,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 600,
+        "errors.ECONNREFUSED": 1000,
+        "vusers.failed": 1000,
+        "vusers.created_by_name.View Book Details": 84,
+        "vusers.created_by_name.Shopping Cart Operations": 141,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 400,
+        "vusers.created_by_name.User Authentication Flow": 207,
+        "vusers.created_by_name.Admin Operations": 52
+      },
+      "rates": {
+        "http.request_rate": 100
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143280002,
+      "lastCounterAt": 1766143289999,
+      "firstMetricAt": 1766143280002,
+      "lastMetricAt": 1766143289999,
+      "period": "1766143280000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 517,
+        "vusers.created": 1000,
+        "http.requests": 1000,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 611,
+        "errors.ECONNREFUSED": 1000,
+        "vusers.failed": 1000,
+        "vusers.created_by_name.Shopping Cart Operations": 147,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 389,
+        "vusers.created_by_name.User Authentication Flow": 208,
+        "vusers.created_by_name.View Book Details": 94,
+        "vusers.created_by_name.Admin Operations": 34
+      },
+      "rates": {
+        "http.request_rate": 100
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143290002,
+      "lastCounterAt": 1766143299999,
+      "firstMetricAt": 1766143290002,
+      "lastMetricAt": 1766143299999,
+      "period": "1766143290000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.User Authentication Flow": 209,
+        "vusers.created": 1000,
+        "http.requests": 1000,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 400,
+        "errors.ECONNREFUSED": 1000,
+        "vusers.failed": 1000,
+        "vusers.created_by_name.View Book Details": 115,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 600,
+        "vusers.created_by_name.Admin Operations": 49,
+        "vusers.created_by_name.Browse and Search Books": 484,
+        "vusers.created_by_name.Shopping Cart Operations": 143
+      },
+      "rates": {
+        "http.request_rate": 100
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143300004,
+      "lastCounterAt": 1766143309999,
+      "firstMetricAt": 1766143300004,
+      "lastMetricAt": 1766143309999,
+      "period": "1766143300000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 490,
+        "vusers.created": 1000,
+        "http.requests": 1000,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 594,
+        "errors.ECONNREFUSED": 1000,
+        "vusers.failed": 1000,
+        "vusers.created_by_name.User Authentication Flow": 200,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 406,
+        "vusers.created_by_name.Admin Operations": 61,
+        "vusers.created_by_name.Shopping Cart Operations": 144,
+        "vusers.created_by_name.View Book Details": 105
+      },
+      "rates": {
+        "http.request_rate": 100
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143310001,
+      "lastCounterAt": 1766143319999,
+      "firstMetricAt": 1766143310001,
+      "lastMetricAt": 1766143319999,
+      "period": "1766143310000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 498,
+        "vusers.created": 1000,
+        "http.requests": 1000,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 606,
+        "errors.ECONNREFUSED": 1000,
+        "vusers.failed": 1000,
+        "vusers.created_by_name.Admin Operations": 46,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 394,
+        "vusers.created_by_name.View Book Details": 107,
+        "vusers.created_by_name.User Authentication Flow": 192,
+        "vusers.created_by_name.Shopping Cart Operations": 157
+      },
+      "rates": {
+        "http.request_rate": 100
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143320001,
+      "lastCounterAt": 1766143329999,
+      "firstMetricAt": 1766143320001,
+      "lastMetricAt": 1766143329999,
+      "period": "1766143320000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.User Authentication Flow": 174,
+        "vusers.created": 908,
+        "http.requests": 909,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 354,
+        "errors.ECONNREFUSED": 909,
+        "vusers.failed": 909,
+        "vusers.created_by_name.Browse and Search Books": 452,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 555,
+        "vusers.created_by_name.Shopping Cart Operations": 135,
+        "vusers.created_by_name.Admin Operations": 44,
+        "vusers.created_by_name.View Book Details": 103
+      },
+      "rates": {
+        "http.request_rate": 95
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143330001,
+      "lastCounterAt": 1766143339984,
+      "firstMetricAt": 1766143330001,
+      "lastMetricAt": 1766143339984,
+      "period": "1766143330000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Admin Operations": 4,
+        "vusers.created": 50,
+        "http.requests": 50,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 18,
+        "errors.ECONNREFUSED": 50,
+        "vusers.failed": 50,
+        "vusers.created_by_name.Browse and Search Books": 28,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 32,
+        "vusers.created_by_name.User Authentication Flow": 8,
+        "vusers.created_by_name.View Book Details": 4,
+        "vusers.created_by_name.Shopping Cart Operations": 6
+      },
+      "rates": {
+        "http.request_rate": 5
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143340660,
+      "lastCounterAt": 1766143349987,
+      "firstMetricAt": 1766143340660,
+      "lastMetricAt": 1766143349987,
+      "period": "1766143340000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 28,
+        "vusers.created": 50,
+        "http.requests": 50,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 34,
+        "errors.ECONNREFUSED": 50,
+        "vusers.failed": 50,
+        "vusers.created_by_name.Shopping Cart Operations": 8,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 16,
+        "vusers.created_by_name.User Authentication Flow": 7,
+        "vusers.created_by_name.View Book Details": 6,
+        "vusers.created_by_name.Admin Operations": 1
+      },
+      "rates": {
+        "http.request_rate": 5
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143350659,
+      "lastCounterAt": 1766143359985,
+      "firstMetricAt": 1766143350659,
+      "lastMetricAt": 1766143359985,
+      "period": "1766143350000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Browse and Search Books": 29,
+        "vusers.created": 45,
+        "http.requests": 45,
+        "plugins.metrics-by-endpoint./api/books.errors.ECONNREFUSED": 33,
+        "errors.ECONNREFUSED": 45,
+        "vusers.failed": 45,
+        "vusers.created_by_name.View Book Details": 4,
+        "vusers.created_by_name.Shopping Cart Operations": 5,
+        "plugins.metrics-by-endpoint./api/auth/login.errors.ECONNREFUSED": 12,
+        "vusers.created_by_name.Admin Operations": 2,
+        "vusers.created_by_name.User Authentication Flow": 5
+      },
+      "rates": {
+        "http.request_rate": 5
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1766143360660,
+      "lastCounterAt": 1766143368986,
+      "firstMetricAt": 1766143360660,
+      "lastMetricAt": 1766143368986,
+      "period": "1766143360000",
+      "summaries": {},
+      "histograms": {}
+    }
+  ]
+}

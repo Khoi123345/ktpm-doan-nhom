@@ -1,0 +1,50 @@
+config:
+  target: "http://localhost:5000"
+  phases:
+    # Normal load
+    - duration: 30
+      arrivalRate: 10
+      name: "Normal load"
+    
+    # Sudden spike
+    - duration: 60
+      arrivalRate: 200
+      name: "Traffic spike!"
+    
+    # Recovery
+    - duration: 30
+      arrivalRate: 10
+      name: "Recovery"
+  
+  ensure:
+    maxErrorRate: 5           # Allow higher error rate during spike
+    p95: 2000                 # Allow slower response during spike
+  
+  http:
+    timeout: 15
+
+scenarios:
+  - name: "Spike Test - Books Search"
+    weight: 60
+    flow:
+      - get:
+          url: "/api/books?search={{ $randomString() }}&limit=20"
+          expect:
+            - statusCode: [200, 404]
+      
+      - think: 0.5
+
+  - name: "Spike Test - Categories"
+    weight: 40
+    flow:
+      - get:
+          url: "/api/categories"
+          expect:
+            - statusCode: 200
+      
+      - think: 0.5
+      
+      - get:
+          url: "/api/books?limit=10"
+          expect:
+            - statusCode: 200
