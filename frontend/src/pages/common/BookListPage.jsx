@@ -30,13 +30,26 @@ const BookListPage = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(getBooks({ keyword, category, page: currentPage, minPrice, maxPrice }));
-    }, [dispatch, keyword, category, currentPage, minPrice, maxPrice]);
+        const params = Object.fromEntries(searchParams);
+        dispatch(getBooks({ 
+            keyword: params.keyword || '', 
+            category: params.category || '', 
+            page: parseInt(params.page) || 1, 
+            minPrice: params.minPrice || '', 
+            maxPrice: params.maxPrice || '' 
+        }));
+    }, [dispatch, searchParams]);
 
     const handleSearch = (e) => {
         e.preventDefault();
         setCurrentPage(1);
-        updateSearchParams();
+        const params = {};
+        if (keyword) params.keyword = keyword;
+        if (category) params.category = category;
+        if (minPrice) params.minPrice = minPrice;
+        if (maxPrice) params.maxPrice = maxPrice;
+        params.page = 1;
+        setSearchParams(params);
     };
 
     const updateSearchParams = () => {

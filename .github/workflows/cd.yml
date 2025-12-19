@@ -20,7 +20,8 @@ jobs:
             cd ~/nhom13/ktpm-doan-nhom
             
             # Pull latest code
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
             
             # Rebuild and restart containers
             docker compose down

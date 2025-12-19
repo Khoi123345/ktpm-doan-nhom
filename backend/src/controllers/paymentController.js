@@ -208,7 +208,14 @@ class PaymentController {
     // Hàm kiểm tra trạng thái thanh toán từ Frontend (sau khi redirect)
     checkStatus = async (req, res) => {
         try {
+            console.log("--- Check Status Request ---");
+            console.log("Body:", req.body);
+            
             const { orderId, requestId, resultCode } = req.body;
+
+            if (!orderId || resultCode === undefined) {
+                return res.status(400).json({ message: "Missing orderId or resultCode" });
+            }
 
             // Tìm đơn hàng dựa trên orderId (hoặc requestId nếu lưu)
             // Lưu ý: orderId từ MoMo trả về là format "id_timestamp"
@@ -217,11 +224,13 @@ class PaymentController {
                 dbOrderId = orderId.split("_")[0];
             }
 
+            console.log("Looking for order:", dbOrderId);
             const order = await Order.findById(dbOrderId);
             if (!order) {
                 return res.status(404).json({ message: "Order not found" });
             }
 
+            console.log("Order found, resultCode:", resultCode);
             if (parseInt(resultCode) === 0) {
                 const paymentResult = {
                     id: requestId,
@@ -233,11 +242,13 @@ class PaymentController {
                 return res.status(200).json({ message: "Payment successful", orderId: dbOrderId });
             } else {
                 // Payment failed, delete the pending order
+                console.log("Payment failed, deleting order:", dbOrderId);
                 await Order.findByIdAndDelete(dbOrderId);
                 return res.status(400).json({ message: "Payment failed. Order has been cancelled." });
             }
         } catch (error) {
             console.error("Check Status Error:", error.message);
+            console.error("Stack:", error.stack);
             res.status(500).json({ message: error.message });
         }
     }
