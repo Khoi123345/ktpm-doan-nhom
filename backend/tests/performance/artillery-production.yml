@@ -1,0 +1,85 @@
+config:
+  # EC2 Instance - IP: 35.79.16.0, Port: 3000
+  target: "http://35.79.16.0:3000"
+  phases:
+    # Test nhẹ hơn cho production
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm up"
+    
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 30
+      name: "Ramp up"
+    
+    - duration: 60
+      arrivalRate: 30
+      name: "Sustained load"
+  
+  ensure:
+    maxErrorRate: 1
+    p95: 1000                # Allow higher latency for remote server
+    p99: 2000
+  
+  http:
+    timeout: 20              # Higher timeout for network latency
+
+scenarios:
+  - name: "Production Health Check"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/health"
+          expect:
+            - statusCode: 200
+      - think: 1
+
+  - name: "Browse Books - Production"
+    weight: 50
+    flow:
+      - get:
+          url: "/api/books?limit=10"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      
+      - think: 2
+      
+      - get:
+          url: "/api/books?search=test&limit=10"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      - get:
+          url: "/api/categories"
+          expect:
+            - statusCode: 200
+
+  - name: "View Book Details - Production"
+    weight: 30
+    flow:
+      - get:
+          url: "/api/books?limit=1"
+          capture:
+            - json: "$.data[0]._id"
+              as: "bookId"
+      
+      - think: 1
+      
+      - get:
+          url: "/api/books/{{ bookId }}"
+          expect:
+            - statusCode: 200
+
+  - name: "Authentication Test - Production"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"  # Dùng test account có sẵn
+            password: "TestPass123"
+          expect:
+            - statusCode: [200, 401]  # Allow both (may not have test account)

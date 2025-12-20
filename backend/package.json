@@ -12,7 +12,8 @@
     "test:security": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest tests/security --detectOpenHandles --forceExit",
     "test:performance": "artillery run tests/performance/artillery-config.yml --output tests/performance/report.json",
     "test:performance:quick": "artillery run tests/performance/artillery-quick.yml",
-    "test:performance:spike": "artillery run tests/performance/artillery-spike.yml"
+    "test:performance:spike": "artillery run tests/performance/artillery-spike.yml",
+    "test:performance:production": "artillery run tests/performance/artillery-production.yml --output tests/performance/report-prod.json"
   },
   "keywords": [
     "bookstore",
