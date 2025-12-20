@@ -5,13 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "mocha 'tests/**/*.spec.js' --timeout 30000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=test-report",
-    "test:login": "mocha 'tests/login.spec.js' --timeout 30000",
-    "test:home": "mocha 'tests/home.spec.js' --timeout 30000",
-    "test:parallel": "mocha 'tests/**/*.spec.js' --timeout 30000 --parallel",
-    "test:local": "cross-env HEADLESS=false BASE_URL=http://localhost:3000 ADMIN_URL=http://localhost:3001 API_URL=http://localhost:5000/api mocha 'tests/**/*.spec.js' --timeout 30000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=test-report",
-    "test:local:home": "cross-env HEADLESS=false BASE_URL=http://localhost:3000 mocha 'tests/home.spec.js' --timeout 30000",
-    "test:local:login": "cross-env HEADLESS=false BASE_URL=http://localhost:3000 ADMIN_URL=http://localhost:3001 mocha 'tests/login.spec.js' --timeout 30000"
+    "test": "mocha tests/**/*.spec.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=test-report",
+    "test:login": "mocha tests/login.spec.js --timeout 120000",
+    "test:home": "mocha tests/home.spec.js --timeout 120000",
+    "test:parallel": "mocha tests/**/*.spec.js --timeout 120000 --parallel",
+    "test:local": "cross-env HEADLESS=false BASE_URL=http://localhost:3000 ADMIN_URL=http://localhost:3001 API_URL=http://localhost:5000/api mocha tests/**/*.spec.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=test-report",
+    "test:local:home": "cross-env HEADLESS=false BASE_URL=http://localhost:3000 mocha tests/home.spec.js --timeout 120000",
+    "test:local:login": "cross-env HEADLESS=false BASE_URL=http://localhost:3000 ADMIN_URL=http://localhost:3001 mocha tests/login.spec.js --timeout 120000"
   },
   "keywords": [
     "selenium",

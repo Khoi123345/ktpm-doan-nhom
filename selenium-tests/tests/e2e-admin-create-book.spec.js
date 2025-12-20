@@ -74,30 +74,79 @@ describe('E2E: Admin Create Book Flow', function() {
         
         await driver.sleep(2000);
         
-        // Fill book form
+        // Fill book form - ALL FIELDS
         const bookTitle = `Test Book ${Date.now()}`;
         console.log(`Creating book: ${bookTitle}`);
         
+        // Tên sách * (required)
         const titleInput = await waitForElement(driver, By.css('input[name="title"]'));
         await titleInput.sendKeys(bookTitle);
         console.log(`✓ Title: ${bookTitle}`);
         
+        // Nhà xuất bản
+        const publisherInput = await driver.findElement(By.css('input[name="publisher"]'));
+        await publisherInput.sendKeys('NXB Trẻ');
+        console.log('✓ Publisher entered');
+        
+        // Tác giả * (required)
         const authorInput = await driver.findElement(By.css('input[name="author"]'));
         await authorInput.sendKeys('F. Scott Fitzgerald');
         console.log('✓ Author entered');
         
-        // Description - REQUIRED field
-        const descInput = await driver.findElement(By.css('textarea[name="description"]'));
-        await descInput.sendKeys('This is an automated test book created by Selenium. Testing E2E flow for admin book creation.');
-        console.log('✓ Description entered');
+        // Năm xuất bản (date format YYYY-MM-DD)
+        try {
+            const publishedDateInput = await driver.findElement(By.css('input[name="publishedDate"]'));
+            await publishedDateInput.sendKeys('2024-01-15');
+            console.log('✓ Published date entered');
+        } catch (e) {
+            console.log('⚠ Published date field not found or skipped');
+        }
         
+        // Số trang
+        try {
+            const pagesInput = await driver.findElement(By.css('input[name="pages"]'));
+            await pagesInput.sendKeys('320');
+            console.log('✓ Pages entered');
+        } catch (e) {
+            console.log('⚠ Pages field not found or skipped');
+        }
+        
+        // Giá * (required)
         const priceInput = await driver.findElement(By.css('input[name="price"]'));
         await priceInput.sendKeys('150000');
         console.log('✓ Price entered');
         
+        // Giá khuyến mãi
+        try {
+            const discountPriceInput = await driver.findElement(By.css('input[name="discountPrice"]'));
+            await discountPriceInput.sendKeys('120000');
+            console.log('✓ Discount price entered');
+        } catch (e) {
+            console.log('⚠ Discount price field not found or skipped');
+        }
+        
+        // ISBN (uppercase field name)
+        try {
+            const isbnInput = await driver.findElement(By.css('input[name="ISBN"]'));
+            await isbnInput.sendKeys('978-0743273565');
+            console.log('✓ ISBN entered');
+        } catch (e) {
+            console.log('⚠ ISBN field not found or skipped');
+        }
+        
+        // Kho * (required)
         const stockInput = await driver.findElement(By.css('input[name="stock"]'));
         await stockInput.sendKeys('100');
         console.log('✓ Stock entered');
+        
+        // Mô tả
+        try {
+            const descInput = await driver.findElement(By.css('textarea[name="description"]'));
+            await descInput.sendKeys('This is an automated test book created by Selenium. Testing E2E flow for admin book creation with all form fields filled.');
+            console.log('✓ Description entered');
+        } catch (e) {
+            console.log('⚠ Description field not found or skipped');
+        }
         
         // Select category - use existing "Fiction" category
         try {

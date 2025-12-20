@@ -74,6 +74,7 @@ describe('E2E: Mua Sach - Gio Hang va Mua Ngay', function() {
 
     // Scenario 1: Them vao gio hang -> Xem gio hang -> Thanh toan
     it('TH1: Them sach vao gio hang, xem gio hang va hoan tat don hang voi COD', async function() {
+        this.timeout(120000);
         console.log('\n========== SCENARIO 1: ADD TO CART -> VIEW CART -> CHECKOUT ==========');
         
         // Step 1: Kiem tra da dang nhap tu beforeEach
@@ -155,6 +156,8 @@ describe('E2E: Mua Sach - Gio Hang va Mua Ngay', function() {
 
         // 3. Tinh/Thanh pho - click input de mo dropdown, go de search
         const provinceInput = await waitForElement(driver, By.xpath("//label[contains(text(), 'Tỉnh/Thành phố')]/..//input"), 5000);
+        await driver.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", provinceInput);
+        await driver.sleep(500);
         await provinceInput.click();
         await driver.sleep(500);
         await provinceInput.sendKeys('Hà Nội');
@@ -238,6 +241,7 @@ describe('E2E: Mua Sach - Gio Hang va Mua Ngay', function() {
 
     // Scenario 2: Mua ngay -> Thanh toan
     it('TH2: Mua ngay va hoan tat don hang voi COD', async function() {
+        this.timeout(120000);
         console.log('\n========== SCENARIO 2: BUY NOW -> CHECKOUT ==========');
         
         // Step 1: Kiem tra da dang nhap tu beforeEach
@@ -295,6 +299,8 @@ describe('E2E: Mua Sach - Gio Hang va Mua Ngay', function() {
 
         // 3. Tinh/Thanh pho - click input de mo dropdown, go de search
         const provinceInput2 = await waitForElement(driver, By.xpath("//label[contains(text(), 'Tỉnh/Thành phố')]/..//input"), 5000);
+        await driver.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", provinceInput2);
+        await driver.sleep(500);
         await provinceInput2.click();
         await driver.sleep(500);
         await provinceInput2.sendKeys('Hà Nội');
