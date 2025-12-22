@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FiShoppingCart, FiUser, FiLogOut, FiSearch, FiMenu } from 'react-icons/fi';
 import { logout } from '../../features/authSlice';
-import { fetchCart } from '../../features/cartSlice';
+import { fetchCart, clearCartOnLogout } from '../../features/cartSlice';
 import { useState, useEffect } from 'react';
 
 const Header = () => {
@@ -20,6 +20,7 @@ const Header = () => {
     }, [dispatch, userInfo]);
 
     const handleLogout = () => {
+        dispatch(clearCartOnLogout()); // Clear cart when logout
         dispatch(logout());
         navigate('/login');
     };

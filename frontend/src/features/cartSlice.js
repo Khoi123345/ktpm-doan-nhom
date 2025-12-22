@@ -135,6 +135,20 @@ const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
+        // Clear cart on logout
+        clearCartOnLogout: (state) => {
+            state.cartItems = [];
+            state.appliedCoupon = null;
+            state.shippingAddress = {};
+            state.paymentMethod = 'COD';
+            state.syncedWithBackend = false;
+            state.loading = false;
+            state.error = null;
+            localStorage.removeItem('cartItems');
+            localStorage.removeItem('shippingAddress');
+            localStorage.removeItem('paymentMethod');
+        },
+        
         // Add to cart (local)
         addToCart: (state, action) => {
             const item = action.payload;
@@ -342,6 +356,7 @@ const cartSlice = createSlice({
 });
 
 export const {
+    clearCartOnLogout,
     addToCart,
     updateCartItem,
     removeFromCart,

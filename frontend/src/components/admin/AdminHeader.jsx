@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiBell, FiSearch, FiUser, FiLogOut, FiMenu } from 'react-icons/fi';
 import { logout } from '../../features/authSlice';
+import { clearCartOnLogout } from '../../features/cartSlice';
 
 const AdminHeader = ({ onMenuClick }) => {
     const dispatch = useDispatch();
@@ -12,6 +13,7 @@ const AdminHeader = ({ onMenuClick }) => {
     const menuRef = useRef(null);
 
     const handleLogout = () => {
+        dispatch(clearCartOnLogout()); // Clear cart when logout
         dispatch(logout());
         navigate('/login');
     };
