@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
+import axios from 'axios';
 import { connect, close, clear } from './setup.js';
 import User from '../../src/models/User.js';
 import Order from '../../src/models/Order.js';
@@ -8,6 +9,9 @@ import Category from '../../src/models/Category.js';
 import generateToken from '../../src/utils/generateToken.js';
 
 const app = (await import('../../src/app.js')).default;
+
+// Mock axios
+jest.spyOn(axios, 'post');
 
 beforeAll(async () => await connect(), 30000);
 afterEach(async () => {
@@ -69,7 +73,16 @@ describe('Payment Integration Tests', () => {
 
     describe('POST /api/payment/momo/create', () => {
         it('should create payment url successfully', async () => {
-            // Controller calls MoMo API directly, so we test the real response
+            // Mock MoMo API response thành công
+            axios.post.mockResolvedValueOnce({
+                data: {
+                    resultCode: 0,
+                    payUrl: 'https://test-payment.momo.vn/gw_payment/123456',
+                    requestId: 'test-request-id',
+                    orderId: 'test-order-id'
+                }
+            });
+
             const res = await request(app)
                 .post('/api/payment/momo/create')
                 .set('Authorization', `Bearer ${userToken}`)
