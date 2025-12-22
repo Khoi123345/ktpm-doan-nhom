@@ -53,6 +53,22 @@ describe('authMiddleware', () => {
             expect(next).toHaveBeenCalled();
         });
 
+        it('rejectRequestWhenUserIsLocked', async () => {
+            const user = mockUser({ isLocked: true });
+            const token = 'valid.jwt.token';
+            req.headers.authorization = `Bearer ${token}`;
+
+            jwt.verify.mockReturnValue({ id: user._id });
+            User.findById.mockReturnValue({
+                select: jest.fn().mockResolvedValue(user)
+            });
+
+            await protect(req, res, next);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+            expect(next).toHaveBeenCalledWith(expect.any(Error));
+        });
+
         it('rejectRequestWithoutAuthorizationHeader', async () => {
             await protect(req, res, next);
             expect(res.status).toHaveBeenCalledWith(401);

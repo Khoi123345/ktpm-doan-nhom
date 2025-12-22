@@ -86,6 +86,25 @@ describe('bookController', () => {
             });
         });
 
+        it('useDefaultPageWhenNotProvided', async () => {
+            const books = [mockBook(), mockBook()];
+            req.query = { limit: '10' }; // No page provided
+
+            Book.countDocuments.mockResolvedValue(20);
+            Book.find.mockReturnValue({
+                populate: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
+                skip: jest.fn().mockReturnThis(),
+                sort: jest.fn().mockResolvedValue(books)
+            });
+
+            await getBooks(req, res);
+
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+                page: 1
+            }));
+        });
+
         it('filterByKeyword', async () => {
             req.query = { keyword: 'test', page: '1' };
 

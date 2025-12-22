@@ -63,6 +63,46 @@ describe('userController', () => {
                 total: 2
             });
         });
+
+        it('filterUsersByRole', async () => {
+            req.query = { role: 'admin' };
+            const users = [mockUser({ role: 'admin' })];
+
+            User.find.mockReturnValue({
+                select: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
+                skip: jest.fn().mockReturnThis(),
+                sort: jest.fn().mockResolvedValue(users)
+            });
+            User.countDocuments.mockResolvedValue(1);
+
+            await getAllUsers(req, res);
+
+            expect(User.find).toHaveBeenCalledWith(expect.objectContaining({ role: 'admin' }));
+        });
+
+        it('filterUsersByKeyword', async () => {
+            req.query = { keyword: 'Test' };
+            const users = [mockUser({ name: 'Test User' })];
+
+            User.find.mockReturnValue({
+                select: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
+                skip: jest.fn().mockReturnThis(),
+                sort: jest.fn().mockResolvedValue(users)
+            });
+            User.countDocuments.mockResolvedValue(1);
+
+            await getAllUsers(req, res);
+
+            // Verify regex search was constructed
+            expect(User.find).toHaveBeenCalledWith(expect.objectContaining({
+                $or: [
+                    { name: { $regex: 'Test', $options: 'i' } },
+                    { email: { $regex: 'Test', $options: 'i' } }
+                ]
+            }));
+        });
     });
 
     describe('getUserById', () => {
@@ -131,6 +171,22 @@ describe('userController', () => {
 
             expect(updatedUser.name).toBe('New Name');
             expect(updatedUser.role).toBe('user'); // Should remain unchanged
+            expect(updatedUser.save).toHaveBeenCalled();
+        });
+
+        it('updateUserWithoutName', async () => {
+            const user = mockUser({ name: 'Old Name', role: 'user' });
+            req.params = { id: user._id };
+            req.body = { role: 'admin' }; // Name not provided
+
+            const updatedUser = { ...user, role: 'admin' };
+            updatedUser.save = jest.fn().mockResolvedValue(updatedUser);
+            User.findById.mockResolvedValue(updatedUser);
+
+            await updateUser(req, res);
+
+            expect(updatedUser.name).toBe('Old Name'); // Should remain unchanged
+            expect(updatedUser.role).toBe('admin');
             expect(updatedUser.save).toHaveBeenCalled();
         });
 

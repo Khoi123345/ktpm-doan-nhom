@@ -208,6 +208,29 @@ describe('reviewController', () => {
             expect(book.save).toHaveBeenCalled();
         });
 
+        it('deleteReviewAndRecalculateRating', async () => {
+            const review = mockReview({ user: req.user._id, book: 'book-id', rating: 5 });
+            req.params = { id: review._id };
+
+            review.deleteOne = jest.fn().mockResolvedValue(true);
+            Review.findById.mockResolvedValue(review);
+
+            const book = mockBook({ _id: 'book-id' });
+            book.save = jest.fn().mockResolvedValue(true);
+            Book.findById.mockResolvedValue(book);
+
+            // Mock remaining reviews
+            const remainingReviews = [mockReview({ rating: 4 })];
+            Review.find.mockResolvedValue(remainingReviews);
+
+            await deleteReview(req, res);
+
+            expect(review.deleteOne).toHaveBeenCalled();
+            expect(book.numReviews).toBe(1);
+            expect(book.rating).toBe(4); // 4/1 = 4
+            expect(book.save).toHaveBeenCalled();
+        });
+
         it('allowAdminToDeleteAnyReview', async () => {
             const review = mockReview({ user: 'other-user-id', book: 'book-id' });
             req.params = { id: review._id };

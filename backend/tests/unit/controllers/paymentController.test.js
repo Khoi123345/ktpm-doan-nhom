@@ -56,9 +56,11 @@ jest.unstable_mockModule('../helpers/testHelpers.js', () => ({
 // Import modules dynamically
 const axios = await import('axios');
 const { default: Order } = await import('../../../src/models/Order.js');
+const { default: Book } = await import('../../../src/models/Book.js');
+const { default: Cart } = await import('../../../src/models/Cart.js');
 const { mockRequest, mockResponse, mockOrder } = await import('../helpers/testHelpers.js');
-const { 
-    createMoMoPaymentUrl, 
+const {
+    createMoMoPaymentUrl,
     momoIPN,
     checkPaymentStatus,
     getPaymentById,
@@ -78,6 +80,12 @@ describe('paymentController', () => {
 
         // Setup Order mock static methods
         Order.findById = jest.fn();
+
+        // Setup Book mock static methods
+        Book.findById = jest.fn();
+
+        // Setup Cart mock static methods
+        Cart.findOne = jest.fn();
     });
 
     describe('createMoMoPaymentUrl', () => {
@@ -133,6 +141,23 @@ describe('paymentController', () => {
             await createMoMoPaymentUrl(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                message: 'Error creating payment'
+            });
+        });
+
+        it('handleAxiosError', async () => {
+            const order = mockOrder({ _id: 'order-id', totalPrice: 100000 });
+            req.body = { orderId: order._id };
+            Order.findById.mockResolvedValue(order);
+            mockAxiosPost.mockRejectedValue(new Error('Network error'));
+
+            await createMoMoPaymentUrl(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                message: 'Network error'
+            });
         });
     });
 
@@ -208,7 +233,7 @@ describe('paymentController', () => {
                 extraData: JSON.stringify({ dbOrderId: 'order-id' })
             };
 
-            const order = mockOrder({ 
+            const order = mockOrder({
                 _id: 'order-id',
                 user: 'user-id',
                 orderItems: []
@@ -266,9 +291,89 @@ describe('paymentController', () => {
 
             expect(res.status).toHaveBeenCalled();
         });
+
+        it('handleIPNError', async () => {
+            req.body = {
+                partnerCode: 'MOMO',
+                orderId: 'order-id_123',
+                resultCode: 0,
+                extraData: JSON.stringify({ dbOrderId: 'order-id' })
+            };
+
+            Order.findById.mockRejectedValue(new Error('Database error'));
+
+            await momoIPN(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Database error' });
+        });
+
+        it('handleIPNMissingOrderId', async () => {
+            req.body = {
+                partnerCode: 'MOMO',
+                orderId: null,
+                resultCode: 0,
+                extraData: 'invalid-json'
+            };
+
+            await momoIPN(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Cannot determine Order ID' });
+        });
+
+        it('handleMomoIPNWithTransId', async () => {
+            req.body = {
+                partnerCode: 'MOMO',
+                orderId: 'order-id_123',
+                resultCode: 0,
+                transId: 987654321,
+                extraData: JSON.stringify({ dbOrderId: 'order-id' })
+            };
+
+            const order = mockOrder({ _id: 'order-id', user: 'user-id', orderItems: [] });
+            order.save = jest.fn().mockResolvedValue(order);
+            Order.findById.mockResolvedValue(order);
+
+            await momoIPN(req, res);
+
+            expect(order.isPaid).toBe(true);
+            expect(order.paymentResult.id).toBe('987654321');
+            expect(res.status).toHaveBeenCalledWith(204);
+        });
+
+        it('handleMomoIPNWithoutTransId', async () => {
+            req.body = {
+                partnerCode: 'MOMO',
+                orderId: 'order-id_123',
+                resultCode: 0,
+                requestId: 'req-123',
+                // transId is missing
+                extraData: JSON.stringify({ dbOrderId: 'order-id' })
+            };
+
+            const order = mockOrder({ _id: 'order-id', user: 'user-id', orderItems: [] });
+            order.save = jest.fn().mockResolvedValue(order);
+            Order.findById.mockResolvedValue(order);
+
+            await momoIPN(req, res);
+
+            expect(order.isPaid).toBe(true);
+            expect(order.paymentResult.id).toBe('req-123');
+            expect(res.status).toHaveBeenCalledWith(204);
+        });
     });
 
     describe('checkPaymentStatus', () => {
+        it('checkStatusMissingParams', async () => {
+            req.body = {}; // Missing orderId and resultCode
+
+            await checkPaymentStatus(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Missing orderId or resultCode' });
+        });
+
         it('handleSuccessfulPaymentStatus', async () => {
             req.body = {
                 orderId: 'order-id_123',
@@ -276,7 +381,7 @@ describe('paymentController', () => {
                 resultCode: 0
             };
 
-            const order = mockOrder({ 
+            const order = mockOrder({
                 _id: 'order-id',
                 user: 'user-id',
                 orderItems: []
@@ -294,24 +399,78 @@ describe('paymentController', () => {
             });
         });
 
-        it('handleFailedPaymentAndDeleteOrder', async () => {
+        it('handleSuccessfulPaymentStatusWithStockReductionAndCartClearing', async () => {
             req.body = {
-                orderId: 'order-id_456',
-                requestId: 'req-456',
-                resultCode: 1
+                orderId: 'order-id_123',
+                requestId: 'req-123',
+                resultCode: 0
             };
 
-            const order = mockOrder({ _id: 'order-id' });
+            const order = mockOrder({
+                _id: 'order-id',
+                user: 'user-id',
+                status: 'pending',
+                orderItems: [{ book: 'book-id', quantity: 2 }]
+            });
+            order.save = jest.fn().mockResolvedValue(order);
             Order.findById.mockResolvedValue(order);
-            Order.findByIdAndDelete = jest.fn().mockResolvedValue(true);
+
+            const book = { _id: 'book-id', stock: 10, save: jest.fn() };
+            Book.findById.mockResolvedValue(book);
+
+            const cart = {
+                user: 'user-id',
+                items: [{ book: 'book-id' }, { book: 'other-book-id' }],
+                save: jest.fn()
+            };
+            Cart.findOne.mockResolvedValue(cart);
 
             await checkPaymentStatus(req, res);
 
-            expect(Order.findByIdAndDelete).toHaveBeenCalledWith('order-id');
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({
-                message: 'Payment failed. Order has been cancelled.'
+            expect(order.isPaid).toBe(true);
+            expect(order.status).toBe('confirmed');
+            expect(book.stock).toBe(8); // 10 - 2
+            expect(book.save).toHaveBeenCalled();
+            expect(cart.items.length).toBe(1); // One item removed
+            expect(cart.save).toHaveBeenCalled();
+        });
+
+        it('handleErrorRemovingItemsFromCart', async () => {
+            req.body = {
+                orderId: 'order-id_123',
+                requestId: 'req-123',
+                resultCode: 0
+            };
+
+            const order = mockOrder({
+                _id: 'order-id',
+                user: 'user-id',
+                status: 'pending',
+                orderItems: [{ book: 'book-id', quantity: 2 }]
             });
+            order.save = jest.fn().mockResolvedValue(order);
+            Order.findById.mockResolvedValue(order);
+
+            const book = { _id: 'book-id', stock: 10, save: jest.fn() };
+            Book.findById.mockResolvedValue(book);
+
+            // Cart error is caught and logged, but payment still succeeds
+            Cart.findOne.mockRejectedValue(new Error('Cart error'));
+            const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
+            await checkPaymentStatus(req, res);
+
+            // Payment should still succeed even if cart clearing fails
+            expect(order.isPaid).toBe(true);
+            expect(order.status).toBe('confirmed');
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                message: 'Payment successful',
+                orderId: 'order-id'
+            });
+            expect(consoleSpy).toHaveBeenCalledWith('Error removing items from cart:', expect.any(Error));
+
+            consoleSpy.mockRestore();
         });
 
         it('return404WhenOrderNotFound', async () => {
@@ -357,6 +516,27 @@ describe('paymentController', () => {
             await checkPaymentStatus(req, res);
 
             expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Database error' });
+        });
+
+        it('handleFailedPaymentAndDeleteOrder', async () => {
+            req.body = {
+                orderId: 'order-id_456',
+                requestId: 'req-456',
+                resultCode: 1
+            };
+
+            const order = mockOrder({ _id: 'order-id' });
+            Order.findById.mockResolvedValue(order);
+            Order.findByIdAndDelete = jest.fn().mockResolvedValue(true);
+
+            await checkPaymentStatus(req, res);
+
+            expect(Order.findByIdAndDelete).toHaveBeenCalledWith('order-id');
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                message: 'Payment failed. Order has been cancelled.'
+            });
         });
     });
 
@@ -417,6 +597,7 @@ describe('paymentController', () => {
             await getPaymentByOrder(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Database error' });
         });
     });
 

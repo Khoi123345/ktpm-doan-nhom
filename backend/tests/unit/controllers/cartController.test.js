@@ -79,7 +79,7 @@ describe('cartController', () => {
 
     describe('addToCart', () => {
         it('addNewItemToCart', async () => {
-            const book = mockBook();
+            const book = mockBook({ discountPrice: 90000, price: 100000 });
             req.body = { bookId: book._id, quantity: 2 };
 
             const cart = mockCart({ user: req.user._id, items: [] });
@@ -89,6 +89,12 @@ describe('cartController', () => {
             await addToCart(req, res);
 
             expect(cart.items).toHaveLength(1);
+            expect(cart.items[0]).toMatchObject({
+                book: book._id,
+                quantity: 2,
+                price: 90000, // Should use discountPrice
+                title: book.title
+            });
             expect(cart.save).toHaveBeenCalled();
         });
 
@@ -113,13 +119,39 @@ describe('cartController', () => {
             expect(newCart.save).toHaveBeenCalled();
         });
 
+        it('addItemWithoutImages', async () => {
+            const book = mockBook({ images: [] });
+            req.body = { bookId: book._id, quantity: 1 };
+
+            const cart = mockCart({ user: req.user._id, items: [] });
+            Book.findById.mockResolvedValue(book);
+            Cart.findOne.mockResolvedValue(cart);
+
+            await addToCart(req, res);
+
+            expect(cart.items[0].image).toBe('');
+        });
+
+        it('useNormalPriceWhenDiscountIsZero', async () => {
+            const book = mockBook({ discountPrice: 0, price: 50000 });
+            req.body = { bookId: book._id, quantity: 1 };
+
+            const cart = mockCart({ user: req.user._id, items: [] });
+            Book.findById.mockResolvedValue(book);
+            Cart.findOne.mockResolvedValue(cart);
+
+            await addToCart(req, res);
+
+            expect(cart.items[0].price).toBe(50000);
+        });
+
         it('updateQuantityForExistingItem', async () => {
-            const book = mockBook();
+            const book = mockBook({ discountPrice: 90000, price: 100000 });
             req.body = { bookId: book._id, quantity: 2 };
 
             const cart = mockCart({
                 user: req.user._id,
-                items: [{ book: book._id, quantity: 1, price: book.price }]
+                items: [{ book: book._id, quantity: 1, price: 100000 }] // Old price
             });
 
             Book.findById.mockResolvedValue(book);
@@ -128,6 +160,26 @@ describe('cartController', () => {
             await addToCart(req, res);
 
             expect(cart.items[0].quantity).toBe(3);
+            expect(cart.items[0].price).toBe(90000); // Should update to new discountPrice
+            expect(cart.save).toHaveBeenCalled();
+        });
+
+        it('addToCartExistingItemNoDiscount', async () => {
+            const book = mockBook({ discountPrice: 0, price: 50000 });
+            req.body = { bookId: book._id, quantity: 1 };
+
+            const cart = mockCart({
+                user: req.user._id,
+                items: [{ book: book._id, quantity: 1, price: 50000 }]
+            });
+
+            Book.findById.mockResolvedValue(book);
+            Cart.findOne.mockResolvedValue(cart);
+
+            await addToCart(req, res);
+
+            expect(cart.items[0].quantity).toBe(2);
+            expect(cart.items[0].price).toBe(50000);
             expect(cart.save).toHaveBeenCalled();
         });
 
@@ -176,13 +228,13 @@ describe('cartController', () => {
 
     describe('updateCartItem', () => {
         it('updateItemQuantity', async () => {
-            const book = mockBook({ stock: 10 });
+            const book = mockBook({ stock: 10, discountPrice: 90000, price: 100000 });
             req.params = { bookId: book._id };
             req.body = { quantity: 5 };
 
             const cart = mockCart({
                 user: req.user._id,
-                items: [{ book: book._id, quantity: 2, price: book.price }]
+                items: [{ book: book._id, quantity: 2, price: 100000 }]
             });
 
             Book.findById.mockResolvedValue(book);
@@ -191,7 +243,26 @@ describe('cartController', () => {
             await updateCartItem(req, res);
 
             expect(cart.items[0].quantity).toBe(5);
+            expect(cart.items[0].price).toBe(90000); // Should update to new discountPrice
             expect(cart.save).toHaveBeenCalled();
+        });
+
+        it('useNormalPriceWhenDiscountIsZeroOnUpdate', async () => {
+            const book = mockBook({ stock: 10, discountPrice: 0, price: 50000 });
+            req.params = { bookId: book._id };
+            req.body = { quantity: 5 };
+
+            const cart = mockCart({
+                user: req.user._id,
+                items: [{ book: book._id, quantity: 2, price: 50000 }]
+            });
+
+            Book.findById.mockResolvedValue(book);
+            Cart.findOne.mockResolvedValue(cart);
+
+            await updateCartItem(req, res);
+
+            expect(cart.items[0].price).toBe(50000);
         });
 
         it('return400WhenQuantityInvalid', async () => {

@@ -245,6 +245,26 @@ describe('authController', () => {
             expect(updatedUser.save).toHaveBeenCalled();
         });
 
+        it('updateAddressesWhenProvided', async () => {
+            const user = mockUser();
+            req.user = { _id: user._id };
+            const newAddresses = [{
+                address: '123 Test St',
+                city: 'Test City',
+                postalCode: '12345',
+                country: 'Test Country'
+            }];
+            req.body = { addresses: newAddresses };
+
+            const updatedUser = { ...user, save: jest.fn().mockResolvedValue(true) };
+            User.findById.mockResolvedValue(updatedUser);
+
+            await updateProfile(req, res, next);
+
+            expect(updatedUser.addresses).toEqual(newAddresses);
+            expect(updatedUser.save).toHaveBeenCalled();
+        });
+
         it('return404IfUserNotFound', async () => {
             req.user = { _id: 'nonexistent-id' };
             req.body = { name: 'New Name' };

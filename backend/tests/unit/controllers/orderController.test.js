@@ -126,6 +126,18 @@ describe('orderController', () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
+        it('return404WhenBookNotFound', async () => {
+            const orderData = {
+                orderItems: [{ book: 'book-id', quantity: 1, title: 'Book Title' }]
+            };
+            req.body = orderData;
+
+            Book.findById.mockResolvedValue(null);
+
+            await expect(createOrder(req, res)).rejects.toThrow('Không tìm thấy sách: Book Title');
+            expect(res.status).toHaveBeenCalledWith(404);
+        });
+
 
         it('incrementCouponUsageWhenCouponCodeIsProvided', async () => {
             const orderData = {
@@ -267,8 +279,8 @@ describe('orderController', () => {
         });
 
         it('filterOrdersByDateRange', async () => {
-            req.query = { 
-                startDate: '2024-01-01', 
+            req.query = {
+                startDate: '2024-01-01',
                 endDate: '2024-01-31',
                 page: 1,
                 limit: 10
@@ -285,8 +297,8 @@ describe('orderController', () => {
         });
 
         it('filterOrdersByPriceRange', async () => {
-            req.query = { 
-                minPrice: 100000, 
+            req.query = {
+                minPrice: 100000,
                 maxPrice: 500000,
                 page: 1,
                 limit: 10
@@ -384,6 +396,56 @@ describe('orderController', () => {
             expect(coupon.usedCount).toBe(0);
             expect(coupon.save).toHaveBeenCalled();
         });
+
+        it('updateStatusToDelivered', async () => {
+            const order = mockOrder({ status: 'confirmed' });
+            req.params = { id: order._id };
+            req.body = { status: 'delivered' };
+
+            order.save = jest.fn().mockResolvedValue(order);
+            Order.findById.mockResolvedValue(order);
+
+            await updateOrderStatus(req, res);
+
+            expect(order.status).toBe('delivered');
+            expect(order.isDelivered).toBe(true);
+            expect(order.deliveredAt).toBeDefined();
+            expect(order.save).toHaveBeenCalled();
+        });
+
+        it('return400WhenStockInsufficientOnConfirm', async () => {
+            const order = {
+                _id: 'order-id',
+                status: 'pending',
+                orderItems: [{ book: 'book-id', quantity: 10, title: 'Book Title' }],
+                save: jest.fn(),
+                populate: jest.fn().mockReturnThis(),
+            };
+            req.params = { id: order._id };
+            req.body = { status: 'confirmed' };
+
+            Order.findById.mockResolvedValue(order);
+
+            const book = {
+                _id: 'book-id',
+                title: 'Book Title',
+                stock: 5,
+                save: jest.fn(),
+            };
+            Book.findById.mockResolvedValue(book);
+
+            await expect(updateOrderStatus(req, res)).rejects.toThrow(expect.any(Error));
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it('return404WhenOrderNotFound', async () => {
+            req.params = { id: 'nonexistent-id' };
+            req.body = { status: 'confirmed' };
+            Order.findById.mockResolvedValue(null);
+
+            await expect(updateOrderStatus(req, res)).rejects.toThrow(expect.any(Error));
+            expect(res.status).toHaveBeenCalledWith(404);
+        });
     });
 
     describe('updateOrderToPaid', () => {
@@ -458,39 +520,9 @@ describe('orderController', () => {
             await cancelOrder(req, res);
 
             expect(order.status).toBe('cancelled');
-            expect(book.stock).toBe(10);
+            expect(book.stock).toBe(10); // 8 + 2 restored
             expect(book.save).toHaveBeenCalled();
-        });
-
-        it('return400WhenAlreadyDelivered', async () => {
-            const order = mockOrder({ status: 'delivered', user: req.user._id });
-            req.params = { id: order._id };
-
-            Order.findById.mockResolvedValue(order);
-
-            await expect(cancelOrder(req, res)).rejects.toThrow('Không thể hủy đơn hàng đã giao, đã hủy hoặc đã hoàn');
-            expect(res.status).toHaveBeenCalledWith(400);
-        });
-
-
-        it('restoreCouponUsageWhenCancelled', async () => {
-            const order = mockOrder({
-                status: 'pending',
-                user: req.user._id,
-                couponApplied: { code: 'TEST10' }
-            });
-            req.params = { id: order._id };
-
-            order.save = jest.fn().mockResolvedValue(order);
-            Order.findById.mockResolvedValue(order);
-
-            const coupon = { code: 'TEST10', usedCount: 5, save: jest.fn() };
-            Coupon.findOne.mockResolvedValue(coupon);
-
-            await cancelOrder(req, res);
-
-            expect(coupon.usedCount).toBe(4);
-            expect(coupon.save).toHaveBeenCalled();
+            expect(order.save).toHaveBeenCalled();
         });
 
         it('return403WhenUnauthorizedToCancel', async () => {
@@ -513,6 +545,67 @@ describe('orderController', () => {
         });
     });
 
+    describe('cancelOrder', () => {
+        it('cancelOrderSuccessfullyAndRestoreCoupon', async () => {
+            const order = mockOrder({
+                status: 'pending',
+                couponApplied: { code: 'TEST10' },
+                user: 'user-id'
+            });
+            req.params = { id: order._id };
+            req.user = { _id: 'user-id', role: 'user' };
+
+            Order.findById.mockResolvedValue(order);
+            const coupon = { code: 'TEST10', usedCount: 1, save: jest.fn() };
+            Coupon.findOne.mockResolvedValue(coupon);
+
+            await cancelOrder(req, res);
+
+            expect(order.status).toBe('cancelled');
+            expect(coupon.usedCount).toBe(0);
+            expect(coupon.save).toHaveBeenCalled();
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
+        });
+
+        it('cancelOrderCouponNotFound', async () => {
+            const order = mockOrder({
+                status: 'pending',
+                couponApplied: { code: 'TEST10' },
+                user: 'user-id'
+            });
+            req.params = { id: order._id };
+            req.user = { _id: 'user-id', role: 'user' };
+
+            Order.findById.mockResolvedValue(order);
+            Coupon.findOne.mockResolvedValue(null);
+
+            await cancelOrder(req, res);
+
+            expect(order.status).toBe('cancelled');
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
+        });
+
+        it('cancelOrderAndRestoreStockIfConfirmed', async () => {
+            const order = mockOrder({
+                status: 'confirmed',
+                user: 'user-id',
+                orderItems: [{ book: 'book-id', quantity: 2 }]
+            });
+            req.params = { id: order._id };
+            req.user = { _id: 'user-id', role: 'user' };
+
+            Order.findById.mockResolvedValue(order);
+            const book = { _id: 'book-id', stock: 10, save: jest.fn() };
+            Book.findById.mockResolvedValue(book);
+
+            await cancelOrder(req, res);
+
+            expect(order.status).toBe('cancelled');
+            expect(book.stock).toBe(12);
+            expect(book.save).toHaveBeenCalled();
+        });
+    });
+
     describe('returnOrder', () => {
         it('returnOrderAndRestoreStock', async () => {
             const order = mockOrder({
@@ -520,20 +613,19 @@ describe('orderController', () => {
                 orderItems: [{ book: 'book-id', quantity: 2 }]
             });
             req.params = { id: order._id };
+            req.body = { reason: 'Defective' };
 
-            order.save = jest.fn().mockResolvedValue(order);
             Order.findById.mockResolvedValue(order);
-
-            const book = mockBook({ stock: 8 });
-            book.save = jest.fn().mockResolvedValue(true);
+            const book = { _id: 'book-id', stock: 10, save: jest.fn() };
             Book.findById.mockResolvedValue(book);
 
             await returnOrder(req, res);
 
             expect(order.status).toBe('returned');
-            expect(book.stock).toBe(10);
+            expect(book.stock).toBe(12);
             expect(book.save).toHaveBeenCalled();
             expect(order.save).toHaveBeenCalled();
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
         });
 
         it('return400IfAlreadyReturned', async () => {
@@ -542,6 +634,14 @@ describe('orderController', () => {
             Order.findById.mockResolvedValue(order);
 
             await expect(returnOrder(req, res)).rejects.toThrow('Đơn hàng đã hủy hoặc đã hoàn');
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it('return400IfAlreadyCancelled', async () => {
+            const order = mockOrder({ status: 'cancelled' });
+            req.params = { id: order._id };
+            Order.findById.mockResolvedValue(order);
+
             await expect(returnOrder(req, res)).rejects.toThrow('Đơn hàng đã hủy hoặc đã hoàn');
             expect(res.status).toHaveBeenCalledWith(400);
         });

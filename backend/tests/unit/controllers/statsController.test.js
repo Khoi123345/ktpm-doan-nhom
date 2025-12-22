@@ -65,9 +65,20 @@ describe('statsController', () => {
                 { isPaid: false, totalPrice: 50000, createdAt: new Date() }
             ];
 
+            // Recent orders: mixed paid/unpaid
+            const recentOrders = [
+                { isPaid: true, totalPrice: 100000 },
+                { isPaid: false, totalPrice: 50000 }
+            ];
+            // Previous orders: mixed paid/unpaid
+            const previousOrders = [
+                { isPaid: true, totalPrice: 200000 },
+                { isPaid: false, totalPrice: 50000 }
+            ];
+
             Order.find.mockResolvedValueOnce(mockOrders);
-            Order.find.mockResolvedValueOnce([mockOrders[0]]);
-            Order.find.mockResolvedValueOnce([]);
+            Order.find.mockResolvedValueOnce(recentOrders);
+            Order.find.mockResolvedValueOnce(previousOrders);
             Book.countDocuments.mockResolvedValue(100);
             User.countDocuments.mockResolvedValueOnce(50);
             User.countDocuments.mockResolvedValueOnce(5);

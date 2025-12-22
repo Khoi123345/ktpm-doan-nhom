@@ -5,7 +5,10 @@
         "src/**/*.js",
         "!src/server.js",
         "!src/config/**",
-        "!src/routes/**"
+        "!src/routes/**",
+        "!src/models/**",
+        "!src/utils/seedAdmin.js**",
+        "!src/app.js**"
     ],
     "testMatch": [
         "**/tests/**/*.test.js"

@@ -135,6 +135,67 @@ describe('categoryController', () => {
             });
         });
 
+        it('updateCategoryWithoutOptionalFields', async () => {
+            const category = mockCategory({ name: 'Old Name', description: 'Old Desc' });
+            req.params = { id: category._id };
+            req.body = {}; // No updates
+
+            const updatedCategory = { ...category };
+            updatedCategory.save = jest.fn().mockResolvedValue(updatedCategory);
+            Category.findById.mockResolvedValue(updatedCategory);
+
+            await updateCategory(req, res);
+
+            // Verify fields remain unchanged (logic in controller: name = req.body.name ? ... : category.name)
+            // Since we mocked the object, we rely on the controller logic being executed.
+            // We can check if save was called.
+            expect(updatedCategory.save).toHaveBeenCalled();
+        });
+
+        it('updateCategoryWithDescriptionOnly', async () => {
+            const category = mockCategory({ name: 'Old Name', description: 'Old Desc' });
+            req.params = { id: category._id };
+            req.body = { description: 'New Desc' };
+
+            const updatedCategory = { ...category, description: 'New Desc' };
+            updatedCategory.save = jest.fn().mockResolvedValue(updatedCategory);
+            Category.findById.mockResolvedValue(updatedCategory);
+
+            await updateCategory(req, res);
+
+            expect(updatedCategory.description).toBe('New Desc');
+            expect(updatedCategory.save).toHaveBeenCalled();
+        });
+
+        it('return400IfCategoryNameDuplicateOnUpdate', async () => {
+            const category = mockCategory({ name: 'Old Name' });
+            req.params = { id: category._id };
+            req.body = { name: 'Existing Name' };
+
+            Category.findById.mockResolvedValue(category);
+            Category.findOne.mockResolvedValue({ _id: 'other-id', name: 'Existing Name' });
+
+            await expect(updateCategory(req, res)).rejects.toThrow('Tên thể loại đã tồn tại');
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+
+        it('updateCategoryNameSuccess', async () => {
+            const category = mockCategory({ name: 'Old Name' });
+            req.params = { id: category._id };
+            req.body = { name: 'New Name' };
+
+            Category.findById.mockResolvedValue(category);
+            Category.findOne.mockResolvedValue(null); // No duplicate
+            category.save = jest.fn().mockResolvedValue({ ...category, name: 'New Name' });
+
+            await updateCategory(req, res);
+
+            expect(category.save).toHaveBeenCalled();
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+                success: true
+            }));
+        });
+
         it('return404WhenNotFound', async () => {
             req.params = { id: 'nonexistent-id' };
             req.body = { name: 'Updated Name' };
@@ -152,7 +213,7 @@ describe('categoryController', () => {
 
             category.deleteOne = jest.fn().mockResolvedValue(true);
             Category.findById.mockResolvedValue(category);
-            
+
             // Mock Book.findOne to return null (no books using this category)
             Book.findOne.mockResolvedValue(null);
 
@@ -163,6 +224,17 @@ describe('categoryController', () => {
                 success: true,
                 message: expect.any(String)
             });
+        });
+
+        it('return400IfCategoryHasBooks', async () => {
+            const category = mockCategory();
+            req.params = { id: category._id };
+
+            Category.findById.mockResolvedValue(category);
+            Book.findOne.mockResolvedValue({ _id: 'book-id' });
+
+            await expect(deleteCategory(req, res)).rejects.toThrow('Không thể xóa danh mục đã có sản phẩm');
+            expect(res.status).toHaveBeenCalledWith(400);
         });
 
         it('return404WhenNotFound', async () => {
