@@ -132,9 +132,3 @@ Hệ thống triển khai một số biện pháp bảo mật để bảo vệ d
 -   **Mã hóa Mật khẩu**: Mật khẩu người dùng được băm (hash) sử dụng Bcrypt trước khi lưu trữ.
 -   **Kiểm soát Truy cập Dựa trên Vai trò (RBAC)**: Middleware đảm bảo rằng các thao tác nhạy cảm chỉ được giới hạn cho nhân sự được ủy quyền (Admin).
 -   **Xác thực Đầu vào**: Tính toàn vẹn dữ liệu được duy trì thông qua việc xác thực nghiêm ngặt các yêu cầu đến.
-
-## Giấy phép
-Dự án này được cấp phép theo Giấy phép ISC.
-
----
-**Lưu ý**: Phần mềm này được dùng cho mục đích giáo dục và minh họa.
